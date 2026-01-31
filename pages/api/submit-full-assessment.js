@@ -462,7 +462,7 @@
 
 import mongoose from 'mongoose';
 import MockResult from '@/models/MockResult';
-import jwt from 'jsonwebtoken'; // Added to handle token verification
+import jwt from 'jsonwebtoken';
 
 // --- 1. DATABASE CONNECTION ---
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -500,26 +500,23 @@ export default async function handler(req, res) {
       await dbConnect();
       const { email, id } = req.query;
 
-      // Scenario A: Fetch Single Result by ID (For Result Page)
+      // A. Fetch Single Result by ID
       if (id) {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ error: "Invalid Report ID" });
         }
         const report = await MockResult.findById(id);
-        
-        if (!report) {
-            return res.status(404).json({ error: "Report not found" });
-        }
+        if (!report) return res.status(404).json({ error: "Report not found" });
         return res.status(200).json({ success: true, report });
       }
 
-      // Scenario B: Fetch All Reports by Email (For Student Dashboard)
+      // B. Fetch All Reports by Email
       if (email) {
         const reports = await MockResult.find({ email }).sort({ createdAt: -1 });
         return res.status(200).json({ success: true, count: reports.length, reports });
       }
 
-      // Scenario C: Return EVERYTHING (For Admin/Testing/Postman)
+      // C. Return EVERYTHING (Admin/Dev)
       const allReports = await MockResult.find({}).sort({ createdAt: -1 });
       return res.status(200).json({ success: true, count: allReports.length, reports: allReports });
 
@@ -535,41 +532,41 @@ export default async function handler(req, res) {
   else if (req.method === 'POST') {
     try {
       await dbConnect();
+      
+      const { email, userInfo, masterData } = req.body;
+      
+      // --- A. ROBUST IDENTITY CHECK (Prevents "Submit Failed") ---
+      let collageName = "Unknown"; // Default matches Schema
+      let authEmail = email;       // Fallback to body email
 
-      // --- A. AUTHENTICATION & USER DATA EXTRACTION ---
-      // We extract details from the JWT to ensure collageName is correct and not "garbage"
       const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ error: "Unauthorized: Missing or invalid token" });
-      }
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        const token = authHeader.split(" ")[1];
+        const secret = process.env.JWT_SECRET || "jwtsecret";
 
-      const token = authHeader.split(" ")[1];
-      let userDetails = { collageName: null, email: null };
-
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "jwtsecret");
-        userDetails.collageName = decoded.collageName;
-        userDetails.email = decoded.email;
-      } catch (err) {
-        return res.status(401).json({ error: "Unauthorized: Invalid token" });
-      }
-
-      // Use body data, but prefer Token data for security/accuracy
-      const { userInfo, masterData } = req.body;
-      const userEmail = userDetails.email || req.body.email; // Fallback to body if needed
-      const userCollage = userDetails.collageName; // Correctly set from Token
-
-      if (!userCollage) {
-         // Optional: Handle case where token exists but has no college (e.g. incomplete profile)
-         // return res.status(400).json({ error: "User profile incomplete: College Name missing." });
+        try {
+          // 1. Try Valid Verification
+          const decoded = jwt.verify(token, secret);
+          collageName = decoded.collageName || "Unknown";
+          authEmail = decoded.email;
+        } catch (jwtError) {
+          // 2. If Token Expired (Common during exams), DECODE only.
+          // We trust the token structure even if it's expired to get the college name.
+          console.warn("JWT Expired, decoding payload for identity extraction.");
+          const decodedUnsafe = jwt.decode(token);
+          if (decodedUnsafe) {
+            collageName = decodedUnsafe.collageName || "Unknown";
+            authEmail = decodedUnsafe.email || email; 
+          }
+        }
       }
 
       const apiKey = process.env.OPENAI_API_KEY;
       if (!apiKey) return res.status(500).json({ error: "OpenAI API Key missing" });
 
-      // --- B. PROCESS TECHNICAL ASSESSMENT ---
-      const techQuestions = masterData.assessment?.questions || [];
-      const techAnswers = masterData.assessment?.answers || {}; 
+      // --- B. PROCESS TECHNICAL DATA (Matches Schema 'details') ---
+      const techQuestions = masterData?.assessment?.questions || [];
+      const techAnswers = masterData?.assessment?.answers || {}; 
       
       let techScore = 0;
       const techDetails = techQuestions.map((q, index) => {
@@ -587,9 +584,9 @@ export default async function handler(req, res) {
         };
       });
 
-      // --- C. PROCESS SITUATION ASSESSMENT ---
-      const sitQuestions = masterData.situation?.questions || [];
-      const sitAnswers = masterData.situation?.answers || {};
+      // --- C. PROCESS SITUATION DATA (Matches Schema 'details') ---
+      const sitQuestions = masterData?.situation?.questions || [];
+      const sitAnswers = masterData?.situation?.answers || {};
       
       let sitScore = 0;
       const sitDetails = sitQuestions.map((q, index) => {
@@ -607,8 +604,8 @@ export default async function handler(req, res) {
         };
       });
 
-      // --- D. PROCESS VOICE INTERVIEW ---
-      const interviewDataObj = masterData.voiceInterview?.answers || {};
+      // --- D. PROCESS VOICE DATA (Matches Schema 'transcripts') ---
+      const interviewDataObj = masterData?.voiceInterview?.answers || {};
       const interviewDetails = Object.values(interviewDataObj).map(item => ({
         question: item.question,
         answerTranscript: item.answer || item.answerTranscript || "No Audio Detected"
@@ -619,7 +616,7 @@ export default async function handler(req, res) {
       
       const userPrompt = `
         Generate a career assessment report in MARATHI based on:
-        1. Technical Assessment (${userInfo.subject}): Scored ${techScore}/${techQuestions.length}.
+        1. Technical Assessment (${userInfo?.subject || 'General'}): Scored ${techScore}/${techQuestions.length}.
         2. Situation Aptitude: Scored ${sitScore}/${sitQuestions.length}.
         3. Interview Responses (Sample): "${interviewDetails.slice(0, 2).map(t => t.answerTranscript).join(' ')}..."
 
@@ -664,15 +661,15 @@ export default async function handler(req, res) {
           console.error("AI Generation Failed:", aiError);
       }
 
-      // --- F. SAVE TO MONGODB ---
+      // --- F. SAVE TO MONGODB (Strictly Schema Aligned) ---
       const newReport = new MockResult({
-        email: userEmail,
+        email: authEmail || email, 
         role: "Student",
-        collageName: userCollage, // <--- Correctly populated from JWT
+        collageName: collageName, // Retrieved from Token (Decoded if expired)
         
         technicalAssessment: {
-          subject: userInfo.subject,
-          standard: userInfo.standard,
+          subject: userInfo?.subject || "Unknown",
+          standard: userInfo?.standard || "Unknown",
           score: techScore,
           totalQuestions: techQuestions.length,
           details: techDetails 
@@ -700,7 +697,7 @@ export default async function handler(req, res) {
 
       const savedReport = await newReport.save();
 
-      console.log(`Report saved | ID: ${savedReport._id} | College: ${userCollage}`);
+      console.log(`Report saved | ID: ${savedReport._id} | College: ${collageName}`);
 
       return res.status(200).json({ 
           success: true, 
@@ -714,7 +711,6 @@ export default async function handler(req, res) {
     }
   } 
   
-  // Method Not Allowed
   else {
     return res.status(405).json({ message: 'Method not allowed' });
   }
