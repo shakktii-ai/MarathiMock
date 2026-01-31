@@ -1615,7 +1615,7 @@
 //                     {stage === 'assessment' && (
 //                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
 //                             <MCQStage 
-//                                 title="तांत्रिक परीक्षा (Technical Assessment)" 
+//                                 title="टेक्निकल असेसमेंट (Technical Assessment)" 
 //                                 endpoint="/api/assessment" 
 //                                 userData={userData} 
 //                                 themeColor="indigo" 
@@ -1628,7 +1628,7 @@
 //                     )}
 
 //                     {stage === 'interview_intro' && (
-//                         <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />
+//                         <TransitionScreen key="t1" title="टेक्निकल असेसमेंट पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />
 //                     )}
 
 //                     {stage === 'system_check' && (
@@ -2182,11 +2182,11 @@
                     
 //                     {stage === 'assessment' && (
 //                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
-//                             <MCQStage title="तांत्रिक परीक्षा" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
+//                             <MCQStage title="टेक्निकल असेसमेंट" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
 //                         </motion.div>
 //                     )}
 
-//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
+//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="टेक्निकल असेसमेंट पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
 
 //                     {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
 
@@ -2931,11 +2931,11 @@
                     
 //                     {stage === 'assessment' && (
 //                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
-//                             <MCQStage title="तांत्रिक परीक्षा" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
+//                             <MCQStage title="टेक्निकल असेसमेंट" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
 //                         </motion.div>
 //                     )}
 
-//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
+//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="टेक्निकल असेसमेंट पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
 
 //                     {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
 
@@ -3656,7 +3656,7 @@
 //                     {stage === 'assessment' && (
 //                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
 //                             <MCQStage 
-//                                 title="तांत्रिक परीक्षा" 
+//                                 title="टेक्निकल असेसमेंट" 
 //                                 endpoint="/api/assessment" // Generates questions
 //                                 userData={formUserInfo} 
 //                                 themeColor="indigo" 
@@ -3665,7 +3665,7 @@
 //                         </motion.div>
 //                     )}
 
-//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
+//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="टेक्निकल असेसमेंट पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
 
 //                     {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
 
@@ -4367,7 +4367,7 @@ export default function FullAssessmentFlow() {
                     {stage === 'assessment' && (
                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
                             <MCQStage 
-                                title="तांत्रिक परीक्षा" 
+                                title="टेक्निकल असेसमेंट" 
                                 fetchData={() => fetchAssessmentQuestions(formUserInfo)}
                                 themeColor="indigo" 
                                 onComplete={(data) => handleStageData('assessment', data, 'interview_intro')} 
@@ -4375,7 +4375,7 @@ export default function FullAssessmentFlow() {
                         </motion.div>
                     )}
 
-                    {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
+                    {stage === 'interview_intro' && <TransitionScreen key="t1" title="टेक्निकल असेसमेंट पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
 
                     {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
 

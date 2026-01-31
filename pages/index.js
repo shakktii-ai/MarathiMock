@@ -252,7 +252,7 @@ export default function dashboard({ Logout, user }) {
                   
                   
                  {/* <Link href={'/assessment'}> */}
-                 <Link href={'/mock'}>
+                 <Link href={'/assessmentInstruction'}>
                     <button className="bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 group">
                       असेसमेंट द्या
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
