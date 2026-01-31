@@ -1680,15 +1680,2045 @@
 // }
 
 
+// import React, { useState, useEffect, useRef } from 'react';
+// import Head from 'next/head';
+// import { useRouter } from 'next/router'; // Added router for redirection
+// import { motion, AnimatePresence } from 'framer-motion';
+// import { 
+//     IoMdMicrophone, 
+//     IoMdCheckmarkCircle,
+//     IoIosArrowDown,
+//     IoMdWarning
+// } from 'react-icons/io';
+// import { 
+//     FaVolumeUp, 
+//     FaMicrophone, 
+//     FaArrowRight, 
+//     FaBrain, 
+//     FaUserGraduate,
+// } from 'react-icons/fa';
+
+// // --- CONFIGURATION: 10 Interview Questions in Marathi ---
+// const INTERVIEW_POOL = [
+//     "तुमच्याबद्दल थोडक्यात सांगा.", 
+//     "तुम्हाला आमच्या कंपनीत काम का करायचे आहे?", 
+//     "तुमच्या जमेच्या बाजू (Strengths) आणि कमकुवत बाजू (Weaknesses) कोणत्या आहेत?",
+//     "पुढील ३-५ वर्षांत तुम्ही स्वतःला कुठे पाहता?", 
+//     "आम्ही तुमची निवड का करावी?", 
+//     "तुम्ही कामाचा ताण किंवा दबाव कसा हाताळता?", 
+//     "एखाद्या कठीण प्रसंगाचे वर्णन करा ज्याचा तुम्ही सामना केला आणि तो कसा सोडवला?", 
+//     "तुम्हाला काम करण्यासाठी कोणती गोष्ट प्रेरित करते?", 
+//     "टीममधील मतभेद किंवा संघर्ष तुम्ही कसे हाताळता?", 
+//     "तुम्ही स्वतंत्रपणे आणि टीममध्ये काम करण्यास तयार आहात का?" 
+// ];
+
+// // --- HELPER: ROBUST MARATHI TEXT TO SPEECH ---
+// const speakText = (text, onEndCallback) => {
+//     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+//         if(onEndCallback) onEndCallback();
+//         return;
+//     }
+//     window.speechSynthesis.cancel();
+//     const utterance = new SpeechSynthesisUtterance(text);
+//     utterance.rate = 0.9; 
+//     utterance.lang = 'mr-IN'; 
+//     const voices = window.speechSynthesis.getVoices();
+//     const marathiVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
+//     if (marathiVoice) utterance.voice = marathiVoice;
+
+//     utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+//     utterance.onerror = () => { if (onEndCallback) onEndCallback(); };
+//     window.speechSynthesis.speak(utterance);
+// };
+
+// // --- API HELPER ---
+// const fetchQuestionsFromAPI = async (endpoint, userDetails) => {
+//     try {
+//         const response = await fetch(endpoint, {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({
+//                 type: 'generate_questions',
+//                 standard: userDetails.standard,
+//                 subject: userDetails.subject
+//             })
+//         });
+//         const data = await response.json();
+//         if (data.result && Array.isArray(data.result)) return data.result;
+//         if (data.questions) return data.questions;
+//         throw new Error("Invalid Format");
+//     } catch (error) {
+//         console.error(`Error fetching from ${endpoint}:`, error);
+//         // Fallback Mock Data
+//         const isSituation = endpoint.includes('situation');
+//         return Array.from({ length: isSituation ? 20 : 25 }, (_, i) => ({
+//             id: i + 1,
+//             question: isSituation 
+//                 ? `(डेमो) खालीलपैकी कोणत्या परिस्थितीत तुम्ही काय कराल? प्रश्न क्रमांक ${i + 1}`
+//                 : `(डेमो) विषयाशी संबंधित तांत्रिक प्रश्न क्रमांक ${i + 1}?`,
+//             options: ["पर्याय अ", "पर्याय ब", "पर्याय क", "पर्याय ड"],
+//             correctAnswer: "पर्याय अ" 
+//         }));
+//     }
+// };
+
+// // ==========================================
+// // 1. INPUT STAGE 
+// // ==========================================
+// // ==========================================
+// // 1. INPUT STAGE (UPDATED)
+// // ==========================================
+// // ==========================================
+// // 1. INPUT STAGE (Visual Fixes)
+// // ==========================================
+// const InputStage = ({ onComplete }) => {
+//     const [formData, setFormData] = useState({ standard: '', subject: '' });
+
+//     const handleSubmit = (e) => {
+//         e.preventDefault();
+//         if (formData.standard && formData.subject) {
+//             onComplete(formData);
+//         } else {
+//             alert("कृपया सर्व माहिती भरा. (Please fill all details)");
+//         }
+//     };
+
+//     return (
+//         <motion.div 
+//             initial={{ opacity: 0, scale: 0.95 }} 
+//             animate={{ opacity: 1, scale: 1 }} 
+//             // FIX: Darker, less transparent background for better readability
+//             className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2rem] shadow-2xl relative overflow-hidden"
+//         >
+//             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            
+//             <div className="text-center mb-10">
+//                 <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
+//                     <FaUserGraduate />
+//                 </div>
+//                 <h2 className="text-4xl font-bold text-white mb-2">विद्यार्थी तपशील</h2>
+//                 <p className="text-slate-300">तुमची माहिती भरून परीक्षा सुरू करा</p>
+//             </div>
+
+//             <form onSubmit={handleSubmit} className="space-y-6">
+//                 <div>
+//                     {/* FIX: Brighter Label Color */}
+//                     <label className="block text-indigo-200 text-xs font-bold mb-2 uppercase tracking-wider">
+//                         तुमची इयत्ता (Standard)
+//                     </label>
+//                     <input 
+//                         type="text" 
+//                         placeholder="उदा. १२वी सायन्स" 
+//                         value={formData.standard} 
+//                         onChange={(e) => setFormData({...formData, standard: e.target.value})} 
+//                         // FIX: Darker input bg (slate-950) + Visible Placeholder
+//                         className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-slate-400" 
+//                         required 
+//                     />
+//                 </div>
+
+//                 <div className="relative">
+//                     <label className="block text-indigo-200 text-xs font-bold mb-2 uppercase tracking-wider">
+//                         विषय निवडा (Subject)
+//                     </label>
+//                     <select 
+//                         value={formData.subject} 
+//                         onChange={(e) => setFormData({...formData, subject: e.target.value})} 
+//                         // FIX: Logic to show placeholder text clearly
+//                         className={`w-full bg-slate-950 border border-slate-600 rounded-xl px-5 py-4 appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none cursor-pointer ${formData.subject === "" ? "text-slate-400" : "text-white"}`}
+//                         required
+//                     >
+//                         <option value="" disabled className="bg-slate-800 text-slate-500">Select Subject</option>
+//                         <option value="PCB" className="bg-slate-900 text-white py-2">PCB (Printed Circuit Board)</option>
+//                         <option value="AAO" className="bg-slate-900 text-white py-2">AAO (Automotive Assembly Operator)</option>
+//                     </select>
+//                     {/* FIX: Brighter Arrow Icon */}
+//                     <div className="pointer-events-none absolute bottom-5 right-5 text-indigo-400 text-xl">
+//                         <IoIosArrowDown />
+//                     </div>
+//                 </div>
+
+//                 <button 
+//                     type="submit" 
+//                     className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl mt-6 shadow-lg shadow-indigo-600/30 transform transition hover:-translate-y-1"
+//                 >
+//                     परीक्षा सुरू करा &rarr;
+//                 </button>
+//             </form>
+//         </motion.div>
+//     );
+// };
+// // ==========================================
+// // 2. MCQ STAGE (Reusable)
+// // ==========================================
+// const MCQStage = ({ title, endpoint, userData, themeColor, onComplete }) => {
+//     const [questions, setQuestions] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [currentQIndex, setCurrentQIndex] = useState(0);
+//     const [answers, setAnswers] = useState({}); 
+
+//     useEffect(() => {
+//         const load = async () => {
+//             setLoading(true);
+//             const data = await fetchQuestionsFromAPI(endpoint, userData);
+//             setQuestions(data);
+//             setLoading(false);
+//         };
+//         load();
+//     }, [endpoint, userData]);
+
+//     const handleSelect = (option) => setAnswers(prev => ({ ...prev, [currentQIndex]: option }));
+
+//     const handleSubmit = () => {
+//         if (Object.keys(answers).length < questions.length) {
+//             if(!confirm("काही प्रश्न बाकी आहेत. तरीही सबमिट करायचे?")) return;
+//         }
+//         onComplete({ questions, answers });
+//     };
+
+//     if (loading) return <LoadingScreen text={`${title} तयार होत आहे...`} color={themeColor} />;
+//     const currentQ = questions[currentQIndex];
+//     const progress = ((Object.keys(answers).length) / questions.length) * 100;
+
+//     return (
+//         <div className="w-full max-w-5xl mx-auto h-full flex flex-col">
+//             <div className="flex justify-between items-end mb-6">
+//                 <div>
+//                     <h2 className={`text-2xl font-bold text-${themeColor}-400`}>{title}</h2>
+//                     <p className="text-slate-400 text-sm">प्रश्न {currentQIndex + 1} / {questions.length}</p>
+//                 </div>
+//                 <div className="flex flex-col items-end">
+//                     <span className="text-xs text-slate-500 mb-1">{Math.round(progress)}% पूर्ण</span>
+//                     <div className="w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
+//                         <div className={`h-full bg-${themeColor}-500 transition-all duration-500`} style={{ width: `${progress}%` }}></div>
+//                     </div>
+//                 </div>
+//             </div>
+//             <div className="bg-slate-900/80 border border-white/10 rounded-3xl p-8 shadow-2xl min-h-[400px] flex flex-col justify-between">
+//                 <div>
+//                     <h3 className="text-xl text-white font-medium mb-8 leading-relaxed">{currentQ?.question || currentQ?.questionText}</h3>
+//                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                         {currentQ?.options?.map((opt, idx) => {
+//                             const isSelected = answers[currentQIndex] === opt;
+//                             return (
+//                                 <button key={idx} onClick={() => handleSelect(opt)} className={`p-4 rounded-xl border-2 text-left transition-all flex items-center ${isSelected ? `bg-${themeColor}-600/20 border-${themeColor}-500 text-white` : 'bg-slate-950/50 border-slate-800 text-slate-300'}`}>
+//                                     <span className={`w-8 h-8 rounded-full border flex items-center justify-center mr-3 font-bold text-sm ${isSelected ? `bg-${themeColor}-500 border-${themeColor}-500` : 'border-slate-600'}`}>{String.fromCharCode(65 + idx)}</span>
+//                                     {opt}
+//                                 </button>
+//                             );
+//                         })}
+//                     </div>
+//                 </div>
+//                 <div className="flex justify-between mt-8 pt-6 border-t border-white/5">
+//                     <button onClick={() => setCurrentQIndex(p => Math.max(0, p - 1))} disabled={currentQIndex === 0} className="px-6 py-2 rounded-lg text-slate-400 hover:bg-white/5 disabled:opacity-30">मागील</button>
+//                     {currentQIndex === questions.length - 1 ? (
+//                         <button onClick={handleSubmit} className={`px-8 py-3 bg-${themeColor}-600 text-white rounded-xl font-bold flex items-center gap-2`}>सबमिट करा <IoMdCheckmarkCircle /></button>
+//                     ) : (
+//                         <button onClick={() => setCurrentQIndex(p => Math.min(questions.length - 1, p + 1))} className="px-8 py-3 bg-white text-black rounded-xl font-bold flex items-center gap-2">पुढील <FaArrowRight /></button>
+//                     )}
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 3. SYSTEM CHECK STAGE
+// // ==========================================
+// const DeviceCheckStage = ({ onComplete }) => {
+//     const [speakerStatus, setSpeakerStatus] = useState('idle'); 
+//     const [micStatus, setMicStatus] = useState('idle');
+
+//     useEffect(() => { if (typeof window !== 'undefined') window.speechSynthesis.getVoices(); }, []);
+
+//     const testSpeaker = () => {
+//         setSpeakerStatus('testing');
+//         speakText("नमस्कार, ही सिस्टम चेक टेस्ट आहे.", () => setSpeakerStatus('success'));
+//     };
+
+//     const testMic = () => {
+//         setMicStatus('testing');
+//         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//         if (!SpeechRecognition) { alert("Mic Not Supported"); setMicStatus('success'); return; }
+        
+//         const recognition = new SpeechRecognition();
+//         recognition.lang = 'mr-IN';
+//         recognition.onresult = () => { setMicStatus('success'); recognition.stop(); };
+//         recognition.onerror = () => { setMicStatus('idle'); alert("Mic Error"); };
+//         recognition.start();
+//         setTimeout(() => { if(micStatus !== 'success') recognition.stop(); }, 4000);
+//     };
+
+//     const isReady = speakerStatus === 'success' && micStatus === 'success';
+
+//     return (
+//         <div className="max-w-xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 p-10 rounded-[2.5rem] shadow-2xl text-center">
+//             <h2 className="text-3xl font-bold text-white mb-2">सिस्टम चेक</h2>
+//             <p className="text-slate-400 mb-8">मुलाखत सुरू करण्यापूर्वी डिव्हाइस तपासा.</p>
+//             <div className="space-y-4 mb-10">
+//                 <div className={`p-4 rounded-2xl border flex justify-between items-center ${speakerStatus === 'success' ? 'border-green-500 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
+//                     <div className="flex items-center gap-4"><div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaVolumeUp /></div><p className="font-bold">स्पीकर</p></div>
+//                     <button onClick={testSpeaker} className="px-4 py-2 bg-indigo-600 rounded-lg text-white font-bold">{speakerStatus === 'success' ? 'Verified' : 'Test'}</button>
+//                 </div>
+//                 <div className={`p-4 rounded-2xl border flex justify-between items-center ${micStatus === 'success' ? 'border-green-500 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
+//                     <div className="flex items-center gap-4"><div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaMicrophone /></div><p className="font-bold">माईक</p></div>
+//                     <button onClick={testMic} className="px-4 py-2 bg-indigo-600 rounded-lg text-white font-bold">{micStatus === 'success' ? 'Verified' : 'Test'}</button>
+//                 </div>
+//             </div>
+//             <button onClick={onComplete} disabled={!isReady} className={`w-full py-4 rounded-xl font-bold text-lg ${isReady ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>मुलाखत सुरू करा</button>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 4. VOICE INTERVIEW STAGE
+// // ==========================================
+// const VoiceStage = ({ onComplete }) => {
+//     const [qIndex, setQIndex] = useState(0);
+//     const [isSpeaking, setIsSpeaking] = useState(false);
+//     const [isRecording, setIsRecording] = useState(false);
+//     const [transcript, setTranscript] = useState('');
+//     const [questions, setQuestions] = useState([]);
+//     const [results, setResults] = useState({}); 
+//     const recognitionRef = useRef(null);
+
+//     useEffect(() => {
+//         const shuffled = [...INTERVIEW_POOL].sort(() => 0.5 - Math.random());
+//         setQuestions(shuffled.slice(0, 5));
+//     }, []);
+
+//     useEffect(() => {
+//         if (questions.length > 0) setTimeout(() => playQuestion(0), 1000);
+//         return () => { if (recognitionRef.current) recognitionRef.current.stop(); };
+//     }, [questions]);
+
+//     const playQuestion = (index) => {
+//         if (index >= questions.length) return;
+//         setTranscript('');
+//         setIsRecording(false);
+//         if (recognitionRef.current) recognitionRef.current.stop();
+//         setIsSpeaking(true);
+//         speakText(questions[index], () => {
+//             setIsSpeaking(false);
+//             startListening(); 
+//         });
+//     };
+
+//     const startListening = () => {
+//         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//         if (!SpeechRecognition) return;
+//         const recognition = new SpeechRecognition();
+//         recognition.lang = 'mr-IN';
+//         recognition.continuous = true;
+//         recognition.interimResults = true;
+//         recognitionRef.current = recognition;
+//         recognition.onstart = () => setIsRecording(true);
+//         recognition.onresult = (event) => {
+//             let final = '';
+//             for (let i = event.resultIndex; i < event.results.length; ++i) {
+//                 if (event.results[i].isFinal) final += event.results[i][0].transcript + ' ';
+//             }
+//             setTranscript(prev => prev + final);
+//         };
+//         try { recognition.start(); } catch(e) { console.error(e); }
+//     };
+
+//     const handleNext = () => {
+//         if (recognitionRef.current) recognitionRef.current.stop();
+//         setIsRecording(false);
+//         const currentAnswerData = { question: questions[qIndex], answer: transcript.trim() || "No Audio" };
+//         const updatedResults = { ...results, [qIndex]: currentAnswerData };
+//         setResults(updatedResults);
+
+//         if (qIndex < 4) {
+//             setQIndex(prev => prev + 1);
+//             setTimeout(() => playQuestion(qIndex + 1), 500);
+//         } else {
+//             onComplete({ answers: updatedResults }); 
+//         }
+//     };
+
+//     if (questions.length === 0) return <LoadingScreen text="मुलाखत तयार होत आहे..." color="purple" />;
+
+//     return (
+//         <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center h-full">
+//             <div className="w-full text-center mb-8">
+//                 <span className="text-purple-400 font-bold uppercase text-sm">प्रश्न {qIndex + 1} / 5</span>
+//                 <div className="w-full h-1 bg-slate-800 rounded-full mt-4"><div className="h-full bg-purple-500 transition-all duration-500" style={{ width: `${((qIndex+1)/5)*100}%` }}></div></div>
+//             </div>
+//             <div className="relative w-full bg-slate-900/80 border border-slate-700 p-12 rounded-3xl shadow-2xl text-center">
+//                 <h2 className="text-3xl text-white font-bold mb-8 leading-normal">{questions[qIndex]}</h2>
+//                 <div className="flex justify-center mb-8 h-24 items-center">
+//                     {isSpeaking ? (
+//                         <div className="flex items-center gap-2 text-purple-400"><FaVolumeUp className="animate-pulse text-3xl" /> प्रश्न बोलला जात आहे...</div>
+//                     ) : (
+//                         <div className="flex flex-col items-center gap-2">
+//                              <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl transition-all ${isRecording ? 'bg-red-500 animate-pulse shadow-[0_0_40px_rgba(239,68,68,0.5)]' : 'bg-slate-700'}`}><IoMdMicrophone /></div>
+//                              {isRecording && <span className="text-red-400 text-xs tracking-widest animate-pulse font-bold mt-2">रेकॉर्डिंग चालू आहे...</span>}
+//                         </div>
+//                     )}
+//                 </div>
+//                 <div className="bg-black/30 rounded-xl p-6 min-h-[120px] mb-8 text-slate-300 italic border border-white/5 text-left text-lg">
+//                     {transcript || (isRecording ? "ऐकत आहे..." : "प्रश्नाची प्रतीक्षा करा...")}
+//                 </div>
+//                 <button onClick={handleNext} disabled={isSpeaking} className={`px-10 py-4 rounded-full font-bold text-lg shadow-xl transition-all flex items-center gap-2 mx-auto ${isSpeaking ? 'bg-slate-700 text-slate-500 cursor-not-allowed' : 'bg-white text-black hover:scale-105'}`}>
+//                     {qIndex === 4 ? "मुलाखत संपवा" : "पुढील प्रश्न"} <FaArrowRight />
+//                 </button>
+//             </div>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 5. HELPER COMPONENTS
+// // ==========================================
+// const LoadingScreen = ({ text, color = 'indigo' }) => (
+//     <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
+//         <div className={`w-16 h-16 border-4 border-${color}-500/30 border-t-${color}-500 rounded-full animate-spin mb-6`}></div>
+//         <h3 className="text-xl text-white font-medium">{text}</h3>
+//     </div>
+// );
+
+// const TransitionScreen = ({ title, subtitle, icon, color, onNext }) => (
+//     <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} className="max-w-md mx-auto text-center bg-slate-900/80 backdrop-blur-xl border border-white/10 p-12 rounded-[2.5rem] shadow-2xl">
+//         <div className={`w-24 h-24 bg-${color}-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-${color}-400 text-4xl`}>{icon}</div>
+//         <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
+//         <p className="text-slate-400 mb-8 text-lg">{subtitle}</p>
+//         <button onClick={onNext} className={`px-8 py-4 bg-${color}-600 hover:bg-${color}-500 text-white rounded-full font-bold shadow-lg flex items-center gap-2 mx-auto`}>पुढे जा <FaArrowRight /></button>
+//     </motion.div>
+// );
+
+// // ==========================================
+// // MAIN CONTROLLER
+// // ==========================================
+// export default function FullAssessmentFlow() {
+//     const router = useRouter();
+//     const [stage, setStage] = useState('input'); 
+//     const [formUserInfo, setFormUserInfo] = useState(null); // Data from the input form
+//     const [isSubmitting, setIsSubmitting] = useState(false);
+//     const [masterData, setMasterData] = useState({ assessment: null, interview: null, situation: null });
+    
+//     // --- AUTH STATE ---
+//     const [loggedInUser, setLoggedInUser] = useState(null); // User from LocalStorage
+//     const [authToken, setAuthToken] = useState(null); // Token from LocalStorage
+
+//     // 1. On Mount: Get Logged In User
+//     useEffect(() => {
+//         const userStr = localStorage.getItem('user');
+//         const token = localStorage.getItem('token');
+//         if (userStr) setLoggedInUser(JSON.parse(userStr));
+//         if (token) setAuthToken(token);
+//     }, []);
+
+//     const handleInputComplete = (data) => {
+//         setFormUserInfo(data);
+//         setStage('assessment');
+//     };
+
+//     const handleStageData = (key, data) => {
+//         setMasterData(prev => ({ ...prev, [key]: data }));
+//     };
+
+//     const formatAndSubmitData = async (finalSituationData) => {
+//         setIsSubmitting(true);
+        
+//         // --- 2. FIXED: Use Dynamic Email ---
+//         const userEmail = loggedInUser?.email || "anonymous@student.com";
+
+//         const payload = {
+//             email: userEmail, // <--- NOW DYNAMIC
+//             userInfo: formUserInfo, 
+//             masterData: {
+//                 assessment: masterData.assessment,
+//                 voiceInterview: masterData.interview,
+//                 situation: finalSituationData      
+//             }
+//         };
+
+//         try {
+//             const res = await fetch('/api/submit-full-assessment', { // Use your correct API route name
+//                 method: 'POST',
+//                 headers: { 
+//                     'Content-Type': 'application/json',
+//                     'Authorization': `Bearer ${authToken}` // <--- 3. FIXED: Add Token
+//                 }, 
+//                 body: JSON.stringify(payload)
+//             });
+
+//             if (res.ok) {
+//                 setStage('success');
+//             } else {
+//                 console.error("Server Error:", await res.text());
+//                 alert("Submission Failed. Please try again.");
+//             }
+//         } catch (error) {
+//             console.error("Network Error", error);
+//             alert("Network Error.");
+//         } finally {
+//             setIsSubmitting(false);
+//         }
+//     };
+
+//     if (isSubmitting) return <LoadingScreen text="निकाल जतन करत आहोत..." color="green" />;
+
+//     return (
+//         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
+//             <Head><title>Full Assessment | Shakkti AI</title></Head>
+//             <div className="fixed inset-0 z-0 pointer-events-none">
+//                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
+//                 <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px]"></div>
+//             </div>
+
+//             <nav className="sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
+//                 <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
+//                     <span className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white">S</span> Shakkti AI
+//                 </div>
+//                 {loggedInUser && <div className="text-sm text-slate-400">Hi, {loggedInUser.fullName}</div>}
+//             </nav>
+
+//             <main className="relative z-10 container mx-auto px-4 py-8 min-h-[85vh] flex flex-col justify-center">
+//                 <AnimatePresence mode="wait">
+//                     {stage === 'input' && <InputStage key="input" onComplete={handleInputComplete} />}
+                    
+//                     {stage === 'assessment' && (
+//                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <MCQStage title="तांत्रिक परीक्षा" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
+
+//                     {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
+
+//                     {stage === 'interview' && (
+//                         <motion.div key="interview" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <VoiceStage onComplete={(data) => { handleStageData('interview', data); setStage('situation_intro'); }} />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'situation_intro' && <TransitionScreen key="t2" title="इंटरव्ह्यू पूर्ण झाला" subtitle="पुढील: सिच्युएशन अ‍ॅप्टिट्यूड" icon={<FaBrain />} color="emerald" onNext={() => setStage('situation')} />}
+
+//                     {stage === 'situation' && (
+//                         <motion.div key="situation" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <MCQStage title="सिच्युएशन अ‍ॅप्टिट्यूड" endpoint="/api/situationque" userData={formUserInfo} themeColor="emerald" onComplete={(data) => formatAndSubmitData(data)} />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'success' && (
+//                         <motion.div key="success" initial={{scale:0.9, opacity:0}} animate={{scale:1, opacity:1}} className="text-center max-w-xl mx-auto bg-slate-900/80 p-12 rounded-[3rem] border border-white/10 shadow-2xl">
+//                             <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 ring-1 ring-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.3)]"><IoMdCheckmarkCircle className="text-green-400 text-6xl" /></div>
+//                             <h2 className="text-4xl font-bold text-white mb-4">अभिनंदन!</h2>
+//                             <p className="text-slate-400 mb-8 text-lg">तुमचा पेपर यशस्वीरित्या सबमिट झाला आहे.</p>
+//                             <button onClick={() => router.push('/')} className="px-10 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all">होम पेजवर जा</button>
+//                         </motion.div>
+//                     )}
+//                 </AnimatePresence>
+//             </main>
+//         </div>
+//     );
+// }
+
+// import React, { useState, useEffect, useRef } from 'react';
+// import Head from 'next/head';
+// import { useRouter } from 'next/router';
+// import { motion, AnimatePresence } from 'framer-motion';
+// import { 
+//     IoMdMicrophone, 
+//     IoMdCheckmarkCircle,
+//     IoIosArrowDown,
+//     IoMdPause,
+//     IoMdPlay
+// } from 'react-icons/io';
+// import { 
+//     FaVolumeUp, 
+//     FaMicrophone, 
+//     FaArrowRight, 
+//     FaBrain, 
+//     FaUserGraduate,
+// } from 'react-icons/fa';
+
+// // ==========================================
+// // 0. CONFIGURATION & UTILS
+// // ==========================================
+
+// const INTERVIEW_POOL = [
+//     "तुमच्याबद्दल थोडक्यात सांगा.", 
+//     "तुम्हाला आमच्या कंपनीत काम का करायचे आहे?", 
+//     "तुमच्या जमेच्या बाजू (Strengths) आणि कमकुवत बाजू (Weaknesses) कोणत्या आहेत?",
+//     "पुढील ३-५ वर्षांत तुम्ही स्वतःला कुठे पाहता?", 
+//     "आम्ही तुमची निवड का करावी?", 
+//     "तुम्ही कामाचा ताण किंवा दबाव कसा हाताळता?", 
+//     "एखाद्या कठीण प्रसंगाचे वर्णन करा ज्याचा तुम्ही सामना केला आणि तो कसा सोडवला?", 
+//     "तुम्हाला काम करण्यासाठी कोणती गोष्ट प्रेरित करते?", 
+//     "टीममधील मतभेद किंवा संघर्ष तुम्ही कसे हाताळता?", 
+//     "तुम्ही स्वतंत्रपणे आणि टीममध्ये काम करण्यास तयार आहात का?" 
+// ];
+
+// // Robust Text-to-Speech
+// const speakText = (text, onEndCallback) => {
+//     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+//         if(onEndCallback) onEndCallback();
+//         return;
+//     }
+//     window.speechSynthesis.cancel();
+//     const utterance = new SpeechSynthesisUtterance(text);
+//     utterance.rate = 0.9; 
+//     utterance.lang = 'mr-IN'; 
+    
+//     // Try to find a Marathi or Hindi voice
+//     const voices = window.speechSynthesis.getVoices();
+//     const specificVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
+//     if (specificVoice) utterance.voice = specificVoice;
+
+//     utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+//     utterance.onerror = (e) => { console.error(e); if (onEndCallback) onEndCallback(); };
+//     window.speechSynthesis.speak(utterance);
+// };
+
+// // API Fetcher with Fallback
+// const fetchQuestionsFromAPI = async (endpoint, userDetails) => {
+//     try {
+//         const response = await fetch(endpoint, {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({
+//                 type: 'generate_questions',
+//                 standard: userDetails.standard,
+//                 subject: userDetails.subject
+//             })
+//         });
+//         const data = await response.json();
+//         if (data.result && Array.isArray(data.result)) return data.result;
+//         if (data.questions) return data.questions;
+//         throw new Error("Invalid Format");
+//     } catch (error) {
+//         console.warn(`API Error (${endpoint}), using fallback data.`);
+//         const isSituation = endpoint.includes('situation');
+//         return Array.from({ length: isSituation ? 20 : 25 }, (_, i) => ({
+//             id: i + 1,
+//             question: isSituation 
+//                 ? `(डेमो) खालीलपैकी कोणत्या परिस्थितीत तुम्ही काय कराल? प्रश्न क्रमांक ${i + 1}`
+//                 : `(डेमो) विषयाशी संबंधित तांत्रिक प्रश्न क्रमांक ${i + 1}?`,
+//             options: ["पर्याय अ", "पर्याय ब", "पर्याय क", "पर्याय ड"],
+//             correctAnswer: "पर्याय अ" 
+//         }));
+//     }
+// };
+
+// // ==========================================
+// // 1. INPUT STAGE 
+// // ==========================================
+// const InputStage = ({ onComplete }) => {
+//     const [formData, setFormData] = useState({ standard: '', subject: '' });
+
+//     const handleSubmit = (e) => {
+//         e.preventDefault();
+//         if (formData.standard && formData.subject) {
+//             onComplete(formData);
+//         } else {
+//             alert("कृपया सर्व माहिती भरा. (Please fill all details)");
+//         }
+//     };
+
+//     return (
+//         <motion.div 
+//             initial={{ opacity: 0, y: 20 }} 
+//             animate={{ opacity: 1, y: 0 }} 
+//             className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden"
+//         >
+//             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            
+//             <div className="text-center mb-8">
+//                 <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
+//                     <FaUserGraduate />
+//                 </div>
+//                 <h2 className="text-3xl font-bold text-white mb-2">विद्यार्थी तपशील</h2>
+//                 <p className="text-slate-400">तुमची माहिती भरून परीक्षा सुरू करा</p>
+//             </div>
+
+//             <form onSubmit={handleSubmit} className="space-y-6">
+//                 <div>
+//                     <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
+//                         तुमची इयत्ता (Standard)
+//                     </label>
+//                     <input 
+//                         type="text" 
+//                         placeholder="उदा. १२वी सायन्स" 
+//                         value={formData.standard} 
+//                         onChange={(e) => setFormData({...formData, standard: e.target.value})} 
+//                         className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none placeholder-slate-500 transition-all" 
+//                         required 
+//                     />
+//                 </div>
+
+//                 <div className="relative">
+//                     <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
+//                         विषय निवडा (Subject)
+//                     </label>
+//                     <select 
+//                         value={formData.subject} 
+//                         onChange={(e) => setFormData({...formData, subject: e.target.value})} 
+//                         className={`w-full bg-slate-950 border border-slate-600 rounded-xl px-5 py-4 appearance-none focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer ${formData.subject === "" ? "text-slate-500" : "text-white"}`}
+//                         required
+//                     >
+//                         <option value="" disabled>Select Subject</option>
+//                         <option value="PCB">PCB (Printed Circuit Board)</option>
+//                         <option value="AAO">AAO (Automotive Assembly Operator)</option>
+//                     </select>
+//                     <div className="pointer-events-none absolute bottom-5 right-5 text-indigo-400">
+//                         <IoIosArrowDown size={20} />
+//                     </div>
+//                 </div>
+
+//                 <button 
+//                     type="submit" 
+//                     className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl mt-4 shadow-lg shadow-indigo-600/30 transform transition hover:-translate-y-1"
+//                 >
+//                     परीक्षा सुरू करा &rarr;
+//                 </button>
+//             </form>
+//         </motion.div>
+//     );
+// };
+
+// // ==========================================
+// // 2. MCQ STAGE (Fixed Progress Bar)
+// // ==========================================
+// const MCQStage = ({ title, endpoint, userData, themeColor, onComplete }) => {
+//     const [questions, setQuestions] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [currentQIndex, setCurrentQIndex] = useState(0);
+//     const [answers, setAnswers] = useState({}); 
+
+//     useEffect(() => {
+//         const load = async () => {
+//             setLoading(true);
+//             const data = await fetchQuestionsFromAPI(endpoint, userData);
+//             setQuestions(data);
+//             setLoading(false);
+//         };
+//         load();
+//     }, [endpoint, userData]);
+
+//     const handleSelect = (option) => {
+//         setAnswers(prev => ({ ...prev, [currentQIndex]: option }));
+//     };
+
+//     const handleSubmit = () => {
+//         if (Object.keys(answers).length < questions.length) {
+//             if(!confirm("काही प्रश्न बाकी आहेत. तरीही सबमिट करायचे?")) return;
+//         }
+//         onComplete({ questions, answers });
+//     };
+
+//     // --- FIX: Robust Progress Calculation ---
+//     const totalQuestions = questions.length;
+//     const answeredCount = Object.keys(answers).length;
+//     const progressPercentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+    
+//     if (loading) return <LoadingScreen text={`${title} तयार होत आहे...`} color={themeColor} />;
+    
+//     const currentQ = questions[currentQIndex];
+
+//     return (
+//         <div className="w-full max-w-5xl mx-auto flex flex-col min-h-[600px]">
+//             {/* Header & Progress */}
+//             <div className="flex justify-between items-end mb-6 px-2">
+//                 <div>
+//                     <h2 className={`text-2xl font-bold text-${themeColor}-400`}>{title}</h2>
+//                     <p className="text-slate-400 text-sm mt-1">
+//                         प्रश्न {currentQIndex + 1} / {totalQuestions}
+//                     </p>
+//                 </div>
+//                 <div className="flex flex-col items-end w-1/3">
+//                     <span className="text-xs text-slate-500 mb-2 font-mono">
+//                         {Math.round(progressPercentage)}% पूर्ण
+//                     </span>
+//                     <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+//                         <div 
+//                             className={`h-full bg-${themeColor}-500 transition-all duration-700 ease-out`} 
+//                             style={{ width: `${progressPercentage}%` }}
+//                         ></div>
+//                     </div>
+//                 </div>
+//             </div>
+
+//             {/* Question Card */}
+//             <div className="flex-1 bg-slate-900/80 border border-white/10 rounded-[2rem] p-8 md:p-12 shadow-2xl flex flex-col justify-between backdrop-blur-sm">
+//                 <div>
+//                     <h3 className="text-xl md:text-2xl text-white font-medium mb-10 leading-relaxed">
+//                         {currentQ?.question}
+//                     </h3>
+//                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                         {currentQ?.options?.map((opt, idx) => {
+//                             const isSelected = answers[currentQIndex] === opt;
+//                             return (
+//                                 <button 
+//                                     key={idx} 
+//                                     onClick={() => handleSelect(opt)} 
+//                                     className={`p-5 rounded-xl border-2 text-left transition-all flex items-center group
+//                                         ${isSelected 
+//                                             ? `bg-${themeColor}-900/40 border-${themeColor}-500 text-white shadow-[0_0_15px_rgba(var(--${themeColor}-500),0.3)]` 
+//                                             : 'bg-slate-950/50 border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-slate-900'
+//                                         }`}
+//                                 >
+//                                     <span className={`w-8 h-8 min-w-[2rem] rounded-full border flex items-center justify-center mr-4 font-bold text-sm transition-colors
+//                                         ${isSelected 
+//                                             ? `bg-${themeColor}-500 border-${themeColor}-500 text-white` 
+//                                             : 'border-slate-600 text-slate-500 group-hover:border-slate-400'
+//                                         }`}
+//                                     >
+//                                         {String.fromCharCode(65 + idx)}
+//                                     </span>
+//                                     <span className="text-lg">{opt}</span>
+//                                 </button>
+//                             );
+//                         })}
+//                     </div>
+//                 </div>
+
+//                 {/* Footer Controls */}
+//                 <div className="flex justify-between mt-12 pt-8 border-t border-white/5">
+//                     <button 
+//                         onClick={() => setCurrentQIndex(p => Math.max(0, p - 1))} 
+//                         disabled={currentQIndex === 0} 
+//                         className="px-6 py-3 rounded-xl text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+//                     >
+//                         मागील (Previous)
+//                     </button>
+                    
+//                     {currentQIndex === totalQuestions - 1 ? (
+//                         <button 
+//                             onClick={handleSubmit} 
+//                             className={`px-8 py-3 bg-${themeColor}-600 hover:bg-${themeColor}-500 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105`}
+//                         >
+//                             सबमिट करा <IoMdCheckmarkCircle size={20} />
+//                         </button>
+//                     ) : (
+//                         <button 
+//                             onClick={() => setCurrentQIndex(p => Math.min(totalQuestions - 1, p + 1))} 
+//                             className="px-8 py-3 bg-white text-black hover:bg-slate-200 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105"
+//                         >
+//                             पुढील (Next) <FaArrowRight />
+//                         </button>
+//                     )}
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 3. SYSTEM CHECK STAGE
+// // ==========================================
+// const DeviceCheckStage = ({ onComplete }) => {
+//     const [speakerStatus, setSpeakerStatus] = useState('idle'); 
+//     const [micStatus, setMicStatus] = useState('idle');
+
+//     useEffect(() => { 
+//         if (typeof window !== 'undefined') window.speechSynthesis.getVoices(); 
+//     }, []);
+
+//     const testSpeaker = () => {
+//         setSpeakerStatus('testing');
+//         speakText("नमस्कार, ही सिस्टम चेक टेस्ट आहे. आवाज स्पष्ट येत आहे का?", () => setSpeakerStatus('success'));
+//     };
+
+//     const testMic = () => {
+//         setMicStatus('testing');
+//         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//         if (!SpeechRecognition) { 
+//             alert("Mic Not Supported in this browser."); 
+//             setMicStatus('error'); 
+//             return; 
+//         }
+        
+//         const recognition = new SpeechRecognition();
+//         recognition.lang = 'mr-IN';
+//         recognition.onresult = () => { setMicStatus('success'); recognition.stop(); };
+//         recognition.onerror = () => { setMicStatus('idle'); alert("Mic Error. Check permissions."); };
+//         recognition.start();
+        
+//         // Auto-stop after 4s if no sound
+//         setTimeout(() => { if(micStatus !== 'success') recognition.stop(); }, 4000);
+//     };
+
+//     const isReady = speakerStatus === 'success' && micStatus === 'success';
+
+//     return (
+//         <div className="max-w-xl mx-auto bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2.5rem] shadow-2xl text-center">
+//             <h2 className="text-3xl font-bold text-white mb-2">सिस्टम चेक</h2>
+//             <p className="text-slate-400 mb-8">मुलाखत सुरू करण्यापूर्वी डिव्हाइस तपासा.</p>
+            
+//             <div className="space-y-4 mb-10">
+//                 {/* Speaker Check */}
+//                 <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${speakerStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
+//                     <div className="flex items-center gap-4">
+//                         <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white">
+//                             <FaVolumeUp size={20}/>
+//                         </div>
+//                         <div className="text-left">
+//                             <p className="font-bold text-white">स्पीकर</p>
+//                             <p className="text-xs text-slate-400">आवाज तपासा</p>
+//                         </div>
+//                     </div>
+//                     <button onClick={testSpeaker} className={`px-5 py-2 rounded-lg font-bold text-sm ${speakerStatus === 'success' ? 'bg-green-500 text-white' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}>
+//                         {speakerStatus === 'success' ? 'OK ✔' : 'Test'}
+//                     </button>
+//                 </div>
+
+//                 {/* Mic Check */}
+//                 <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${micStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
+//                     <div className="flex items-center gap-4">
+//                         <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white">
+//                             <FaMicrophone size={20}/>
+//                         </div>
+//                         <div className="text-left">
+//                             <p className="font-bold text-white">माईक</p>
+//                             <p className="text-xs text-slate-400">रेकॉर्डिंग तपासा</p>
+//                         </div>
+//                     </div>
+//                     <button onClick={testMic} className={`px-5 py-2 rounded-lg font-bold text-sm ${micStatus === 'success' ? 'bg-green-500 text-white' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}>
+//                         {micStatus === 'success' ? 'OK ✔' : 'Test'}
+//                     </button>
+//                 </div>
+//             </div>
+
+//             <button 
+//                 onClick={onComplete} 
+//                 disabled={!isReady} 
+//                 className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${isReady ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-purple-500/25' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+//             >
+//                 मुलाखत सुरू करा
+//             </button>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 4. VOICE INTERVIEW STAGE (REFACTORED)
+// // ==========================================
+// const VoiceStage = ({ onComplete }) => {
+//     const [qIndex, setQIndex] = useState(0);
+//     const [status, setStatus] = useState('preparing'); // preparing, speaking_question, listening, paused
+    
+//     // Transcript State
+//     const [permanentTranscript, setPermanentTranscript] = useState(''); // Stores text before pause
+//     const [interimTranscript, setInterimTranscript] = useState(''); // Stores text during current session
+    
+//     const [questions, setQuestions] = useState([]);
+//     const [results, setResults] = useState({}); 
+    
+//     const recognitionRef = useRef(null);
+
+//     // 1. Initialize Questions
+//     useEffect(() => {
+//         const shuffled = [...INTERVIEW_POOL].sort(() => 0.5 - Math.random());
+//         setQuestions(shuffled.slice(0, 5));
+//     }, []);
+
+//     // 2. Play Question when qIndex changes
+//     useEffect(() => {
+//         if (questions.length > 0) {
+//             playQuestion(qIndex);
+//         }
+//         return () => stopRecognition(); // Cleanup
+//     }, [questions, qIndex]);
+
+//     const playQuestion = (index) => {
+//         if (index >= questions.length) return;
+        
+//         stopRecognition();
+//         setPermanentTranscript('');
+//         setInterimTranscript('');
+//         setStatus('speaking_question');
+
+//         speakText(questions[index], () => {
+//             setStatus('listening');
+//             startRecognition(); 
+//         });
+//     };
+
+//     const startRecognition = () => {
+//         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//         if (!SpeechRecognition) return;
+
+//         const recognition = new SpeechRecognition();
+//         recognition.lang = 'mr-IN';
+//         recognition.continuous = true;
+//         recognition.interimResults = true;
+//         recognitionRef.current = recognition;
+
+//         recognition.onstart = () => {
+//              // Ensure status is listening only if we meant to start
+//              // Logic handled by caller usually
+//         };
+
+//         recognition.onresult = (event) => {
+//             let finalStr = '';
+//             for (let i = event.resultIndex; i < event.results.length; ++i) {
+//                 if (event.results[i].isFinal) {
+//                     finalStr += event.results[i][0].transcript + ' ';
+//                 }
+//             }
+//             // Update the temporary part
+//             setInterimTranscript(prev => prev + finalStr);
+//         };
+
+//         recognition.onerror = (e) => console.error("Rec Error", e);
+        
+//         try { recognition.start(); } catch(e) { console.error(e); }
+//     };
+
+//     const stopRecognition = () => {
+//         if (recognitionRef.current) {
+//             recognitionRef.current.stop();
+//             recognitionRef.current = null;
+//         }
+//     };
+
+//     // --- PAUSE / RESUME LOGIC ---
+//     const togglePause = () => {
+//         if (status === 'listening') {
+//             // PAUSE: Stop mic, save interim to permanent
+//             stopRecognition();
+//             setPermanentTranscript(prev => prev + interimTranscript);
+//             setInterimTranscript('');
+//             setStatus('paused');
+//         } else if (status === 'paused') {
+//             // RESUME: Start mic
+//             setStatus('listening');
+//             startRecognition();
+//         }
+//     };
+
+//     const handleNext = () => {
+//         stopRecognition();
+        
+//         // Combine all text
+//         const finalAnswer = (permanentTranscript + interimTranscript).trim() || "No Audio Recorded";
+        
+//         const currentAnswerData = { question: questions[qIndex], answer: finalAnswer };
+//         const updatedResults = { ...results, [qIndex]: currentAnswerData };
+//         setResults(updatedResults);
+
+//         if (qIndex < 4) {
+//             setQIndex(prev => prev + 1);
+//         } else {
+//             onComplete({ answers: updatedResults }); 
+//         }
+//     };
+
+//     if (questions.length === 0) return <LoadingScreen text="मुलाखत तयार होत आहे..." color="purple" />;
+
+//     // Helper to display full text
+//     const fullDisplayText = (permanentTranscript + " " + interimTranscript).trim();
+
+//     return (
+//         <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[600px]">
+//             {/* Progress */}
+//             <div className="w-full text-center mb-8">
+//                 <span className="text-purple-400 font-bold uppercase text-sm tracking-widest">प्रश्न {qIndex + 1} / 5</span>
+//                 <div className="w-full h-1 bg-slate-800 rounded-full mt-4">
+//                     <div className="h-full bg-purple-500 transition-all duration-500 ease-in-out" style={{ width: `${((qIndex+1)/5)*100}%` }}></div>
+//                 </div>
+//             </div>
+
+//             {/* Main Card */}
+//             <div className="relative w-full bg-slate-900/80 border border-slate-700 p-12 rounded-[2rem] shadow-2xl text-center backdrop-blur-md">
+                
+//                 <h2 className="text-2xl md:text-3xl text-white font-bold mb-10 leading-normal min-h-[3rem]">
+//                     {questions[qIndex]}
+//                 </h2>
+
+//                 {/* Animation / Icon Area */}
+//                 <div className="flex justify-center mb-10 h-32 items-center">
+//                     {status === 'speaking_question' && (
+//                         <div className="flex flex-col items-center gap-4 text-purple-400 animate-pulse">
+//                             <FaVolumeUp className="text-6xl" /> 
+//                             <span className="text-sm font-bold">प्रश्न बोलला जात आहे...</span>
+//                         </div>
+//                     )}
+
+//                     {status === 'listening' && (
+//                         <div className="relative">
+//                             <div className="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center text-white text-4xl animate-pulse shadow-[0_0_50px_rgba(239,68,68,0.6)]">
+//                                 <IoMdMicrophone />
+//                             </div>
+//                             <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-red-400 text-xs font-bold tracking-widest whitespace-nowrap">
+//                                 REC ●
+//                             </span>
+//                         </div>
+//                     )}
+
+//                     {status === 'paused' && (
+//                         <div className="flex flex-col items-center gap-4 text-yellow-500">
+//                             <div className="w-24 h-24 border-4 border-yellow-500 rounded-full flex items-center justify-center text-4xl">
+//                                 <IoMdPause />
+//                             </div>
+//                             <span className="text-sm font-bold">माईक थांबवला आहे (Paused)</span>
+//                         </div>
+//                     )}
+//                 </div>
+
+//                 {/* Transcript Box */}
+//                 <div className="bg-black/40 rounded-2xl p-6 min-h-[140px] mb-8 text-slate-300 italic border border-white/5 text-left text-lg shadow-inner overflow-y-auto max-h-[200px]">
+//                     {fullDisplayText || (
+//                         <span className="text-slate-600">
+//                             {status === 'speaking_question' ? "प्रश्नाची प्रतीक्षा करा..." : "येथे तुमचे उत्तर दिसेल..."}
+//                         </span>
+//                     )}
+//                 </div>
+
+//                 {/* Controls */}
+//                 <div className="flex justify-center gap-4">
+//                     {/* Pause/Resume Button */}
+//                     {(status === 'listening' || status === 'paused') && (
+//                         <button 
+//                             onClick={togglePause}
+//                             className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all shadow-lg
+//                                 ${status === 'listening' 
+//                                     ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500 hover:bg-yellow-500 hover:text-white' 
+//                                     : 'bg-green-500/20 text-green-400 border border-green-500 hover:bg-green-500 hover:text-white'
+//                                 }`}
+//                             title={status === 'listening' ? "Pause" : "Resume"}
+//                         >
+//                             {status === 'listening' ? <IoMdPause /> : <IoMdPlay className="ml-1"/>}
+//                         </button>
+//                     )}
+
+//                     {/* Next Button */}
+//                     <button 
+//                         onClick={handleNext} 
+//                         disabled={status === 'speaking_question'} 
+//                         className={`px-10 py-4 rounded-full font-bold text-lg shadow-xl transition-all flex items-center gap-3
+//                             ${status === 'speaking_question' 
+//                                 ? 'bg-slate-800 text-slate-600 cursor-not-allowed' 
+//                                 : 'bg-white text-black hover:scale-105 hover:bg-slate-200'
+//                             }`}
+//                     >
+//                         {qIndex === 4 ? "मुलाखत संपवा" : "पुढील प्रश्न"} <FaArrowRight />
+//                     </button>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 5. HELPER COMPONENTS
+// // ==========================================
+// const LoadingScreen = ({ text, color = 'indigo' }) => (
+//     <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
+//         <div className={`w-16 h-16 border-4 border-${color}-500/30 border-t-${color}-500 rounded-full animate-spin mb-6`}></div>
+//         <h3 className="text-xl text-white font-medium tracking-wide">{text}</h3>
+//     </div>
+// );
+
+// const TransitionScreen = ({ title, subtitle, icon, color, onNext }) => (
+//     <motion.div 
+//         initial={{opacity:0, scale:0.95}} 
+//         animate={{opacity:1, scale:1}} 
+//         className="max-w-md mx-auto text-center bg-slate-900/80 backdrop-blur-xl border border-white/10 p-12 rounded-[2.5rem] shadow-2xl"
+//     >
+//         <div className={`w-24 h-24 bg-${color}-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-${color}-400 text-4xl shadow-[0_0_30px_rgba(var(--${color}-500),0.2)]`}>
+//             {icon}
+//         </div>
+//         <h2 className="text-3xl font-bold text-white mb-3">{title}</h2>
+//         <p className="text-slate-400 mb-10 text-lg leading-relaxed">{subtitle}</p>
+//         <button 
+//             onClick={onNext} 
+//             className={`px-10 py-4 bg-${color}-600 hover:bg-${color}-500 text-white rounded-full font-bold shadow-lg flex items-center gap-3 mx-auto transition-transform hover:scale-105`}
+//         >
+//             पुढे जा <FaArrowRight />
+//         </button>
+//     </motion.div>
+// );
+
+// // ==========================================
+// // MAIN CONTROLLER
+// // ==========================================
+// export default function FullAssessmentFlow() {
+//     const router = useRouter();
+//     const [stage, setStage] = useState('input'); 
+//     const [formUserInfo, setFormUserInfo] = useState(null); 
+//     const [isSubmitting, setIsSubmitting] = useState(false);
+//     const [masterData, setMasterData] = useState({ assessment: null, interview: null, situation: null });
+    
+//     // Auth
+//     const [loggedInUser, setLoggedInUser] = useState(null);
+//     const [authToken, setAuthToken] = useState(null);
+
+//     useEffect(() => {
+//         const userStr = localStorage.getItem('user');
+//         const token = localStorage.getItem('token');
+//         if (userStr) setLoggedInUser(JSON.parse(userStr));
+//         if (token) setAuthToken(token);
+//     }, []);
+
+//     const handleInputComplete = (data) => {
+//         setFormUserInfo(data);
+//         setStage('assessment');
+//     };
+
+//     const handleStageData = (key, data) => {
+//         setMasterData(prev => ({ ...prev, [key]: data }));
+//     };
+
+//     const formatAndSubmitData = async (finalSituationData) => {
+//         setIsSubmitting(true);
+//         const userEmail = loggedInUser?.email || "anonymous@student.com";
+
+//         const payload = {
+//             email: userEmail,
+//             userInfo: formUserInfo, 
+//             masterData: {
+//                 assessment: masterData.assessment,
+//                 voiceInterview: masterData.interview,
+//                 situation: finalSituationData      
+//             }
+//         };
+
+//         try {
+//             const res = await fetch('/api/submit-full-assessment', { 
+//                 method: 'POST',
+//                 headers: { 
+//                     'Content-Type': 'application/json',
+//                     'Authorization': `Bearer ${authToken}`
+//                 }, 
+//                 body: JSON.stringify(payload)
+//             });
+
+//             if (res.ok) {
+//                 setStage('success');
+//             } else {
+//                 console.error("Server Error:", await res.text());
+//                 alert("Submission Failed. Please try again.");
+//             }
+//         } catch (error) {
+//             console.error("Network Error", error);
+//             alert("Network Error.");
+//         } finally {
+//             setIsSubmitting(false);
+//         }
+//     };
+
+//     if (isSubmitting) return <LoadingScreen text="निकाल जतन करत आहोत..." color="green" />;
+
+//     return (
+//         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
+//             <Head><title>Full Assessment | Shakkti AI</title></Head>
+            
+//             {/* Background Ambience */}
+//             <div className="fixed inset-0 z-0 pointer-events-none">
+//                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
+//                 <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px]"></div>
+//             </div>
+
+//             {/* Navbar */}
+//             <nav className="sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
+//                 <div className="flex items-center gap-3 font-bold text-xl tracking-tight">
+//                     <span className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white shadow-lg">S</span> 
+//                     Shakkti AI
+//                 </div>
+//                 {loggedInUser && <div className="text-sm text-slate-400 bg-white/5 px-4 py-2 rounded-full">Hi, {loggedInUser.fullName}</div>}
+//             </nav>
+
+//             {/* Main Content Area */}
+//             <main className="relative z-10 container mx-auto px-4 py-12 min-h-[85vh] flex flex-col justify-center">
+//                 <AnimatePresence mode="wait">
+//                     {stage === 'input' && <InputStage key="input" onComplete={handleInputComplete} />}
+                    
+//                     {stage === 'assessment' && (
+//                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <MCQStage title="तांत्रिक परीक्षा" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
+
+//                     {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
+
+//                     {stage === 'interview' && (
+//                         <motion.div key="interview" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <VoiceStage onComplete={(data) => { handleStageData('interview', data); setStage('situation_intro'); }} />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'situation_intro' && <TransitionScreen key="t2" title="इंटरव्ह्यू पूर्ण झाला" subtitle="पुढील: सिच्युएशन अ‍ॅप्टिट्यूड" icon={<FaBrain />} color="emerald" onNext={() => setStage('situation')} />}
+
+//                     {stage === 'situation' && (
+//                         <motion.div key="situation" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <MCQStage title="सिच्युएशन अ‍ॅप्टिट्यूड" endpoint="/api/situationque" userData={formUserInfo} themeColor="emerald" onComplete={(data) => formatAndSubmitData(data)} />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'success' && (
+//                         <motion.div key="success" initial={{scale:0.9, opacity:0}} animate={{scale:1, opacity:1}} className="text-center max-w-xl mx-auto bg-slate-900/80 p-12 rounded-[3rem] border border-white/10 shadow-2xl backdrop-blur-md">
+//                             <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 ring-1 ring-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
+//                                 <IoMdCheckmarkCircle className="text-green-400 text-6xl" />
+//                             </div>
+//                             <h2 className="text-4xl font-bold text-white mb-4">अभिनंदन!</h2>
+//                             <p className="text-slate-400 mb-10 text-lg">तुमचा पेपर यशस्वीरित्या सबमिट झाला आहे.</p>
+//                             <button onClick={() => router.push('/')} className="px-10 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all border border-slate-700">
+//                                 होम पेजवर जा
+//                             </button>
+//                         </motion.div>
+//                     )}
+//                 </AnimatePresence>
+//             </main>
+//         </div>
+//     );
+// }
+
+
+// import React, { useState, useEffect, useRef } from 'react';
+// import Head from 'next/head';
+// import { useRouter } from 'next/router';
+// import { motion, AnimatePresence } from 'framer-motion';
+// import { 
+//     IoMdMicrophone, 
+//     IoMdCheckmarkCircle,
+//     IoIosArrowDown,
+//     IoMdPause,
+//     IoMdPlay
+// } from 'react-icons/io';
+// import { 
+//     FaVolumeUp, 
+//     FaMicrophone, 
+//     FaArrowRight, 
+//     FaBrain, 
+//     FaUserGraduate,
+// } from 'react-icons/fa';
+
+// // ==========================================
+// // 0. CONFIGURATION & UTILS
+// // ==========================================
+
+// const INTERVIEW_POOL = [
+//     "तुमच्याबद्दल थोडक्यात सांगा.", 
+//     "तुम्हाला आमच्या कंपनीत काम का करायचे आहे?", 
+//     "तुमच्या जमेच्या बाजू (Strengths) आणि कमकुवत बाजू (Weaknesses) कोणत्या आहेत?",
+//     "पुढील ३-५ वर्षांत तुम्ही स्वतःला कुठे पाहता?", 
+//     "आम्ही तुमची निवड का करावी?", 
+//     "तुम्ही कामाचा ताण किंवा दबाव कसा हाताळता?", 
+//     "एखाद्या कठीण प्रसंगाचे वर्णन करा ज्याचा तुम्ही सामना केला आणि तो कसा सोडवला?", 
+//     "तुम्हाला काम करण्यासाठी कोणती गोष्ट प्रेरित करते?", 
+//     "टीममधील मतभेद किंवा संघर्ष तुम्ही कसे हाताळता?", 
+//     "तुम्ही स्वतंत्रपणे आणि टीममध्ये काम करण्यास तयार आहात का?" 
+// ];
+
+// // Robust Text-to-Speech
+// const speakText = (text, onEndCallback) => {
+//     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+//         if(onEndCallback) onEndCallback();
+//         return;
+//     }
+//     window.speechSynthesis.cancel();
+//     const utterance = new SpeechSynthesisUtterance(text);
+//     utterance.rate = 0.9; 
+//     utterance.lang = 'mr-IN'; 
+    
+//     const voices = window.speechSynthesis.getVoices();
+//     const specificVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
+//     if (specificVoice) utterance.voice = specificVoice;
+
+//     utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+//     utterance.onerror = (e) => { console.error(e); if (onEndCallback) onEndCallback(); };
+//     window.speechSynthesis.speak(utterance);
+// };
+
+// // API Fetcher - UPDATED to use GET for reliability where needed and strictly wait
+// const fetchQuestionsFromAPI = async (endpoint, userDetails) => {
+//     try {
+//         // Construct URL for GET request if needed, or use POST body
+//         // Note: Your backend Situation API seemed to prefer GET or POST. 
+//         // We will stick to the method that matches your specific backend route handler logic.
+//         // Assuming your updated backend handles POST for generation:
+        
+//         const response = await fetch(endpoint, {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({
+//                 type: 'generate_questions',
+//                 standard: userDetails.standard,
+//                 subject: userDetails.subject
+//             })
+//         });
+
+//         if (!response.ok) {
+//             throw new Error(`API Error: ${response.status}`);
+//         }
+
+//         const data = await response.json();
+        
+//         // Robust check for array data
+//         if (data.result && Array.isArray(data.result) && data.result.length > 0) return data.result;
+//         if (data.questions && Array.isArray(data.questions) && data.questions.length > 0) return data.questions;
+        
+//         throw new Error("Invalid or Empty Data Format");
+
+//     } catch (error) {
+//         console.error(`Error fetching from ${endpoint}:`, error);
+//         throw error; // Throw error to let the component handle the loading state or retry
+//     }
+// };
+// export const fetchAssessmentQuestions = async (userDetails) => {
+//   try {
+//     const res = await fetch("/api/assessment", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         type: "generate_questions",
+//         standard: userDetails.standard,
+//         subject: userDetails.subject
+//       })
+//     });
+
+//     if (!res.ok) {
+//       throw new Error(await res.text());
+//     }
+
+//     const data = await res.json();
+
+//     if (!data.result || !Array.isArray(data.result)) {
+//       throw new Error("Invalid assessment response");
+//     }
+
+//     return data.result.map((q, index) => ({
+//       id: q.id ?? index + 1,
+//       question: q.question,
+//       options: q.options,
+//       correctAnswer: q.correctAnswer
+//     }));
+
+//   } catch (err) {
+//     console.error("Assessment API error:", err);
+//     throw err;
+//   }
+// };
+// export const fetchSituationQuestions = async () => {
+//   try {
+//     const res = await fetch("/api/situationque", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" }
+//     });
+
+//     if (!res.ok) {
+//       throw new Error(await res.text());
+//     }
+
+//     const data = await res.json();
+
+//     if (!data.result || !Array.isArray(data.result)) {
+//       throw new Error("Invalid situation response");
+//     }
+
+//     return data.result.map((q, index) => ({
+//       id: q.id ?? index + 1,
+//       question: q.question,
+//       options: q.options,
+//       correctAnswer: q.correctAnswer
+//     }));
+
+//   } catch (err) {
+//     console.error("Situation API error:", err);
+//     throw err;
+//   }
+// };
+
+
+// // ==========================================
+// // 1. INPUT STAGE 
+// // ==========================================
+// const InputStage = ({ onComplete }) => {
+//     const [formData, setFormData] = useState({ standard: '', subject: '' });
+
+//     const handleSubmit = (e) => {
+//         e.preventDefault();
+//         if (formData.standard && formData.subject) {
+//             onComplete(formData);
+//         } else {
+//             alert("कृपया सर्व माहिती भरा. (Please fill all details)");
+//         }
+//     };
+
+//     return (
+//         <motion.div 
+//             initial={{ opacity: 0, y: 20 }} 
+//             animate={{ opacity: 1, y: 0 }} 
+//             className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden"
+//         >
+//             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            
+//             <div className="text-center mb-8">
+//                 <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
+//                     <FaUserGraduate />
+//                 </div>
+//                 <h2 className="text-3xl font-bold text-white mb-2">विद्यार्थी तपशील</h2>
+//                 <p className="text-slate-400">तुमची माहिती भरून परीक्षा सुरू करा</p>
+//             </div>
+
+//             <form onSubmit={handleSubmit} className="space-y-6">
+//                 <div>
+//                     <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
+//                         तुमची इयत्ता (Standard)
+//                     </label>
+//                     <input 
+//                         type="text" 
+//                         placeholder="उदा. १२वी सायन्स" 
+//                         value={formData.standard} 
+//                         onChange={(e) => setFormData({...formData, standard: e.target.value})} 
+//                         className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none placeholder-slate-500 transition-all" 
+//                         required 
+//                     />
+//                 </div>
+
+//                 <div className="relative">
+//                     <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
+//                         विषय निवडा (Subject)
+//                     </label>
+//                     <select 
+//                         value={formData.subject} 
+//                         onChange={(e) => setFormData({...formData, subject: e.target.value})} 
+//                         className={`w-full bg-slate-950 border border-slate-600 rounded-xl px-5 py-4 appearance-none focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer ${formData.subject === "" ? "text-slate-500" : "text-white"}`}
+//                         required
+//                     >
+//                         <option value="" disabled>Select Subject</option>
+//                         <option value="PCB">PCB (Printed Circuit Board)</option>
+//                         <option value="AAO">AAO (Automotive Assembly Operator)</option>
+
+//                     </select>
+//                     <div className="pointer-events-none absolute bottom-5 right-5 text-indigo-400">
+//                         <IoIosArrowDown size={20} />
+//                     </div>
+//                 </div>
+
+//                 <button 
+//                     type="submit" 
+//                     className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl mt-4 shadow-lg shadow-indigo-600/30 transform transition hover:-translate-y-1"
+//                 >
+//                     परीक्षा सुरू करा &rarr;
+//                 </button>
+//             </form>
+//         </motion.div>
+//     );
+// };
+
+// // ==========================================
+// // 2. MCQ STAGE (With strict Loading State)
+// // ==========================================
+// const MCQStage = ({ title, endpoint, userData, themeColor, onComplete }) => {
+//     const [questions, setQuestions] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [error, setError] = useState(null);
+//     const [currentQIndex, setCurrentQIndex] = useState(0);
+//     const [answers, setAnswers] = useState({}); 
+
+//     useEffect(() => {
+//         let isMounted = true;
+        
+//         const load = async () => {
+//             setLoading(true);
+//             setError(null);
+//             try {
+//                 const data = await fetchQuestionsFromAPI(endpoint, userData);
+//                 if (isMounted) {
+//                     setQuestions(data);
+//                     setLoading(false);
+//                 }
+//             } catch (err) {
+//                 if (isMounted) {
+//                     // Fallback only on explicit error, but mark as loaded
+//                     console.error("Failed to load questions, retrying or using fallback");
+//                     // Minimal fallback to prevent crash, but strictly labeled
+//                     setQuestions(Array.from({ length: 10 }, (_, i) => ({
+//                         id: i + 1,
+//                         question: "Server is busy. Please try reloading or continue with this demo question.",
+//                         options: ["Option A", "Option B", "Option C", "Option D"],
+//                         correctAnswer: "Option A"
+//                     })));
+//                     setLoading(false);
+//                 }
+//             }
+//         };
+        
+//         load();
+        
+//         return () => { isMounted = false; };
+//     }, [endpoint, userData]);
+
+//     const handleSelect = (option) => {
+//         setAnswers(prev => ({ ...prev, [currentQIndex]: option }));
+//     };
+
+//     const handleSubmit = () => {
+//         if (Object.keys(answers).length < questions.length) {
+//             if(!confirm("काही प्रश्न बाकी आहेत. तरीही सबमिट करायचे?")) return;
+//         }
+//         // Just return data to parent, do NOT call API here
+//         onComplete({ questions, answers });
+//     };
+
+//     // Calculate Progress
+//     const totalQuestions = questions.length;
+//     const answeredCount = Object.keys(answers).length;
+//     const progressPercentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+    
+//     // Strict Loading View - No Garbage Values
+//     if (loading) return <LoadingScreen text={`${title} तयार होत आहे... (Generating Questions)`} color={themeColor} />;
+    
+//     if (questions.length === 0) return <div className="text-center text-white">No questions loaded. Please refresh.</div>;
+
+//     const currentQ = questions[currentQIndex];
+
+//     return (
+//         <div className="w-full max-w-5xl mx-auto flex flex-col min-h-[600px]">
+//             {/* Header & Progress */}
+//             <div className="flex justify-between items-end mb-6 px-2">
+//                 <div>
+//                     <h2 className={`text-2xl font-bold text-${themeColor}-400`}>{title}</h2>
+//                     <p className="text-slate-400 text-sm mt-1">
+//                         प्रश्न {currentQIndex + 1} / {totalQuestions}
+//                     </p>
+//                 </div>
+//                 <div className="flex flex-col items-end w-1/3">
+//                     <span className="text-xs text-slate-500 mb-2 font-mono">
+//                         {Math.round(progressPercentage)}% पूर्ण
+//                     </span>
+//                     <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+//                         <div 
+//                             className={`h-full bg-${themeColor}-500 transition-all duration-700 ease-out`} 
+//                             style={{ width: `${progressPercentage}%` }}
+//                         ></div>
+//                     </div>
+//                 </div>
+//             </div>
+
+//             {/* Question Card */}
+//             <div className="flex-1 bg-slate-900/80 border border-white/10 rounded-[2rem] p-8 md:p-12 shadow-2xl flex flex-col justify-between backdrop-blur-sm">
+//                 <div>
+//                     <h3 className="text-xl md:text-2xl text-white font-medium mb-10 leading-relaxed">
+//                         {currentQ?.question}
+//                     </h3>
+//                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                         {currentQ?.options?.map((opt, idx) => {
+//                             const isSelected = answers[currentQIndex] === opt;
+//                             return (
+//                                 <button 
+//                                     key={idx} 
+//                                     onClick={() => handleSelect(opt)} 
+//                                     className={`p-5 rounded-xl border-2 text-left transition-all flex items-center group
+//                                         ${isSelected 
+//                                             ? `bg-${themeColor}-900/40 border-${themeColor}-500 text-white shadow-[0_0_15px_rgba(var(--${themeColor}-500),0.3)]` 
+//                                             : 'bg-slate-950/50 border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-slate-900'
+//                                         }`}
+//                                 >
+//                                     <span className={`w-8 h-8 min-w-[2rem] rounded-full border flex items-center justify-center mr-4 font-bold text-sm transition-colors
+//                                         ${isSelected 
+//                                             ? `bg-${themeColor}-500 border-${themeColor}-500 text-white` 
+//                                             : 'border-slate-600 text-slate-500 group-hover:border-slate-400'
+//                                         }`}
+//                                     >
+//                                         {String.fromCharCode(65 + idx)}
+//                                     </span>
+//                                     <span className="text-lg">{opt}</span>
+//                                 </button>
+//                             );
+//                         })}
+//                     </div>
+//                 </div>
+
+//                 {/* Footer Controls */}
+//                 <div className="flex justify-between mt-12 pt-8 border-t border-white/5">
+//                     <button 
+//                         onClick={() => setCurrentQIndex(p => Math.max(0, p - 1))} 
+//                         disabled={currentQIndex === 0} 
+//                         className="px-6 py-3 rounded-xl text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+//                     >
+//                         मागील (Previous)
+//                     </button>
+                    
+//                     {currentQIndex === totalQuestions - 1 ? (
+//                         <button 
+//                             onClick={handleSubmit} 
+//                             className={`px-8 py-3 bg-${themeColor}-600 hover:bg-${themeColor}-500 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105`}
+//                         >
+//                             पुढील टप्पा <IoMdCheckmarkCircle size={20} />
+//                         </button>
+//                     ) : (
+//                         <button 
+//                             onClick={() => setCurrentQIndex(p => Math.min(totalQuestions - 1, p + 1))} 
+//                             className="px-8 py-3 bg-white text-black hover:bg-slate-200 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105"
+//                         >
+//                             पुढील (Next) <FaArrowRight />
+//                         </button>
+//                     )}
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 3. SYSTEM CHECK STAGE
+// // ==========================================
+// const DeviceCheckStage = ({ onComplete }) => {
+//     const [speakerStatus, setSpeakerStatus] = useState('idle'); 
+//     const [micStatus, setMicStatus] = useState('idle');
+
+//     useEffect(() => { 
+//         if (typeof window !== 'undefined') window.speechSynthesis.getVoices(); 
+//     }, []);
+
+//     const testSpeaker = () => {
+//         setSpeakerStatus('testing');
+//         speakText("नमस्कार, ही सिस्टम चेक टेस्ट आहे. आवाज स्पष्ट येत आहे का?", () => setSpeakerStatus('success'));
+//     };
+
+//     const testMic = () => {
+//         setMicStatus('testing');
+//         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//         if (!SpeechRecognition) { 
+//             alert("Mic Not Supported in this browser."); 
+//             setMicStatus('error'); 
+//             return; 
+//         }
+        
+//         const recognition = new SpeechRecognition();
+//         recognition.lang = 'mr-IN';
+//         recognition.onresult = () => { setMicStatus('success'); recognition.stop(); };
+//         recognition.onerror = () => { setMicStatus('idle'); alert("Mic Error. Check permissions."); };
+//         recognition.start();
+//         setTimeout(() => { if(micStatus !== 'success') recognition.stop(); }, 4000);
+//     };
+
+//     const isReady = speakerStatus === 'success' && micStatus === 'success';
+
+//     return (
+//         <div className="max-w-xl mx-auto bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2.5rem] shadow-2xl text-center">
+//             <h2 className="text-3xl font-bold text-white mb-2">सिस्टम चेक</h2>
+//             <p className="text-slate-400 mb-8">मुलाखत सुरू करण्यापूर्वी डिव्हाइस तपासा.</p>
+            
+//             <div className="space-y-4 mb-10">
+//                 <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${speakerStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
+//                     <div className="flex items-center gap-4">
+//                         <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaVolumeUp size={20}/></div>
+//                         <div className="text-left"><p className="font-bold text-white">स्पीकर</p><p className="text-xs text-slate-400">आवाज तपासा</p></div>
+//                     </div>
+//                     <button onClick={testSpeaker} className={`px-5 py-2 rounded-lg font-bold text-sm ${speakerStatus === 'success' ? 'bg-green-500 text-white' : 'bg-indigo-600 text-white'}`}>{speakerStatus === 'success' ? 'OK ✔' : 'Test'}</button>
+//                 </div>
+
+//                 <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${micStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
+//                     <div className="flex items-center gap-4">
+//                         <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaMicrophone size={20}/></div>
+//                         <div className="text-left"><p className="font-bold text-white">माईक</p><p className="text-xs text-slate-400">रेकॉर्डिंग तपासा</p></div>
+//                     </div>
+//                     <button onClick={testMic} className={`px-5 py-2 rounded-lg font-bold text-sm ${micStatus === 'success' ? 'bg-green-500 text-white' : 'bg-indigo-600 text-white'}`}>{micStatus === 'success' ? 'OK ✔' : 'Test'}</button>
+//                 </div>
+//             </div>
+
+//             <button onClick={onComplete} disabled={!isReady} className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${isReady ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>मुलाखत सुरू करा</button>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 4. VOICE INTERVIEW STAGE
+// // ==========================================
+// const VoiceStage = ({ onComplete }) => {
+//     const [qIndex, setQIndex] = useState(0);
+//     const [status, setStatus] = useState('preparing'); 
+//     const [permanentTranscript, setPermanentTranscript] = useState('');
+//     const [interimTranscript, setInterimTranscript] = useState('');
+//     const [questions, setQuestions] = useState([]);
+//     const [results, setResults] = useState({}); 
+//     const recognitionRef = useRef(null);
+
+//     useEffect(() => {
+//         const shuffled = [...INTERVIEW_POOL].sort(() => 0.5 - Math.random());
+//         setQuestions(shuffled.slice(0, 5));
+//     }, []);
+
+//     useEffect(() => {
+//         if (questions.length > 0) playQuestion(qIndex);
+//         return () => stopRecognition();
+//     }, [questions, qIndex]);
+
+//     const playQuestion = (index) => {
+//         if (index >= questions.length) return;
+//         stopRecognition();
+//         setPermanentTranscript('');
+//         setInterimTranscript('');
+//         setStatus('speaking_question');
+//         speakText(questions[index], () => { setStatus('listening'); startRecognition(); });
+//     };
+
+//     const startRecognition = () => {
+//         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//         if (!SpeechRecognition) return;
+//         const recognition = new SpeechRecognition();
+//         recognition.lang = 'mr-IN';
+//         recognition.continuous = true;
+//         recognition.interimResults = true;
+//         recognitionRef.current = recognition;
+//         recognition.onresult = (event) => {
+//             let finalStr = '';
+//             for (let i = event.resultIndex; i < event.results.length; ++i) {
+//                 if (event.results[i].isFinal) finalStr += event.results[i][0].transcript + ' ';
+//             }
+//             setInterimTranscript(prev => prev + finalStr);
+//         };
+//         try { recognition.start(); } catch(e) { console.error(e); }
+//     };
+
+//     const stopRecognition = () => {
+//         if (recognitionRef.current) { recognitionRef.current.stop(); recognitionRef.current = null; }
+//     };
+
+//     const togglePause = () => {
+//         if (status === 'listening') {
+//             stopRecognition();
+//             setPermanentTranscript(prev => prev + interimTranscript);
+//             setInterimTranscript('');
+//             setStatus('paused');
+//         } else if (status === 'paused') {
+//             setStatus('listening');
+//             startRecognition();
+//         }
+//     };
+
+//     const handleNext = () => {
+//         stopRecognition();
+//         const finalAnswer = (permanentTranscript + interimTranscript).trim() || "No Audio Recorded";
+//         const currentAnswerData = { question: questions[qIndex], answer: finalAnswer };
+//         const updatedResults = { ...results, [qIndex]: currentAnswerData };
+//         setResults(updatedResults);
+//         if (qIndex < 4) { setQIndex(prev => prev + 1); } 
+//         else { onComplete({ answers: updatedResults }); } // Store locally, don't submit yet
+//     };
+
+//     if (questions.length === 0) return <LoadingScreen text="मुलाखत तयार होत आहे..." color="purple" />;
+//     const fullDisplayText = (permanentTranscript + " " + interimTranscript).trim();
+
+//     return (
+//         <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[600px]">
+//             <div className="w-full text-center mb-8">
+//                 <span className="text-purple-400 font-bold uppercase text-sm tracking-widest">प्रश्न {qIndex + 1} / 5</span>
+//                 <div className="w-full h-1 bg-slate-800 rounded-full mt-4"><div className="h-full bg-purple-500" style={{ width: `${((qIndex+1)/5)*100}%` }}></div></div>
+//             </div>
+//             <div className="relative w-full bg-slate-900/80 border border-slate-700 p-12 rounded-[2rem] shadow-2xl text-center backdrop-blur-md">
+//                 <h2 className="text-2xl md:text-3xl text-white font-bold mb-10">{questions[qIndex]}</h2>
+//                 <div className="flex justify-center mb-10 h-32 items-center">
+//                     {status === 'speaking_question' && <div className="text-purple-400 animate-pulse"><FaVolumeUp className="text-6xl mx-auto" /><span className="text-sm font-bold">Speaking...</span></div>}
+//                     {status === 'listening' && <div className="text-red-500 animate-pulse"><IoMdMicrophone className="text-8xl mx-auto" /><span className="text-xs font-bold">REC ●</span></div>}
+//                     {status === 'paused' && <div className="text-yellow-500"><IoMdPause className="text-8xl mx-auto" /><span className="text-sm font-bold">Paused</span></div>}
+//                 </div>
+//                 <div className="bg-black/40 rounded-2xl p-6 min-h-[140px] mb-8 text-slate-300 italic border border-white/5 text-left text-lg shadow-inner overflow-y-auto max-h-[200px]">
+//                     {fullDisplayText || <span className="text-slate-600">{status === 'speaking_question' ? "Wait for question..." : "Listening..."}</span>}
+//                 </div>
+//                 <div className="flex justify-center gap-4">
+//                     {(status === 'listening' || status === 'paused') && (
+//                         <button onClick={togglePause} className="w-16 h-16 rounded-full flex items-center justify-center text-2xl bg-white/10 hover:bg-white/20 text-white transition-all">
+//                             {status === 'listening' ? <IoMdPause /> : <IoMdPlay />}
+//                         </button>
+//                     )}
+//                     <button onClick={handleNext} disabled={status === 'speaking_question'} className="px-10 py-4 bg-white text-black hover:bg-slate-200 rounded-full font-bold flex items-center gap-3">
+//                         {qIndex === 4 ? "Finish Interview" : "Next"} <FaArrowRight />
+//                     </button>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// // ==========================================
+// // 5. HELPER COMPONENTS
+// // ==========================================
+// const LoadingScreen = ({ text, color = 'indigo' }) => (
+//     <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
+//         <div className={`w-16 h-16 border-4 border-${color}-500/30 border-t-${color}-500 rounded-full animate-spin mb-6`}></div>
+//         <h3 className="text-xl text-white font-medium tracking-wide animate-pulse">{text}</h3>
+//     </div>
+// );
+
+// const TransitionScreen = ({ title, subtitle, icon, color, onNext }) => (
+//     <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} className="max-w-md mx-auto text-center bg-slate-900/80 backdrop-blur-xl border border-white/10 p-12 rounded-[2.5rem] shadow-2xl">
+//         <div className={`w-24 h-24 bg-${color}-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-${color}-400 text-4xl shadow-[0_0_30px_rgba(var(--${color}-500),0.2)]`}>{icon}</div>
+//         <h2 className="text-3xl font-bold text-white mb-3">{title}</h2>
+//         <p className="text-slate-400 mb-10 text-lg leading-relaxed">{subtitle}</p>
+//         <button onClick={onNext} className={`px-10 py-4 bg-${color}-600 hover:bg-${color}-500 text-white rounded-full font-bold shadow-lg flex items-center gap-3 mx-auto transition-transform hover:scale-105`}>पुढे जा <FaArrowRight /></button>
+//     </motion.div>
+// );
+
+// // ==========================================
+// // MAIN CONTROLLER
+// // ==========================================
+// export default function FullAssessmentFlow() {
+//     const router = useRouter();
+//     const [stage, setStage] = useState('input'); 
+//     const [formUserInfo, setFormUserInfo] = useState(null); 
+//     const [isSubmitting, setIsSubmitting] = useState(false);
+    
+//     // Master State to hold ALL data locally before final submit
+//     const [masterData, setMasterData] = useState({ 
+//         assessment: null, 
+//         interview: null, 
+//         situation: null 
+//     });
+    
+//     // Auth
+//     const [loggedInUser, setLoggedInUser] = useState(null);
+//     const [authToken, setAuthToken] = useState(null);
+
+//     useEffect(() => {
+//         const userStr = localStorage.getItem('user');
+//         const token = localStorage.getItem('token');
+//         if (userStr) setLoggedInUser(JSON.parse(userStr));
+//         if (token) setAuthToken(token);
+//     }, []);
+
+//     const handleInputComplete = (data) => {
+//         setFormUserInfo(data);
+//         setStage('assessment');
+//     };
+
+//     // Store stage data locally and move to transition or next stage
+//     const handleStageData = (key, data, nextStage) => {
+//         setMasterData(prev => ({ ...prev, [key]: data }));
+//         setStage(nextStage);
+//     };
+
+//     // FINAL SUBMISSION ONLY
+//     const finalizeAndSubmit = async (finalSituationData) => {
+//         setIsSubmitting(true);
+//         const userEmail = loggedInUser?.email || "anonymous@student.com";
+
+//         // Construct final payload with all accumulated data
+//         const payload = {
+//             email: userEmail,
+//             userInfo: formUserInfo, 
+//             masterData: {
+//                 assessment: masterData.assessment,
+//                 voiceInterview: masterData.interview,
+//                 situation: finalSituationData // This comes from the last step
+//             }
+//         };
+
+//         try {
+//             const res = await fetch('/api/submit-full-assessment', { 
+//                 method: 'POST',
+//                 headers: { 
+//                     'Content-Type': 'application/json',
+//                     'Authorization': `Bearer ${authToken}`
+//                 }, 
+//                 body: JSON.stringify(payload)
+//             });
+
+//             if (res.ok) {
+//                 setStage('success');
+//             } else {
+//                 console.error("Server Error:", await res.text());
+//                 alert("Submission Failed. Please try again.");
+//             }
+//         } catch (error) {
+//             console.error("Network Error", error);
+//             alert("Network Error.");
+//         } finally {
+//             setIsSubmitting(false);
+//         }
+//     };
+
+//     if (isSubmitting) return <LoadingScreen text="पूर्ण निकाल जतन करत आहोत..." color="green" />;
+
+//     return (
+//         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
+//             <Head><title>Full Assessment | Shakkti AI</title></Head>
+            
+//             <div className="fixed inset-0 z-0 pointer-events-none">
+//                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
+//                 <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px]"></div>
+//             </div>
+
+//             <nav className="sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
+//                 <div className="flex items-center gap-3 font-bold text-xl tracking-tight">
+//                     <span className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white shadow-lg">S</span> 
+//                     Shakkti AI
+//                 </div>
+//                 {loggedInUser && <div className="text-sm text-slate-400 bg-white/5 px-4 py-2 rounded-full">Hi, {loggedInUser.fullName}</div>}
+//             </nav>
+
+//             <main className="relative z-10 container mx-auto px-4 py-12 min-h-[85vh] flex flex-col justify-center">
+//                 <AnimatePresence mode="wait">
+//                     {stage === 'input' && <InputStage key="input" onComplete={handleInputComplete} />}
+                    
+//                     {/* 1. Assessment Stage - Post to create questions, then store local */}
+//                     {stage === 'assessment' && (
+//                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <MCQStage 
+//                                 title="तांत्रिक परीक्षा" 
+//                                 endpoint="/api/assessment" // Generates questions
+//                                 userData={formUserInfo} 
+//                                 themeColor="indigo" 
+//                                 onComplete={(data) => handleStageData('assessment', data, 'interview_intro')} 
+//                             />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
+
+//                     {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
+
+//                     {/* 2. Interview Stage - Store local */}
+//                     {stage === 'interview' && (
+//                         <motion.div key="interview" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <VoiceStage onComplete={(data) => handleStageData('interview', data, 'situation_intro')} />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'situation_intro' && <TransitionScreen key="t2" title="इंटरव्ह्यू पूर्ण झाला" subtitle="पुढील: सिच्युएशन अ‍ॅप्टिट्यूड" icon={<FaBrain />} color="emerald" onNext={() => setStage('situation')} />}
+
+//                     {/* 3. Situation Stage - Generates questions, then Final Submit */}
+//                     {stage === 'situation' && (
+//                         <motion.div key="situation" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+//                             <MCQStage 
+//                                 title="सिच्युएशन अ‍ॅप्टिट्यूड" 
+//                                 endpoint="/api/situationque" // Generates questions
+//                                 userData={formUserInfo} 
+//                                 themeColor="emerald" 
+//                                 onComplete={(data) => finalizeAndSubmit(data)} // <--- Final Submit here
+//                             />
+//                         </motion.div>
+//                     )}
+
+//                     {stage === 'success' && (
+//                         <motion.div key="success" initial={{scale:0.9, opacity:0}} animate={{scale:1, opacity:1}} className="text-center max-w-xl mx-auto bg-slate-900/80 p-12 rounded-[3rem] border border-white/10 shadow-2xl backdrop-blur-md">
+//                             <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 ring-1 ring-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
+//                                 <IoMdCheckmarkCircle className="text-green-400 text-6xl" />
+//                             </div>
+//                             <h2 className="text-4xl font-bold text-white mb-4">अभिनंदन!</h2>
+//                             <p className="text-slate-400 mb-10 text-lg">तुमचा पेपर यशस्वीरित्या सबमिट झाला आहे.</p>
+//                             <button onClick={() => router.push('/')} className="px-10 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all border border-slate-700">
+//                                 होम पेजवर जा
+//                             </button>
+//                         </motion.div>
+//                     )}
+//                 </AnimatePresence>
+//             </main>
+//         </div>
+//     );
+// }
+
 import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router'; // Added router for redirection
+import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     IoMdMicrophone, 
     IoMdCheckmarkCircle,
     IoIosArrowDown,
-    IoMdWarning
+    IoMdPause,
+    IoMdPlay
 } from 'react-icons/io';
 import { 
     FaVolumeUp, 
@@ -1698,7 +3728,10 @@ import {
     FaUserGraduate,
 } from 'react-icons/fa';
 
-// --- CONFIGURATION: 10 Interview Questions in Marathi ---
+// ==========================================
+// 0. API & UTILITIES
+// ==========================================
+
 const INTERVIEW_POOL = [
     "तुमच्याबद्दल थोडक्यात सांगा.", 
     "तुम्हाला आमच्या कंपनीत काम का करायचे आहे?", 
@@ -1712,7 +3745,7 @@ const INTERVIEW_POOL = [
     "तुम्ही स्वतंत्रपणे आणि टीममध्ये काम करण्यास तयार आहात का?" 
 ];
 
-// --- HELPER: ROBUST MARATHI TEXT TO SPEECH ---
+// Text-to-Speech Utility
 const speakText = (text, onEndCallback) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
         if(onEndCallback) onEndCallback();
@@ -1722,54 +3755,81 @@ const speakText = (text, onEndCallback) => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.9; 
     utterance.lang = 'mr-IN'; 
+    
+    // Attempt to select a local voice (Hindi/Marathi)
     const voices = window.speechSynthesis.getVoices();
-    const marathiVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
-    if (marathiVoice) utterance.voice = marathiVoice;
+    const specificVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
+    if (specificVoice) utterance.voice = specificVoice;
 
     utterance.onend = () => { if (onEndCallback) onEndCallback(); };
-    utterance.onerror = () => { if (onEndCallback) onEndCallback(); };
+    utterance.onerror = (e) => { console.error(e); if (onEndCallback) onEndCallback(); };
     window.speechSynthesis.speak(utterance);
 };
 
-// --- API HELPER ---
-const fetchQuestionsFromAPI = async (endpoint, userDetails) => {
-    try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: 'generate_questions',
-                standard: userDetails.standard,
-                subject: userDetails.subject
-            })
-        });
-        const data = await response.json();
-        if (data.result && Array.isArray(data.result)) return data.result;
-        if (data.questions) return data.questions;
-        throw new Error("Invalid Format");
-    } catch (error) {
-        console.error(`Error fetching from ${endpoint}:`, error);
-        // Fallback Mock Data
-        const isSituation = endpoint.includes('situation');
-        return Array.from({ length: isSituation ? 20 : 25 }, (_, i) => ({
-            id: i + 1,
-            question: isSituation 
-                ? `(डेमो) खालीलपैकी कोणत्या परिस्थितीत तुम्ही काय कराल? प्रश्न क्रमांक ${i + 1}`
-                : `(डेमो) विषयाशी संबंधित तांत्रिक प्रश्न क्रमांक ${i + 1}?`,
-            options: ["पर्याय अ", "पर्याय ब", "पर्याय क", "पर्याय ड"],
-            correctAnswer: "पर्याय अ" 
-        }));
+// --- API FUNCTIONS ---
+
+export const fetchAssessmentQuestions = async (userDetails) => {
+  try {
+    const res = await fetch("/api/assessment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "generate_questions",
+        standard: userDetails.standard,
+        subject: userDetails.subject
+      })
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+
+    const data = await res.json();
+    const resultList = data.result || data.questions; // Handle potential schema variations
+
+    if (!resultList || !Array.isArray(resultList)) {
+      throw new Error("Invalid assessment response format");
     }
+
+    return resultList.map((q, index) => ({
+      id: q.id ?? index + 1,
+      question: q.question,
+      options: q.options,
+      correctAnswer: q.correctAnswer
+    }));
+
+  } catch (err) {
+    console.error("Assessment API error:", err);
+    throw err;
+  }
 };
+
+export const fetchSituationQuestions = async () => {
+  try {
+    const res = await fetch("/api/situationque"); // ✅ GET by default
+
+    if (!res.ok) throw new Error(await res.text());
+
+    const data = await res.json();
+
+    if (!data.result || !Array.isArray(data.result)) {
+      throw new Error("Invalid situation response");
+    }
+
+    return data.result.map((q, index) => ({
+      id: q.id ?? index + 1,
+      question: q.question,
+      options: q.options,
+      correctAnswer: q.correctAnswer
+    }));
+
+  } catch (err) {
+    console.error("Situation API error:", err);
+    throw err;
+  }
+};
+
 
 // ==========================================
 // 1. INPUT STAGE 
-// ==========================================
-// ==========================================
-// 1. INPUT STAGE (UPDATED)
-// ==========================================
-// ==========================================
-// 1. INPUT STAGE (Visual Fixes)
 // ==========================================
 const InputStage = ({ onComplete }) => {
     const [formData, setFormData] = useState({ standard: '', subject: '' });
@@ -1785,25 +3845,23 @@ const InputStage = ({ onComplete }) => {
 
     return (
         <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            // FIX: Darker, less transparent background for better readability
-            className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2rem] shadow-2xl relative overflow-hidden"
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden"
         >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
             
-            <div className="text-center mb-10">
+            <div className="text-center mb-8">
                 <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
                     <FaUserGraduate />
                 </div>
-                <h2 className="text-4xl font-bold text-white mb-2">विद्यार्थी तपशील</h2>
-                <p className="text-slate-300">तुमची माहिती भरून परीक्षा सुरू करा</p>
+                <h2 className="text-3xl font-bold text-white mb-2">विद्यार्थी तपशील</h2>
+                <p className="text-slate-400">तुमची माहिती भरून परीक्षा सुरू करा</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    {/* FIX: Brighter Label Color */}
-                    <label className="block text-indigo-200 text-xs font-bold mb-2 uppercase tracking-wider">
+                    <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
                         तुमची इयत्ता (Standard)
                     </label>
                     <input 
@@ -1811,36 +3869,33 @@ const InputStage = ({ onComplete }) => {
                         placeholder="उदा. १२वी सायन्स" 
                         value={formData.standard} 
                         onChange={(e) => setFormData({...formData, standard: e.target.value})} 
-                        // FIX: Darker input bg (slate-950) + Visible Placeholder
-                        className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-slate-400" 
+                        className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none placeholder-slate-500 transition-all" 
                         required 
                     />
                 </div>
 
                 <div className="relative">
-                    <label className="block text-indigo-200 text-xs font-bold mb-2 uppercase tracking-wider">
+                    <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
                         विषय निवडा (Subject)
                     </label>
                     <select 
                         value={formData.subject} 
                         onChange={(e) => setFormData({...formData, subject: e.target.value})} 
-                        // FIX: Logic to show placeholder text clearly
-                        className={`w-full bg-slate-950 border border-slate-600 rounded-xl px-5 py-4 appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none cursor-pointer ${formData.subject === "" ? "text-slate-400" : "text-white"}`}
+                        className={`w-full bg-slate-950 border border-slate-600 rounded-xl px-5 py-4 appearance-none focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer ${formData.subject === "" ? "text-slate-500" : "text-white"}`}
                         required
                     >
-                        <option value="" disabled className="bg-slate-800 text-slate-500">Select Subject</option>
-                        <option value="PCB" className="bg-slate-900 text-white py-2">PCB (Printed Circuit Board)</option>
-                        <option value="AAO" className="bg-slate-900 text-white py-2">AAO (Automotive Assembly Operator)</option>
+                        <option value="" disabled>Select Subject</option>
+                        <option value="PCB">PCB (Printed Circuit Board)</option>
+                        <option value="AAO">AAO (Automotive Assembly Operator)</option>
                     </select>
-                    {/* FIX: Brighter Arrow Icon */}
-                    <div className="pointer-events-none absolute bottom-5 right-5 text-indigo-400 text-xl">
-                        <IoIosArrowDown />
+                    <div className="pointer-events-none absolute bottom-5 right-5 text-indigo-400">
+                        <IoIosArrowDown size={20} />
                     </div>
                 </div>
 
                 <button 
                     type="submit" 
-                    className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl mt-6 shadow-lg shadow-indigo-600/30 transform transition hover:-translate-y-1"
+                    className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl mt-4 shadow-lg shadow-indigo-600/30 transform transition hover:-translate-y-1"
                 >
                     परीक्षा सुरू करा &rarr;
                 </button>
@@ -1848,73 +3903,148 @@ const InputStage = ({ onComplete }) => {
         </motion.div>
     );
 };
+
 // ==========================================
-// 2. MCQ STAGE (Reusable)
+// 2. MCQ STAGE 
 // ==========================================
-const MCQStage = ({ title, endpoint, userData, themeColor, onComplete }) => {
+const MCQStage = ({ title, fetchData, themeColor, onComplete }) => {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentQIndex, setCurrentQIndex] = useState(0);
     const [answers, setAnswers] = useState({}); 
 
     useEffect(() => {
+        let isMounted = true;
         const load = async () => {
             setLoading(true);
-            const data = await fetchQuestionsFromAPI(endpoint, userData);
-            setQuestions(data);
-            setLoading(false);
+            try {
+                // Execute the passed function (Assessment or Situation)
+                const data = await fetchData();
+                if (isMounted) {
+                    setQuestions(data);
+                    setLoading(false);
+                }
+            } catch (err) {
+                console.error("Failed to load questions", err);
+                if (isMounted) {
+                    // Fallback for demo stability
+                    setQuestions([
+                        {
+                            id: 1,
+                            question: "Unable to load API. This is a demo fallback question.",
+                            options: ["Option A", "Option B", "Option C", "Option D"],
+                            correctAnswer: "Option A"
+                        }
+                    ]);
+                    setLoading(false);
+                }
+            }
         };
         load();
-    }, [endpoint, userData]);
+        return () => { isMounted = false; };
+    }, [fetchData]);
 
-    const handleSelect = (option) => setAnswers(prev => ({ ...prev, [currentQIndex]: option }));
+    const handleSelect = (option) => {
+        setAnswers(prev => ({ ...prev, [currentQIndex]: option }));
+    };
 
     const handleSubmit = () => {
         if (Object.keys(answers).length < questions.length) {
             if(!confirm("काही प्रश्न बाकी आहेत. तरीही सबमिट करायचे?")) return;
         }
+        // Send data back up
         onComplete({ questions, answers });
     };
 
+    const totalQuestions = questions.length;
+    const answeredCount = Object.keys(answers).length;
+    const progressPercentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+    
     if (loading) return <LoadingScreen text={`${title} तयार होत आहे...`} color={themeColor} />;
+    
     const currentQ = questions[currentQIndex];
-    const progress = ((Object.keys(answers).length) / questions.length) * 100;
 
     return (
-        <div className="w-full max-w-5xl mx-auto h-full flex flex-col">
-            <div className="flex justify-between items-end mb-6">
+        <div className="w-full max-w-5xl mx-auto flex flex-col min-h-[600px]">
+            {/* Header & Progress */}
+            <div className="flex justify-between items-end mb-6 px-2">
                 <div>
                     <h2 className={`text-2xl font-bold text-${themeColor}-400`}>{title}</h2>
-                    <p className="text-slate-400 text-sm">प्रश्न {currentQIndex + 1} / {questions.length}</p>
+                    <p className="text-slate-400 text-sm mt-1">
+                        प्रश्न {currentQIndex + 1} / {totalQuestions}
+                    </p>
                 </div>
-                <div className="flex flex-col items-end">
-                    <span className="text-xs text-slate-500 mb-1">{Math.round(progress)}% पूर्ण</span>
-                    <div className="w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
-                        <div className={`h-full bg-${themeColor}-500 transition-all duration-500`} style={{ width: `${progress}%` }}></div>
+                <div className="flex flex-col items-end w-1/3">
+                    <span className="text-xs text-slate-500 mb-2 font-mono">
+                        {Math.round(progressPercentage)}% पूर्ण
+                    </span>
+                    <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                        <div 
+                            className={`h-full bg-${themeColor}-500 transition-all duration-700 ease-out`} 
+                            style={{ width: `${progressPercentage}%` }}
+                        ></div>
                     </div>
                 </div>
             </div>
-            <div className="bg-slate-900/80 border border-white/10 rounded-3xl p-8 shadow-2xl min-h-[400px] flex flex-col justify-between">
+
+            {/* Question Card */}
+            <div className="flex-1 bg-slate-900/80 border border-white/10 rounded-[2rem] p-8 md:p-12 shadow-2xl flex flex-col justify-between backdrop-blur-sm">
                 <div>
-                    <h3 className="text-xl text-white font-medium mb-8 leading-relaxed">{currentQ?.question || currentQ?.questionText}</h3>
+                    <h3 className="text-xl md:text-2xl text-white font-medium mb-10 leading-relaxed">
+                        {currentQ?.question}
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {currentQ?.options?.map((opt, idx) => {
                             const isSelected = answers[currentQIndex] === opt;
                             return (
-                                <button key={idx} onClick={() => handleSelect(opt)} className={`p-4 rounded-xl border-2 text-left transition-all flex items-center ${isSelected ? `bg-${themeColor}-600/20 border-${themeColor}-500 text-white` : 'bg-slate-950/50 border-slate-800 text-slate-300'}`}>
-                                    <span className={`w-8 h-8 rounded-full border flex items-center justify-center mr-3 font-bold text-sm ${isSelected ? `bg-${themeColor}-500 border-${themeColor}-500` : 'border-slate-600'}`}>{String.fromCharCode(65 + idx)}</span>
-                                    {opt}
+                                <button 
+                                    key={idx} 
+                                    onClick={() => handleSelect(opt)} 
+                                    className={`p-5 rounded-xl border-2 text-left transition-all flex items-center group
+                                        ${isSelected 
+                                            ? `bg-${themeColor}-900/40 border-${themeColor}-500 text-white shadow-[0_0_15px_rgba(var(--${themeColor}-500),0.3)]` 
+                                            : 'bg-slate-950/50 border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-slate-900'
+                                        }`}
+                                >
+                                    <span className={`w-8 h-8 min-w-[2rem] rounded-full border flex items-center justify-center mr-4 font-bold text-sm transition-colors
+                                        ${isSelected 
+                                            ? `bg-${themeColor}-500 border-${themeColor}-500 text-white` 
+                                            : 'border-slate-600 text-slate-500 group-hover:border-slate-400'
+                                        }`}
+                                    >
+                                        {String.fromCharCode(65 + idx)}
+                                    </span>
+                                    <span className="text-lg">{opt}</span>
                                 </button>
                             );
                         })}
                     </div>
                 </div>
-                <div className="flex justify-between mt-8 pt-6 border-t border-white/5">
-                    <button onClick={() => setCurrentQIndex(p => Math.max(0, p - 1))} disabled={currentQIndex === 0} className="px-6 py-2 rounded-lg text-slate-400 hover:bg-white/5 disabled:opacity-30">मागील</button>
-                    {currentQIndex === questions.length - 1 ? (
-                        <button onClick={handleSubmit} className={`px-8 py-3 bg-${themeColor}-600 text-white rounded-xl font-bold flex items-center gap-2`}>सबमिट करा <IoMdCheckmarkCircle /></button>
+
+                {/* Footer Controls */}
+                <div className="flex justify-between mt-12 pt-8 border-t border-white/5">
+                    <button 
+                        onClick={() => setCurrentQIndex(p => Math.max(0, p - 1))} 
+                        disabled={currentQIndex === 0} 
+                        className="px-6 py-3 rounded-xl text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                        मागील (Previous)
+                    </button>
+                    
+                    {currentQIndex === totalQuestions - 1 ? (
+                        <button 
+                            onClick={handleSubmit} 
+                            className={`px-8 py-3 bg-${themeColor}-600 hover:bg-${themeColor}-500 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105`}
+                        >
+                            पुढील टप्पा <IoMdCheckmarkCircle size={20} />
+                        </button>
                     ) : (
-                        <button onClick={() => setCurrentQIndex(p => Math.min(questions.length - 1, p + 1))} className="px-8 py-3 bg-white text-black rounded-xl font-bold flex items-center gap-2">पुढील <FaArrowRight /></button>
+                        <button 
+                            onClick={() => setCurrentQIndex(p => Math.min(totalQuestions - 1, p + 1))} 
+                            className="px-8 py-3 bg-white text-black hover:bg-slate-200 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105"
+                        >
+                            पुढील (Next) <FaArrowRight />
+                        </button>
                     )}
                 </div>
             </div>
@@ -1929,43 +4059,62 @@ const DeviceCheckStage = ({ onComplete }) => {
     const [speakerStatus, setSpeakerStatus] = useState('idle'); 
     const [micStatus, setMicStatus] = useState('idle');
 
-    useEffect(() => { if (typeof window !== 'undefined') window.speechSynthesis.getVoices(); }, []);
+    useEffect(() => { 
+        if (typeof window !== 'undefined') window.speechSynthesis.getVoices(); 
+    }, []);
 
     const testSpeaker = () => {
         setSpeakerStatus('testing');
-        speakText("नमस्कार, ही सिस्टम चेक टेस्ट आहे.", () => setSpeakerStatus('success'));
+        speakText("नमस्कार, ही सिस्टम चेक टेस्ट आहे. आवाज स्पष्ट येत आहे का?", () => setSpeakerStatus('success'));
     };
 
     const testMic = () => {
         setMicStatus('testing');
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) { alert("Mic Not Supported"); setMicStatus('success'); return; }
+        if (!SpeechRecognition) { 
+            alert("Mic Not Supported in this browser (Use Chrome)."); 
+            setMicStatus('error'); 
+            return; 
+        }
         
         const recognition = new SpeechRecognition();
         recognition.lang = 'mr-IN';
         recognition.onresult = () => { setMicStatus('success'); recognition.stop(); };
-        recognition.onerror = () => { setMicStatus('idle'); alert("Mic Error"); };
+        recognition.onerror = () => { setMicStatus('idle'); alert("Mic Error. Check permissions."); };
         recognition.start();
+        
+        // Auto stop after 4 seconds if no sound
         setTimeout(() => { if(micStatus !== 'success') recognition.stop(); }, 4000);
     };
 
     const isReady = speakerStatus === 'success' && micStatus === 'success';
 
     return (
-        <div className="max-w-xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 p-10 rounded-[2.5rem] shadow-2xl text-center">
+        <div className="max-w-xl mx-auto bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2.5rem] shadow-2xl text-center">
             <h2 className="text-3xl font-bold text-white mb-2">सिस्टम चेक</h2>
             <p className="text-slate-400 mb-8">मुलाखत सुरू करण्यापूर्वी डिव्हाइस तपासा.</p>
+            
             <div className="space-y-4 mb-10">
-                <div className={`p-4 rounded-2xl border flex justify-between items-center ${speakerStatus === 'success' ? 'border-green-500 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
-                    <div className="flex items-center gap-4"><div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaVolumeUp /></div><p className="font-bold">स्पीकर</p></div>
-                    <button onClick={testSpeaker} className="px-4 py-2 bg-indigo-600 rounded-lg text-white font-bold">{speakerStatus === 'success' ? 'Verified' : 'Test'}</button>
+                {/* Speaker */}
+                <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${speakerStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaVolumeUp size={20}/></div>
+                        <div className="text-left"><p className="font-bold text-white">स्पीकर</p><p className="text-xs text-slate-400">आवाज तपासा</p></div>
+                    </div>
+                    <button onClick={testSpeaker} className={`px-5 py-2 rounded-lg font-bold text-sm ${speakerStatus === 'success' ? 'bg-green-500 text-white' : 'bg-indigo-600 text-white'}`}>{speakerStatus === 'success' ? 'OK ✔' : 'Test'}</button>
                 </div>
-                <div className={`p-4 rounded-2xl border flex justify-between items-center ${micStatus === 'success' ? 'border-green-500 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
-                    <div className="flex items-center gap-4"><div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaMicrophone /></div><p className="font-bold">माईक</p></div>
-                    <button onClick={testMic} className="px-4 py-2 bg-indigo-600 rounded-lg text-white font-bold">{micStatus === 'success' ? 'Verified' : 'Test'}</button>
+
+                {/* Mic */}
+                <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${micStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaMicrophone size={20}/></div>
+                        <div className="text-left"><p className="font-bold text-white">माईक</p><p className="text-xs text-slate-400">रेकॉर्डिंग तपासा</p></div>
+                    </div>
+                    <button onClick={testMic} className={`px-5 py-2 rounded-lg font-bold text-sm ${micStatus === 'success' ? 'bg-green-500 text-white' : 'bg-indigo-600 text-white'}`}>{micStatus === 'success' ? 'OK ✔' : 'Test'}</button>
                 </div>
             </div>
-            <button onClick={onComplete} disabled={!isReady} className={`w-full py-4 rounded-xl font-bold text-lg ${isReady ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>मुलाखत सुरू करा</button>
+
+            <button onClick={onComplete} disabled={!isReady} className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${isReady ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>मुलाखत सुरू करा</button>
         </div>
     );
 };
@@ -1975,9 +4124,9 @@ const DeviceCheckStage = ({ onComplete }) => {
 // ==========================================
 const VoiceStage = ({ onComplete }) => {
     const [qIndex, setQIndex] = useState(0);
-    const [isSpeaking, setIsSpeaking] = useState(false);
-    const [isRecording, setIsRecording] = useState(false);
-    const [transcript, setTranscript] = useState('');
+    const [status, setStatus] = useState('preparing'); 
+    const [permanentTranscript, setPermanentTranscript] = useState('');
+    const [interimTranscript, setInterimTranscript] = useState('');
     const [questions, setQuestions] = useState([]);
     const [results, setResults] = useState({}); 
     const recognitionRef = useRef(null);
@@ -1988,52 +4137,78 @@ const VoiceStage = ({ onComplete }) => {
     }, []);
 
     useEffect(() => {
-        if (questions.length > 0) setTimeout(() => playQuestion(0), 1000);
-        return () => { if (recognitionRef.current) recognitionRef.current.stop(); };
-    }, [questions]);
+        if (questions.length > 0) playQuestion(qIndex);
+        return () => stopRecognition();
+    }, [questions, qIndex]);
 
     const playQuestion = (index) => {
         if (index >= questions.length) return;
-        setTranscript('');
-        setIsRecording(false);
-        if (recognitionRef.current) recognitionRef.current.stop();
-        setIsSpeaking(true);
-        speakText(questions[index], () => {
-            setIsSpeaking(false);
-            startListening(); 
+        stopRecognition();
+        setPermanentTranscript('');
+        setInterimTranscript('');
+        setStatus('speaking_question');
+        // Wait for speech to finish before starting mic
+        speakText(questions[index], () => { 
+            setStatus('listening'); 
+            startRecognition(); 
         });
     };
 
-    const startListening = () => {
+    const startRecognition = () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) return;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'mr-IN';
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognitionRef.current = recognition;
-        recognition.onstart = () => setIsRecording(true);
-        recognition.onresult = (event) => {
-            let final = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) final += event.results[i][0].transcript + ' ';
-            }
-            setTranscript(prev => prev + final);
-        };
-        try { recognition.start(); } catch(e) { console.error(e); }
+        
+        try {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'mr-IN';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognitionRef.current = recognition;
+            
+            recognition.onresult = (event) => {
+                let finalStr = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) finalStr += event.results[i][0].transcript + ' ';
+                }
+                setPermanentTranscript(prev => prev + finalStr);
+                // Reset interim if final found, else show it
+                if(finalStr) setInterimTranscript('');
+                else setInterimTranscript(event.results[event.results.length -1][0].transcript);
+            };
+
+            recognition.start();
+        } catch(e) { 
+            console.error(e); 
+        }
+    };
+
+    const stopRecognition = () => {
+        if (recognitionRef.current) { 
+            recognitionRef.current.stop(); 
+            recognitionRef.current = null; 
+        }
+    };
+
+    const togglePause = () => {
+        if (status === 'listening') {
+            stopRecognition();
+            setStatus('paused');
+        } else if (status === 'paused') {
+            setStatus('listening');
+            startRecognition();
+        }
     };
 
     const handleNext = () => {
-        if (recognitionRef.current) recognitionRef.current.stop();
-        setIsRecording(false);
-        const currentAnswerData = { question: questions[qIndex], answer: transcript.trim() || "No Audio" };
+        stopRecognition();
+        const finalAnswer = (permanentTranscript + interimTranscript).trim() || "No Audio Recorded";
+        const currentAnswerData = { question: questions[qIndex], answer: finalAnswer };
         const updatedResults = { ...results, [qIndex]: currentAnswerData };
         setResults(updatedResults);
-
-        if (qIndex < 4) {
-            setQIndex(prev => prev + 1);
-            setTimeout(() => playQuestion(qIndex + 1), 500);
-        } else {
+        
+        if (qIndex < 4) { 
+            setQIndex(prev => prev + 1); 
+        } else { 
             onComplete({ answers: updatedResults }); 
         }
     };
@@ -2041,29 +4216,31 @@ const VoiceStage = ({ onComplete }) => {
     if (questions.length === 0) return <LoadingScreen text="मुलाखत तयार होत आहे..." color="purple" />;
 
     return (
-        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center h-full">
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[600px]">
             <div className="w-full text-center mb-8">
-                <span className="text-purple-400 font-bold uppercase text-sm">प्रश्न {qIndex + 1} / 5</span>
-                <div className="w-full h-1 bg-slate-800 rounded-full mt-4"><div className="h-full bg-purple-500 transition-all duration-500" style={{ width: `${((qIndex+1)/5)*100}%` }}></div></div>
+                <span className="text-purple-400 font-bold uppercase text-sm tracking-widest">प्रश्न {qIndex + 1} / 5</span>
+                <div className="w-full h-1 bg-slate-800 rounded-full mt-4"><div className="h-full bg-purple-500" style={{ width: `${((qIndex+1)/5)*100}%` }}></div></div>
             </div>
-            <div className="relative w-full bg-slate-900/80 border border-slate-700 p-12 rounded-3xl shadow-2xl text-center">
-                <h2 className="text-3xl text-white font-bold mb-8 leading-normal">{questions[qIndex]}</h2>
-                <div className="flex justify-center mb-8 h-24 items-center">
-                    {isSpeaking ? (
-                        <div className="flex items-center gap-2 text-purple-400"><FaVolumeUp className="animate-pulse text-3xl" /> प्रश्न बोलला जात आहे...</div>
-                    ) : (
-                        <div className="flex flex-col items-center gap-2">
-                             <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl transition-all ${isRecording ? 'bg-red-500 animate-pulse shadow-[0_0_40px_rgba(239,68,68,0.5)]' : 'bg-slate-700'}`}><IoMdMicrophone /></div>
-                             {isRecording && <span className="text-red-400 text-xs tracking-widest animate-pulse font-bold mt-2">रेकॉर्डिंग चालू आहे...</span>}
-                        </div>
+            <div className="relative w-full bg-slate-900/80 border border-slate-700 p-12 rounded-[2rem] shadow-2xl text-center backdrop-blur-md">
+                <h2 className="text-2xl md:text-3xl text-white font-bold mb-10">{questions[qIndex]}</h2>
+                <div className="flex justify-center mb-10 h-32 items-center">
+                    {status === 'speaking_question' && <div className="text-purple-400 animate-pulse"><FaVolumeUp className="text-6xl mx-auto" /><span className="text-sm font-bold">Speaking...</span></div>}
+                    {status === 'listening' && <div className="text-red-500 animate-pulse"><IoMdMicrophone className="text-8xl mx-auto" /><span className="text-xs font-bold">REC ●</span></div>}
+                    {status === 'paused' && <div className="text-yellow-500"><IoMdPause className="text-8xl mx-auto" /><span className="text-sm font-bold">Paused</span></div>}
+                </div>
+                <div className="bg-black/40 rounded-2xl p-6 min-h-[140px] mb-8 text-slate-300 italic border border-white/5 text-left text-lg shadow-inner overflow-y-auto max-h-[200px]">
+                    {(permanentTranscript + " " + interimTranscript).trim() || <span className="text-slate-600">{status === 'speaking_question' ? "Wait for question..." : "Listening..."}</span>}
+                </div>
+                <div className="flex justify-center gap-4">
+                    {(status === 'listening' || status === 'paused') && (
+                        <button onClick={togglePause} className="w-16 h-16 rounded-full flex items-center justify-center text-2xl bg-white/10 hover:bg-white/20 text-white transition-all">
+                            {status === 'listening' ? <IoMdPause /> : <IoMdPlay />}
+                        </button>
                     )}
+                    <button onClick={handleNext} disabled={status === 'speaking_question'} className="px-10 py-4 bg-white text-black hover:bg-slate-200 rounded-full font-bold flex items-center gap-3">
+                        {qIndex === 4 ? "Finish Interview" : "Next"} <FaArrowRight />
+                    </button>
                 </div>
-                <div className="bg-black/30 rounded-xl p-6 min-h-[120px] mb-8 text-slate-300 italic border border-white/5 text-left text-lg">
-                    {transcript || (isRecording ? "ऐकत आहे..." : "प्रश्नाची प्रतीक्षा करा...")}
-                </div>
-                <button onClick={handleNext} disabled={isSpeaking} className={`px-10 py-4 rounded-full font-bold text-lg shadow-xl transition-all flex items-center gap-2 mx-auto ${isSpeaking ? 'bg-slate-700 text-slate-500 cursor-not-allowed' : 'bg-white text-black hover:scale-105'}`}>
-                    {qIndex === 4 ? "मुलाखत संपवा" : "पुढील प्रश्न"} <FaArrowRight />
-                </button>
             </div>
         </div>
     );
@@ -2075,16 +4252,16 @@ const VoiceStage = ({ onComplete }) => {
 const LoadingScreen = ({ text, color = 'indigo' }) => (
     <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
         <div className={`w-16 h-16 border-4 border-${color}-500/30 border-t-${color}-500 rounded-full animate-spin mb-6`}></div>
-        <h3 className="text-xl text-white font-medium">{text}</h3>
+        <h3 className="text-xl text-white font-medium tracking-wide animate-pulse">{text}</h3>
     </div>
 );
 
 const TransitionScreen = ({ title, subtitle, icon, color, onNext }) => (
     <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} className="max-w-md mx-auto text-center bg-slate-900/80 backdrop-blur-xl border border-white/10 p-12 rounded-[2.5rem] shadow-2xl">
-        <div className={`w-24 h-24 bg-${color}-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-${color}-400 text-4xl`}>{icon}</div>
-        <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
-        <p className="text-slate-400 mb-8 text-lg">{subtitle}</p>
-        <button onClick={onNext} className={`px-8 py-4 bg-${color}-600 hover:bg-${color}-500 text-white rounded-full font-bold shadow-lg flex items-center gap-2 mx-auto`}>पुढे जा <FaArrowRight /></button>
+        <div className={`w-24 h-24 bg-${color}-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-${color}-400 text-4xl shadow-[0_0_30px_rgba(var(--${color}-500),0.2)]`}>{icon}</div>
+        <h2 className="text-3xl font-bold text-white mb-3">{title}</h2>
+        <p className="text-slate-400 mb-10 text-lg leading-relaxed">{subtitle}</p>
+        <button onClick={onNext} className={`px-10 py-4 bg-${color}-600 hover:bg-${color}-500 text-white rounded-full font-bold shadow-lg flex items-center gap-3 mx-auto transition-transform hover:scale-105`}>पुढे जा <FaArrowRight /></button>
     </motion.div>
 );
 
@@ -2094,20 +4271,21 @@ const TransitionScreen = ({ title, subtitle, icon, color, onNext }) => (
 export default function FullAssessmentFlow() {
     const router = useRouter();
     const [stage, setStage] = useState('input'); 
-    const [formUserInfo, setFormUserInfo] = useState(null); // Data from the input form
+    const [formUserInfo, setFormUserInfo] = useState(null); 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [masterData, setMasterData] = useState({ assessment: null, interview: null, situation: null });
     
-    // --- AUTH STATE ---
-    const [loggedInUser, setLoggedInUser] = useState(null); // User from LocalStorage
-    const [authToken, setAuthToken] = useState(null); // Token from LocalStorage
+    // Master State to hold ALL data locally before final submit
+    const [masterData, setMasterData] = useState({ 
+        assessment: null, 
+        interview: null, 
+        situation: null 
+    });
+    
+    const [loggedInUser, setLoggedInUser] = useState(null);
 
-    // 1. On Mount: Get Logged In User
     useEffect(() => {
         const userStr = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
         if (userStr) setLoggedInUser(JSON.parse(userStr));
-        if (token) setAuthToken(token);
     }, []);
 
     const handleInputComplete = (data) => {
@@ -2115,32 +4293,34 @@ export default function FullAssessmentFlow() {
         setStage('assessment');
     };
 
-    const handleStageData = (key, data) => {
+    // Store stage data locally and move to transition or next stage
+    const handleStageData = (key, data, nextStage) => {
         setMasterData(prev => ({ ...prev, [key]: data }));
+        setStage(nextStage);
     };
 
-    const formatAndSubmitData = async (finalSituationData) => {
+    // FINAL SUBMISSION
+    const finalizeAndSubmit = async (finalSituationData) => {
         setIsSubmitting(true);
-        
-        // --- 2. FIXED: Use Dynamic Email ---
         const userEmail = loggedInUser?.email || "anonymous@student.com";
 
+        // Construct final payload
         const payload = {
-            email: userEmail, // <--- NOW DYNAMIC
+            email: userEmail,
             userInfo: formUserInfo, 
             masterData: {
                 assessment: masterData.assessment,
                 voiceInterview: masterData.interview,
-                situation: finalSituationData      
+                situation: finalSituationData // Comes from the last step
             }
         };
 
         try {
-            const res = await fetch('/api/submit-full-assessment', { // Use your correct API route name
+            const res = await fetch('/api/submit-full-assessment', { 
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}` // <--- 3. FIXED: Add Token
+                    // 'Authorization': `Bearer ${token}` // If needed
                 }, 
                 body: JSON.stringify(payload)
             });
@@ -2153,63 +4333,82 @@ export default function FullAssessmentFlow() {
             }
         } catch (error) {
             console.error("Network Error", error);
-            alert("Network Error.");
+            alert("Network Error. Check console.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    if (isSubmitting) return <LoadingScreen text="निकाल जतन करत आहोत..." color="green" />;
+    if (isSubmitting) return <LoadingScreen text="पूर्ण निकाल जतन करत आहोत..." color="green" />;
 
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
             <Head><title>Full Assessment | Shakkti AI</title></Head>
+            
             <div className="fixed inset-0 z-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
                 <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px]"></div>
             </div>
 
             <nav className="sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
-                <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-                    <span className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white">S</span> Shakkti AI
+                <div className="flex items-center gap-3 font-bold text-xl tracking-tight">
+                    <span className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white shadow-lg">S</span> 
+                    Shakkti AI
                 </div>
-                {loggedInUser && <div className="text-sm text-slate-400">Hi, {loggedInUser.fullName}</div>}
+                {loggedInUser && <div className="text-sm text-slate-400 bg-white/5 px-4 py-2 rounded-full">Hi, {loggedInUser.fullName}</div>}
             </nav>
 
-            <main className="relative z-10 container mx-auto px-4 py-8 min-h-[85vh] flex flex-col justify-center">
+            <main className="relative z-10 container mx-auto px-4 py-12 min-h-[85vh] flex flex-col justify-center">
                 <AnimatePresence mode="wait">
                     {stage === 'input' && <InputStage key="input" onComplete={handleInputComplete} />}
                     
+                    {/* 1. Assessment Stage (Uses fetchAssessmentQuestions) */}
                     {stage === 'assessment' && (
                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
-                            <MCQStage title="तांत्रिक परीक्षा" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
+                            <MCQStage 
+                                title="तांत्रिक परीक्षा" 
+                                fetchData={() => fetchAssessmentQuestions(formUserInfo)}
+                                themeColor="indigo" 
+                                onComplete={(data) => handleStageData('assessment', data, 'interview_intro')} 
+                            />
                         </motion.div>
                     )}
 
-                    {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
+                    {stage === 'interview_intro' && <TransitionScreen key="t1" title="तांत्रिक परीक्षा पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
 
                     {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
 
+                    {/* 2. Interview Stage */}
                     {stage === 'interview' && (
                         <motion.div key="interview" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
-                            <VoiceStage onComplete={(data) => { handleStageData('interview', data); setStage('situation_intro'); }} />
+                            <VoiceStage onComplete={(data) => handleStageData('interview', data, 'situation_intro')} />
                         </motion.div>
                     )}
 
                     {stage === 'situation_intro' && <TransitionScreen key="t2" title="इंटरव्ह्यू पूर्ण झाला" subtitle="पुढील: सिच्युएशन अ‍ॅप्टिट्यूड" icon={<FaBrain />} color="emerald" onNext={() => setStage('situation')} />}
 
+                    {/* 3. Situation Stage (Uses fetchSituationQuestions) */}
                     {stage === 'situation' && (
                         <motion.div key="situation" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
-                            <MCQStage title="सिच्युएशन अ‍ॅप्टिट्यूड" endpoint="/api/situationque" userData={formUserInfo} themeColor="emerald" onComplete={(data) => formatAndSubmitData(data)} />
+                            <MCQStage 
+                                title="सिच्युएशन अ‍ॅप्टिट्यूड" 
+                                fetchData={() => fetchSituationQuestions()}
+                                themeColor="emerald" 
+                                onComplete={(data) => finalizeAndSubmit(data)} 
+                            />
                         </motion.div>
                     )}
 
                     {stage === 'success' && (
-                        <motion.div key="success" initial={{scale:0.9, opacity:0}} animate={{scale:1, opacity:1}} className="text-center max-w-xl mx-auto bg-slate-900/80 p-12 rounded-[3rem] border border-white/10 shadow-2xl">
-                            <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 ring-1 ring-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.3)]"><IoMdCheckmarkCircle className="text-green-400 text-6xl" /></div>
+                        <motion.div key="success" initial={{scale:0.9, opacity:0}} animate={{scale:1, opacity:1}} className="text-center max-w-xl mx-auto bg-slate-900/80 p-12 rounded-[3rem] border border-white/10 shadow-2xl backdrop-blur-md">
+                            <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 ring-1 ring-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
+                                <IoMdCheckmarkCircle className="text-green-400 text-6xl" />
+                            </div>
                             <h2 className="text-4xl font-bold text-white mb-4">अभिनंदन!</h2>
-                            <p className="text-slate-400 mb-8 text-lg">तुमचा पेपर यशस्वीरित्या सबमिट झाला आहे.</p>
-                            <button onClick={() => router.push('/')} className="px-10 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all">होम पेजवर जा</button>
+                            <p className="text-slate-400 mb-10 text-lg">तुमचा पेपर यशस्वीरित्या सबमिट झाला आहे.</p>
+                            <button onClick={() => router.push('/')} className="px-10 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all border border-slate-700">
+                                होम पेजवर जा
+                            </button>
                         </motion.div>
                     )}
                 </AnimatePresence>
