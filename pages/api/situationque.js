@@ -359,7 +359,6 @@
 //     return res.status(405).json({ message: 'Method not allowed' });
 //   }
 // }
-
 import mongoose from "mongoose";
 
 // ===============================
@@ -397,97 +396,98 @@ function cleanJSON(text) {
 // API HANDLER
 // ===============================
 export default async function handler(req, res) {
-  if (req.method !== "GET")
+  if (req.method !== "GET") {
     return res.status(405).json({ message: "Use GET only" });
+  }
 
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey)
+  if (!apiKey) {
     return res.status(500).json({ error: "Missing OpenAI API Key" });
+  }
 
   await dbConnect();
-
-  const { standard = "General", subject = "General Aptitude" } = req.query;
 
   const url = "https://api.openai.com/v1/chat/completions";
 
   const systemPrompt = `
-You are an expert psychologist.
-Return ONLY valid JSON array.
-Never include markdown.
-Never explain anything.
+You are a corporate behavioural assessment expert.
+
+Return ONLY a valid JSON array.
+Do NOT include markdown.
+Do NOT include explanations.
+Do NOT include headings.
+Do NOT include any text outside JSON.
+
+Rules:
+- Exactly 10 corporate workplace scenario-based MCQs.
+- Marathi language only.
+- Office or corporate environment only.
+- Decision-making based situations.
+- 4 options per question.
+- Only one correct answer.
+- No repetition.
+- Do NOT use "All of the above" or "वरीलपैकी सर्व".
 `;
 
   const userPrompt = `
-Generate 20 Situation Reaction Test (SRT) MCQ questions in Marathi
-for Class ${standard} (${subject}).
+Generate corporate scenario MCQs to evaluate:
 
-Each object must contain:
-{
- "id": number,
- "question": string,
- "options": [string,string,string,string],
- "correctAnswer": string
-}
+- Leadership
+- Accountability
+- Teamwork
+- Integrity
+- Communication
+- Problem solving
+- Work ethics
 
-If the response is cut, continue from where you stopped.
+Return strictly in this format:
+
+[
+  {
+    "id": 1,
+    "question": "Situation in Marathi",
+    "options": ["A","B","C","D"],
+    "correctAnswer": "Exact option text"
+  }
+]
 `;
 
   try {
-    let fullText = "";
-    let isComplete = false;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.4,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      }),
+    });
 
-    let messages = [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
-    ];
+    const data = await response.json();
 
-    // ===============================
-    // AUTO CONTINUE LOOP
-    // ===============================
-    for (let i = 0; i < 6; i++) {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo-16k",
-          messages,
-          temperature: 0.7,
-        }),
-      });
-
-      const data = await response.json();
-      const chunk = data.choices[0].message.content;
-
-      fullText += "\n" + chunk;
-
-      // Check if JSON array completed
-      const open = (fullText.match(/\[/g) || []).length;
-      const close = (fullText.match(/\]/g) || []).length;
-
-      if (open > 0 && open === close) {
-        isComplete = true;
-        break;
-      }
-
-      // Ask model to continue
-      messages.push({ role: "assistant", content: chunk });
-      messages.push({
-        role: "user",
-        content: "Continue exactly from where you stopped. Do not repeat.",
+    const content = data?.choices?.[0]?.message?.content;
+    if (!content) {
+      return res.status(500).json({
+        error: "AI did not return content",
+        raw: data,
       });
     }
 
-    const cleaned = cleanJSON(fullText);
+    const cleaned = cleanJSON(content);
     const parsed = JSON.parse(cleaned);
 
     return res.status(200).json({ result: parsed });
+
   } catch (err) {
-    console.error(err);
+    console.error("Situation generation failed:", err);
     return res.status(500).json({
-      error: "Generation failed",
+      error: "Situation generation failed",
       details: err.message,
     });
   }
