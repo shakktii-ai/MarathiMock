@@ -3860,21 +3860,7 @@ const InputStage = ({ onComplete }) => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
-                        तुमची इयत्ता (Standard)
-                    </label>
-                    <input 
-                        type="text" 
-                        placeholder="उदा. १२वी सायन्स" 
-                        value={formData.standard} 
-                        onChange={(e) => setFormData({...formData, standard: e.target.value})} 
-                        className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none placeholder-slate-500 transition-all" 
-                        required 
-                    />
-                </div>
-
-                <div className="relative">
+             <div className="relative">
                     <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
                         विषय निवडा (Subject)
                     </label>
@@ -3892,6 +3878,21 @@ const InputStage = ({ onComplete }) => {
                         <IoIosArrowDown size={20} />
                     </div>
                 </div>
+                <div>
+                    <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
+                        तुमची इयत्ता (Standard)
+                    </label>
+                    <input 
+                        type="text" 
+                        placeholder="उदा. १२वी सायन्स" 
+                        value={formData.standard} 
+                        onChange={(e) => setFormData({...formData, standard: e.target.value})} 
+                        className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none placeholder-slate-500 transition-all" 
+                        required 
+                    />
+                </div>
+
+               
 
                 <button 
                     type="submit" 
