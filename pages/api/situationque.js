@@ -117,7 +117,7 @@ export default async function handler(req, res) {
     try {
       // --- SCENARIO 1: GENERATE SITUATION QUESTIONS (Custom Input) ---
       if (type === 'generate_questions') {
-        const questionCount = 10; 
+        const questionCount = 20; 
         const systemPrompt = `You are an expert Psychologist. Output strictly valid JSON array only. No markdown.`;
         const userPrompt = `Create exactly ${questionCount} Situation Reaction Test (MCQ) questions in Marathi for Class ${standard} (${subject} stream).
         Output format (RAW JSON Array):
