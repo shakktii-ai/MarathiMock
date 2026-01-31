@@ -1,0 +1,78 @@
+import mongoose from 'mongoose';
+
+const MockResultSchema = new mongoose.Schema({
+  // --- User Identity ---
+  email: { 
+    type: String, 
+    required: true, 
+    index: true 
+  },
+  role: { type: String, default: 'Student' },
+  collageName: { type: String },
+
+  // --- 1. Technical Assessment Data ---
+  technicalAssessment: {
+    subject: { type: String },
+    standard: { type: String },
+    score: { type: Number, default: 0 },
+    totalQuestions: { type: Number, default: 0 },
+    // Storing details inline
+    details: [
+      {
+        questionId: Number,
+        questionText: String,
+        options: [String], // Array of strings
+        correctAnswer: String,
+        userAnswer: String,
+        isCorrect: Boolean,
+        _id: false // Prevents creating a unique ID for every single answer (saves space)
+      }
+    ]
+  },
+
+  // --- 2. Voice Interview Data ---
+  voiceInterview: {
+    aiFeedback: { type: String },
+    // Storing transcripts inline
+    transcripts: [
+      {
+        question: String,
+        answerTranscript: String,
+        _id: false
+      }
+    ]
+  },
+
+  // --- 3. Situation Aptitude Data ---
+  situationAssessment: {
+    score: { type: Number, default: 0 },
+    totalQuestions: { type: Number, default: 0 },
+    // Storing details inline
+    details: [
+      {
+        questionId: Number,
+        questionText: String,
+        options: [String],
+        correctAnswer: String,
+        userAnswer: String,
+        isCorrect: Boolean,
+        _id: false
+      }
+    ]
+  },
+
+  // --- 4. AI Generated Report ---
+  aiReport: {
+    summary: { type: String },
+    strengths: [String],           // Array of strings
+    areasForImprovement: [String], // Array of strings
+    careerRoadmap: { type: String },
+    fullReportMarkdown: { type: String }
+  },
+
+  // --- Metadata ---
+  createdAt: { type: Date, default: Date.now }
+});
+
+// Export only ONE model
+export default mongoose.models.MockResult || mongoose.model('MockResult', MockResultSchema);
