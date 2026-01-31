@@ -78,8 +78,8 @@ export default async function handler(req, res) {
         const systemPrompt = `You are a strict academic examiner for the Maharashtra State Board. 
         You must output strictly valid JSON only. Do not add any markdown formatting (like \`\`\`json).`;
         
-        // User prompt specifically asking for 25 MCQs in Marathi
-        const userPrompt = `Create exactly 25 Multiple Choice Questions (MCQs) in Marathi for Class ${standard}, Subject ${subject}. 
+        // User prompt specifically asking for 20 MCQs in Marathi
+        const userPrompt = `Create exactly 20 Multiple Choice Questions (MCQs) in Marathi for Class ${standard}, Subject ${subject}. 
         
         The output must be a raw JSON array of objects. Each object must follow this structure:
         {

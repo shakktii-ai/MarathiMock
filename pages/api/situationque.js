@@ -48,7 +48,7 @@ export default async function handler(req, res) {
       // DEFAULT SETTINGS since no input is provided
       const standard = "General";
       const subject = "General Aptitude";
-      const questionCount = 10; 
+      const questionCount = 20; 
 
       const systemPrompt = `You are an expert Psychologist. Output strictly valid JSON array only. No markdown. No extra text.`;
       

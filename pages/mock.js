@@ -1765,40 +1765,89 @@ const fetchQuestionsFromAPI = async (endpoint, userDetails) => {
 // ==========================================
 // 1. INPUT STAGE 
 // ==========================================
+// ==========================================
+// 1. INPUT STAGE (UPDATED)
+// ==========================================
+// ==========================================
+// 1. INPUT STAGE (Visual Fixes)
+// ==========================================
 const InputStage = ({ onComplete }) => {
-    const [formData, setFormData] = useState({ standard: '', subject: 'PCB' });
+    const [formData, setFormData] = useState({ standard: '', subject: '' });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (formData.standard && formData.subject) onComplete(formData);
-        else alert("कृपया सर्व माहिती भरा.");
+        if (formData.standard && formData.subject) {
+            onComplete(formData);
+        } else {
+            alert("कृपया सर्व माहिती भरा. (Please fill all details)");
+        }
     };
 
     return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 p-10 rounded-3xl shadow-2xl">
-            <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-400 text-2xl"><FaUserGraduate /></div>
-                <h2 className="text-3xl font-bold text-white">विद्यार्थी तपशील</h2>
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            // FIX: Darker, less transparent background for better readability
+            className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2rem] shadow-2xl relative overflow-hidden"
+        >
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            
+            <div className="text-center mb-10">
+                <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
+                    <FaUserGraduate />
+                </div>
+                <h2 className="text-4xl font-bold text-white mb-2">विद्यार्थी तपशील</h2>
+                <p className="text-slate-300">तुमची माहिती भरून परीक्षा सुरू करा</p>
             </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label className="block text-slate-400 text-xs font-bold mb-2 uppercase">तुमची इयत्ता</label>
-                    <input type="text" placeholder="उदा. १२वी सायन्स" value={formData.standard} onChange={(e) => setFormData({...formData, standard: e.target.value})} className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none" required />
+                    {/* FIX: Brighter Label Color */}
+                    <label className="block text-indigo-200 text-xs font-bold mb-2 uppercase tracking-wider">
+                        तुमची इयत्ता (Standard)
+                    </label>
+                    <input 
+                        type="text" 
+                        placeholder="उदा. १२वी सायन्स" 
+                        value={formData.standard} 
+                        onChange={(e) => setFormData({...formData, standard: e.target.value})} 
+                        // FIX: Darker input bg (slate-950) + Visible Placeholder
+                        className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-slate-400" 
+                        required 
+                    />
                 </div>
+
                 <div className="relative">
-                    <label className="block text-slate-400 text-xs font-bold mb-2 uppercase">विषय निवडा</label>
-                    <select value={formData.subject} onChange={(e) => setFormData({...formData, subject: e.target.value})} className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 appearance-none focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <option value="PCB">PCB (Printed Circuit Board)</option>
-                        <option value="AAO">AAO (Automotive Assembly Operator)</option>
+                    <label className="block text-indigo-200 text-xs font-bold mb-2 uppercase tracking-wider">
+                        विषय निवडा (Subject)
+                    </label>
+                    <select 
+                        value={formData.subject} 
+                        onChange={(e) => setFormData({...formData, subject: e.target.value})} 
+                        // FIX: Logic to show placeholder text clearly
+                        className={`w-full bg-slate-950 border border-slate-600 rounded-xl px-5 py-4 appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none cursor-pointer ${formData.subject === "" ? "text-slate-400" : "text-white"}`}
+                        required
+                    >
+                        <option value="" disabled className="bg-slate-800 text-slate-500">Select Subject</option>
+                        <option value="PCB" className="bg-slate-900 text-white py-2">PCB (Printed Circuit Board)</option>
+                        <option value="AAO" className="bg-slate-900 text-white py-2">AAO (Automotive Assembly Operator)</option>
                     </select>
-                    <div className="pointer-events-none absolute bottom-4 right-4 text-slate-400"><IoIosArrowDown /></div>
+                    {/* FIX: Brighter Arrow Icon */}
+                    <div className="pointer-events-none absolute bottom-5 right-5 text-indigo-400 text-xl">
+                        <IoIosArrowDown />
+                    </div>
                 </div>
-                <button type="submit" className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl mt-4 hover:scale-[1.02] transition-transform">परीक्षा सुरू करा &rarr;</button>
+
+                <button 
+                    type="submit" 
+                    className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl mt-6 shadow-lg shadow-indigo-600/30 transform transition hover:-translate-y-1"
+                >
+                    परीक्षा सुरू करा &rarr;
+                </button>
             </form>
         </motion.div>
     );
 };
-
 // ==========================================
 // 2. MCQ STAGE (Reusable)
 // ==========================================
