@@ -55,7 +55,7 @@ export default function dashboard({ Logout, user }) {
           <ul className="hidden md:flex space-x-8 text-sm items-center">
             <li className="hover:text-pink-400 cursor-pointer transition-colors font-medium">होम</li>
             
-            <Link href={'/progress'}>
+            <Link href={''}>
               <li className="hover:text-pink-400 cursor-pointer transition-colors font-medium">
                 <span className="relative inline-flex">
                   प्रोग्रेस
@@ -65,7 +65,7 @@ export default function dashboard({ Logout, user }) {
             
             
             
-            <Link href={'/oldreport'}>
+            <Link href={''}>
               <li className="relative hover:text-pink-400 cursor-pointer transition-colors font-medium" onClick={handleReportClick}>
                 अहवाल
                 {notification && (
@@ -103,7 +103,7 @@ export default function dashboard({ Logout, user }) {
                           प्रोफाइल
                         </li>
                       </Link>
-                      <Link href={'/progress'}>
+                      <Link href={''}>
                         <li className="hover:text-blue-700 text-sm font-medium p-3 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors flex items-center gap-2">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
@@ -153,7 +153,7 @@ export default function dashboard({ Logout, user }) {
               <ul className="flex flex-col space-y-6 text-center items-center">
                 <li className="text-white hover:text-pink-400 font-medium text-xl cursor-pointer" onClick={toggleMobileMenu}>होम</li>
                 
-                <Link href={'/progress'}>
+                <Link href={''}>
                   <li className="text-white hover:text-pink-400 font-medium text-xl cursor-pointer" onClick={toggleMobileMenu}>
                     <span className="relative inline-flex">
                       प्रोग्रेस
@@ -162,7 +162,7 @@ export default function dashboard({ Logout, user }) {
                   </li>
                 </Link>
                 
-                <Link href={'/oldreport'}>
+                <Link href={''}>
                   <li className="text-white hover:text-pink-400 font-medium text-xl cursor-pointer relative" onClick={() => { handleReportClick(); toggleMobileMenu(); }}>
                     अहवाल
                     {notification && (
@@ -170,6 +170,13 @@ export default function dashboard({ Logout, user }) {
                     )}
                   </li>
                 </Link>
+               </Link>
+                <Link href={'/assessmentReport'}>
+              <li className="hover:text-pink-400 cursor-pointer transition-all duration-300 relative group">
+                असेसमेंट रिपोर्ट
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-500 group-hover:w-full transition-all duration-300"></span>
+              </li>
+            </Link>
                 
                 {user?.value ? (
                   <>
@@ -221,7 +228,7 @@ export default function dashboard({ Logout, user }) {
                 </p>
                 
                 <div className="mt-6 flex flex-col sm:flex-row gap-4">
-                  <Link href={'/role'}>
+                  <Link href={''}>
                     <button className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 group">
                       सराव सुरू करा
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
@@ -231,7 +238,7 @@ export default function dashboard({ Logout, user }) {
                   </Link>
                   
                   
-                  <Link href={'/progress'}>
+                  <Link href={''}>
                     <button className="border-2 border-white hover:border-pink-400 text-white py-3 px-8 rounded-full text-lg font-semibold hover:text-pink-400 transition duration-300 flex items-center gap-2 group">
                       प्रोग्रेस पाहण्यासाठी क्लिक करा
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
@@ -311,7 +318,7 @@ export default function dashboard({ Logout, user }) {
                     </li>
                   ))}
                 </ul>
-                <Link href="/progress">
+                <Link href="">
                   <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-6 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition duration-300 shadow-md mt-2">
                     प्रोग्रेस पहा
                   </button>
