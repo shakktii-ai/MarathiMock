@@ -19,7 +19,7 @@
 //   const safeTotal = total || 1; 
 //   const safeObtained = obtained || 0;
 //   const percentage = Math.round((safeObtained / safeTotal) * 100);
-  
+
 //   const radius = 18;
 //   const circumference = 2 * Math.PI * radius;
 //   const strokeDashoffset = circumference - (percentage / 100) * circumference;
@@ -61,7 +61,7 @@
 //           cy="20"
 //         />
 //       </svg>
-      
+
 //       {/* Centered Text */}
 //       <div className={`absolute flex flex-col items-center ${colorClass}`}>
 //         <span className={`${fontSize} font-black`}>{percentage}%</span>
@@ -90,7 +90,7 @@
 //         router.push('/login'); 
 //         return;
 //       }
-      
+
 //       const user = JSON.parse(userStr);
 //       const res = await fetch(`/api/assessment?email=${user.email}`);
 //       const data = await res.json();
@@ -113,13 +113,13 @@
 //     if (report.score !== undefined && report.totalQuestions !== undefined) {
 //         return { obtained: report.score, total: report.totalQuestions };
 //     }
-    
+
 //     // 2. Fallback Regex (Old System)
 //     const match = report.reportAnalysis?.match(/(\d+)\s*\/\s*(\d+)/);
 //     if (match) {
 //       return { obtained: parseInt(match[1]), total: parseInt(match[2]) };
 //     }
-    
+
 //     return { obtained: 0, total: 100 }; // Default
 //   };
 
@@ -147,7 +147,7 @@
 //       </Head>
 
 //       <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500/30 relative overflow-x-hidden">
-        
+
 //         {/* Background Ambient */}
 //         <div className="fixed inset-0 z-0 pointer-events-none">
 //             <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-900/10 rounded-full blur-[120px]"></div>
@@ -170,7 +170,7 @@
 //         </nav>
 
 //         <main className="relative z-10 max-w-7xl mx-auto p-6 md:p-12">
-          
+
 //           {/* --- HEADER SECTION --- */}
 //           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
 //             <div>
@@ -179,7 +179,7 @@
 //                     तुमच्या मागील सर्व चाचण्या, गुण आणि AI ने केलेले सखोल विश्लेषण येथे पहा.
 //                 </p>
 //             </div>
-            
+
 //             {/* Quick Stats */}
 //             {!loading && reports.length > 0 && (
 //                 <div className="flex gap-4">
@@ -447,13 +447,14 @@ const ScoreCircle = ({ obtained = 0, total = 100, size = "sm" }) => {
 
 /* ================= SECTION CARD ================= */
 
-function SectionCard({ title, score, markdown, accent }) {
+function SectionCard({ title, score, markdown, accent, questions = [] }) {
+  const [showQuestions, setShowQuestions] = useState(false);
   return (
     <div className="bg-slate-900 border border-white/10 rounded-3xl p-10">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">
-          <span className={`w-2 h-2 rounded-full ${accent.replace("text","bg")}`}></span>
+          <span className={`w-2 h-2 rounded-full ${accent.replace("text", "bg")}`}></span>
           <h2 className={`text-2xl font-bold tracking-wide ${accent}`}>
             {title}
           </h2>
@@ -466,16 +467,16 @@ function SectionCard({ title, score, markdown, accent }) {
       <div className="prose prose-invert max-w-none">
         <ReactMarkdown
           components={{
-            h1: ({node, ...props}) => (
+            h1: ({ node, ...props }) => (
               <h1 className="text-xl font-bold mt-8 mb-4 text-white border-b border-white/10 pb-2" {...props} />
             ),
-            h2: ({node, ...props}) => (
+            h2: ({ node, ...props }) => (
               <h2 className="text-lg font-semibold mt-6 mb-3 text-indigo-300" {...props} />
             ),
-            p: ({node, ...props}) => (
+            p: ({ node, ...props }) => (
               <p className="text-sm text-slate-300 leading-relaxed mb-3" {...props} />
             ),
-            li: ({node, ...props}) => (
+            li: ({ node, ...props }) => (
               <li className="text-sm text-slate-300 mb-2 list-disc ml-5" {...props} />
             )
           }}
@@ -483,9 +484,86 @@ function SectionCard({ title, score, markdown, accent }) {
           {markdown || "No Report Available"}
         </ReactMarkdown>
       </div>
+      {/* TOGGLE BUTTON */}
+      {questions.length > 0 && (
+        <div className="mt-8">
+          <button
+            onClick={() => setShowQuestions(!showQuestions)}
+            className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition"
+          >
+            {showQuestions ? "Hide Questions ↑" : "View Questions →"}
+          </button>
+        </div>
+      )}
+
+      {/* QUESTIONS TABLE */}
+      {showQuestions && (
+        <div className="mt-8 space-y-6">
+          {questions.map((q, index) => (
+            <div
+              key={index}
+              className="bg-slate-800 border border-white/5 rounded-xl p-6"
+            >
+              <h4 className="text-sm font-semibold text-white mb-3">
+                Q{index + 1}. {q.questionText}
+              </h4>
+
+              <div className="text-xs text-slate-400 space-y-2">
+
+                <div>
+                  <span className="font-semibold text-emerald-400">
+                    Correct Answer:
+                  </span>{" "}
+                  {q.correctAnswer}
+                </div>
+
+                <div>
+                  <span className="font-semibold text-yellow-400">
+                    Your Answer:
+                  </span>{" "}
+                  {q.userAnswer}
+                </div>
+
+                <div>
+                  {q.isCorrect ? (
+                    <span className="text-emerald-400 font-semibold">
+                      ✅ Correct
+                    </span>
+                  ) : (
+                    <span className="text-red-400 font-semibold">
+                      ❌ Incorrect
+                    </span>
+                  )}
+                </div>
+
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+// ===== Extract YouTube Study Topics from Markdown =====
+const extractYoutubeTopics = (markdownText) => {
+  if (!markdownText) return [];
+
+  const match = markdownText.match(
+    /YouTube Study Topics[\s\S]*?(?=\n#|\n##|$)/i
+  );
+
+  if (!match) return [];
+
+  const lines = match[0]
+    .split("\n")
+    .map(line => line.replace(/^\d+\.\s*/, "").trim())
+    .filter(line =>
+      line &&
+      !line.toLowerCase().includes("youtube")
+    );
+
+  return lines;
+};
 
 /* ================= MAIN PAGE ================= */
 
@@ -494,10 +572,28 @@ export default function AssessmentReport() {
   const [reports, setReports] = useState([]);
   const [selectedReport, setSelectedReport] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [youtubeVideos, setYoutubeVideos] = useState([]);
+  const [loadingVideos, setLoadingVideos] = useState(false);
+
 
   useEffect(() => {
     fetchReports();
   }, []);
+
+  // useEffect(() => {
+  //   if (!selectedReport) return;
+
+  //   const topics = extractYoutubeTopics(
+  //     selectedReport.aiReport?.technicalReport
+  //   );
+
+  //   if (topics.length > 0) {
+  //     fetchYoutubeRecommendations(topics.join(", "));
+  //   }
+
+  // }, [selectedReport]);
+
+
 
   const fetchReports = async () => {
     const userStr = localStorage.getItem("user");
@@ -519,6 +615,40 @@ export default function AssessmentReport() {
     }
 
     setLoading(false);
+  };
+  const fetchYoutubeRecommendations = async (reportText) => {
+    try {
+      setLoadingVideos(true);
+
+      const response = await fetch(
+        "https://youtube-recommender-x79p.onrender.com/api/recommendations",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            report: reportText,
+            max_videos: 6,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch YouTube recommendations");
+      }
+
+      const data = await response.json();
+
+      if (data?.recommendations) {
+        setYoutubeVideos(data.recommendations);
+      }
+
+    } catch (error) {
+      console.error("YouTube fetch error:", error);
+    } finally {
+      setLoadingVideos(false);
+    }
   };
 
   const formatDate = (dateString) =>
@@ -551,46 +681,46 @@ export default function AssessmentReport() {
           <div>Loading...</div>
         ) : (
           <div className="grid md:grid-cols-3 gap-8">
-  {reports.map((report) => (
-    <motion.div
-      key={report._id}
-      whileHover={{ y: -6 }}
-      className="bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-xl flex flex-col hover:border-indigo-500/30 transition"
-    >
-      {/* HEADER (same column block) */}
-      <div className="flex items-start justify-between">
-        
-        {/* LEFT SIDE */}
-        <div className="flex-1 pr-4">
-          <h2 className="text-lg font-bold text-white tracking-wide">
-            {report.technicalAssessment?.subject}
-          </h2>
+            {reports.map((report) => (
+              <motion.div
+                key={report._id}
+                whileHover={{ y: -6 }}
+                className="bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-xl flex flex-col hover:border-indigo-500/30 transition"
+              >
+                {/* HEADER (same column block) */}
+                <div className="flex items-start justify-between">
 
-          <div className="text-xs text-slate-500 mt-2">
-            {formatDate(report.createdAt)}
+                  {/* LEFT SIDE */}
+                  <div className="flex-1 pr-4">
+                    <h2 className="text-lg font-bold text-white tracking-wide">
+                      {report.technicalAssessment?.subject}
+                    </h2>
+
+                    <div className="text-xs text-slate-500 mt-2">
+                      {formatDate(report.createdAt)}
+                    </div>
+                  </div>
+
+                  {/* RIGHT SIDE SCORE */}
+                  <ScoreCircle
+                    obtained={report.aiReport?.overallScore}
+                    total={100}
+                    size="sm"
+                  />
+                </div>
+
+                {/* BUTTON */}
+                <div className="mt-8 flex justify-end">
+                  <button
+                    onClick={() => setSelectedReport(report)}
+                    className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition"
+                  >
+                    अहवाल पहा →
+                  </button>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        </div>
-
-        {/* RIGHT SIDE SCORE */}
-        <ScoreCircle
-          obtained={report.aiReport?.overallScore}
-          total={100}
-          size="sm"
-        />
-      </div>
-
-      {/* BUTTON */}
-      <div className="mt-8 flex justify-end">
-        <button
-          onClick={() => setSelectedReport(report)}
-          className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition"
-        >
-          अहवाल पहा →
-        </button>
-      </div>
-    </motion.div>
-  ))}
-</div>
 
         )}
 
@@ -636,6 +766,7 @@ export default function AssessmentReport() {
                     score={selectedReport.technicalAssessment?.percentage}
                     markdown={selectedReport.aiReport?.technicalReport}
                     accent="text-indigo-400"
+                    questions={selectedReport.technicalAssessment?.details || []}
                   />
 
                   <SectionCard
@@ -651,6 +782,59 @@ export default function AssessmentReport() {
                     markdown={selectedReport.aiReport?.situationReport}
                     accent="text-blue-400"
                   />
+
+
+                  {/* YOUTUBE RECOMMENDATIONS */}
+                  {/* <div className="bg-slate-900 border border-white/10 rounded-3xl p-10">
+                    <h2 className="text-2xl font-bold text-red-400 mb-8">
+                      Recommended Learning Videos
+                    </h2>
+
+                    {loadingVideos ? (
+                      <div className="text-slate-400">Loading videos...</div>
+                    ) : youtubeVideos.length === 0 ? (
+                      <div className="text-slate-500 text-sm">
+                        No recommendations available.
+                      </div>
+                    ) : (
+                      youtubeVideos.map((group, groupIndex) => (
+                        <div key={groupIndex} className="mb-10">
+                          <h3 className="text-lg font-semibold mb-4 text-white">
+                            {group.skill}
+                          </h3>
+
+                          <div className="grid md:grid-cols-3 gap-6">
+                            {group.videos.map((video, index) => {
+                              let videoId = null;
+                              try {
+                                const url = new URL(video.url);
+                                videoId =
+                                  url.searchParams.get("v") ||
+                                  url.pathname.split("/").pop();
+                              } catch { }
+
+                              return (
+                                <div
+                                  key={index}
+                                  className="bg-slate-800 rounded-xl overflow-hidden"
+                                >
+                                  <iframe
+                                    className="w-full h-48"
+                                    src={`https://www.youtube.com/embed/${videoId}`}
+                                    allowFullScreen
+                                  ></iframe>
+
+                                  <div className="p-4 text-sm font-semibold text-white">
+                                    {video.title}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div> */}
 
                   {/* FINAL SUMMARY */}
                   {/* <div className="bg-gradient-to-r from-indigo-600/10 to-purple-600/10 border border-white/10 rounded-3xl p-12">
@@ -683,7 +867,7 @@ export default function AssessmentReport() {
             </motion.div>
           )}
         </AnimatePresence>
-        
+
 
       </div>
     </>

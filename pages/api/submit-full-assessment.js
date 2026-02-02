@@ -269,7 +269,7 @@ Create final career readiness summary in Marathi.
 
       technicalAssessment: {
         subject: userInfo?.subject,
-        standard: userInfo?.standard,
+        // standard: userInfo?.standard,
         score: techScore,
         totalQuestions: techQ.length,
         percentage: techPercent,

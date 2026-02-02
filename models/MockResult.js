@@ -94,7 +94,7 @@ const MockResultSchema = new mongoose.Schema({
   // ================= 1️⃣ TECHNICAL =================
   technicalAssessment: {
     subject: String,
-    standard: String,
+    // standard: String,
 
     score: { type: Number, default: 0 },
     totalQuestions: { type: Number, default: 0 },

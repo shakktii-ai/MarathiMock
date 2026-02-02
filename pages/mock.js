@@ -3775,7 +3775,7 @@ export const fetchAssessmentQuestions = async (userDetails) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         type: "generate_questions",
-        standard: userDetails.standard,
+        // standard: userDetails.standard,
         subject: userDetails.subject
       })
     });
@@ -3832,11 +3832,11 @@ export const fetchSituationQuestions = async () => {
 // 1. INPUT STAGE 
 // ==========================================
 const InputStage = ({ onComplete }) => {
-    const [formData, setFormData] = useState({ standard: '', subject: '' });
+    const [formData, setFormData] = useState({ subject: '' });   //standard:''
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (formData.standard && formData.subject) {
+        if (formData.subject) {               //formData.standard
             onComplete(formData);
         } else {
             alert("कृपया सर्व माहिती भरा. (Please fill all details)");
@@ -3871,14 +3871,14 @@ const InputStage = ({ onComplete }) => {
                         required
                     >
                         <option value="" disabled>Select Subject</option>
-                        <option value="PCB">PCB (Printed Circuit Board)</option>
-                        <option value="AAO">AAO (Automotive Assembly Operator)</option>
+                        <option value="PCB">Printed Circuit Board</option>
+                        <option value="AAO">Automotive Assembly Operator</option>
                     </select>
                     <div className="pointer-events-none absolute bottom-5 right-5 text-indigo-400">
                         <IoIosArrowDown size={20} />
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
                         तुमची इयत्ता (Standard)
                     </label>
@@ -3890,7 +3890,7 @@ const InputStage = ({ onComplete }) => {
                         className="w-full bg-slate-950 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none placeholder-slate-500 transition-all" 
                         required 
                     />
-                </div>
+                </div> */}
 
                
 
@@ -4183,12 +4183,22 @@ const VoiceStage = ({ onComplete }) => {
         }
     };
 
+    // const stopRecognition = () => {
+    //     if (recognitionRef.current) { 
+    //         recognitionRef.current.stop(); 
+    //         recognitionRef.current = null; 
+    //     }
+    // };
+   
     const stopRecognition = () => {
-        if (recognitionRef.current) { 
-            recognitionRef.current.stop(); 
-            recognitionRef.current = null; 
-        }
-    };
+    if (recognitionRef.current) {
+        recognitionRef.current.onresult = null;
+        recognitionRef.current.onerror = null;
+        recognitionRef.current.onend = null;
+        recognitionRef.current.abort();   // 👈 use abort instead of stop
+        recognitionRef.current = null;
+    }
+};
 
     const togglePause = () => {
         if (status === 'listening') {
@@ -4201,17 +4211,43 @@ const VoiceStage = ({ onComplete }) => {
     };
 
     const handleNext = () => {
-        stopRecognition();
-        const finalAnswer = (permanentTranscript + interimTranscript).trim() || "No Audio Recorded";
-        const currentAnswerData = { question: questions[qIndex], answer: finalAnswer };
-        const updatedResults = { ...results, [qIndex]: currentAnswerData };
-        setResults(updatedResults);
+        // stopRecognition();
+        // const finalAnswer = (permanentTranscript + interimTranscript).trim() || "No Audio Recorded";
+        // const currentAnswerData = { question: questions[qIndex], answer: finalAnswer };
+        // const updatedResults = { ...results, [qIndex]: currentAnswerData };
+        // setResults(updatedResults);
         
-        if (qIndex < 4) { 
-            setQIndex(prev => prev + 1); 
-        } else { 
-            onComplete({ answers: updatedResults }); 
-        }
+        // if (qIndex < 4) { 
+        //     setQIndex(prev => prev + 1); 
+        // } else { 
+        //     onComplete({ answers: updatedResults }); 
+        // }
+        stopRecognition();
+
+setTimeout(() => {
+    const finalAnswer =
+      (permanentTranscript + interimTranscript).trim() ||
+      "No Audio Recorded";
+
+    const currentAnswerData = {
+        question: questions[qIndex],
+        answer: finalAnswer
+    };
+
+    const updatedResults = {
+        ...results,
+        [qIndex]: currentAnswerData
+    };
+
+    setResults(updatedResults);
+
+    if (qIndex < 4) {
+        setQIndex(prev => prev + 1);
+    } else {
+        onComplete({ answers: updatedResults });
+    }
+}, 200);   // 👈 small delay to avoid race condition
+
     };
 
     if (questions.length === 0) return <LoadingScreen text="मुलाखत तयार होत आहे..." color="purple" />;

@@ -1,3 +1,4 @@
+//pages/api/assessment.js
 import mongoose from "mongoose";
 import AssessmentReport from "@/models/assessmentReport";
 
@@ -84,7 +85,9 @@ No explanation.
 No extra text.
 
 Rules:
-- Exactly 20 MCQs
+- Exactly 20 MCQs related to exact selected subject ${subject}
+- Proper Questions with 4 options
+- Questions must be technically accurate and practical.
 - Marathi language only
 - Practical job-oriented
 - 4 options
@@ -98,18 +101,51 @@ Technical words must be Marathi pronunciation:
 
       const userPrompt = `
 Subject: ${subject}
+IMPORTANT:
+Generate questions STRICTLY related to ${subject} only.
+Do NOT include questions from any other trade.
+Do NOT mix PCB and Automobile concepts.
 
-Generate ITI Trade Theory MCQs.
+If Subject = Printed Circuit Board:
+Generate ITI-level practical questions based on:
+- PCB fabrication steps
+- Etching process
+- Soldering and flux
+- SMT and Through-hole technology
+- Multimeter testing
+- Continuity check
+- Short circuit troubleshooting
+- Copper thickness
+- PCB layout rules
+- ESD safety
 
-Return strictly:
+If Subject = Automotive Assembly Operator:
+Generate ITI-level practical questions based on:
+- Engine components and working
+- Piston and piston rings
+- Gearbox working
+- Clutch system
+- Torque wrench usage
+- Vernier caliper and micrometer
+- 5S and Kaizen
+- PPE safety
+- Workshop tools
+- Assembly line quality check
+
+Return strictly in this format:
 
 [
-  {
-    "id": 1,
-    "question": "मराठी प्रश्न",
-    "options": ["A","B","C","D"],
-    "correctAnswer": "Exact option text"
-  }
+ {
+  "id": 1,
+  "question": "Question in Marathi",
+  "options": [
+    "Option A",
+    "Option B",
+    "Option C",
+    "Option D"
+  ],
+  "correctAnswer": "Exact correct option text"
+ }
 ]
 `;
 
