@@ -170,7 +170,6 @@ export default function dashboard({ Logout, user }) {
                     )}
                   </li>
                 </Link>
-               </Link>
                 <Link href={'/assessmentReport'}>
               <li className="hover:text-pink-400 cursor-pointer transition-all duration-300 relative group">
                 असेसमेंट रिपोर्ट
