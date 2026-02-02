@@ -65,7 +65,7 @@ function Practices() {
           <div className="flex items-center justify-between mb-12">
             <div>
               <button 
-                onClick={() => router.push('/dashboard')} 
+                onClick={() => router.push('/')} 
                 className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
               >
                 <img src="/2.svg" alt="Back" className="w-8 h-8 mr-2" />
