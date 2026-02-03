@@ -79,6 +79,12 @@ export default function dashboard({ Logout, user }) {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-500 group-hover:w-full transition-all duration-300"></span>
               </li>
             </Link>
+            <Link href={'/suggestionVideos'}>
+              <li className="hover:text-pink-400 cursor-pointer transition-all duration-300 relative group">
+               व्हिडिओ ट्युटोरियल्स
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-500 group-hover:w-full transition-all duration-300"></span>
+              </li>
+            </Link>
           </ul>
           
           {/* Desktop User Section */}

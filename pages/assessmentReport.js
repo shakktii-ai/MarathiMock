@@ -545,24 +545,20 @@ function SectionCard({ title, score, markdown, accent, questions = [] }) {
   );
 }
 // ===== Extract YouTube Study Topics from Markdown =====
-const extractYoutubeTopics = (markdownText) => {
-  if (!markdownText) return [];
+const extractYoutubeTopics = (text) => {
+  if (!text) return [];
 
-  const match = markdownText.match(
-    /YouTube Study Topics[\s\S]*?(?=\n#|\n##|$)/i
+  const match = text.match(
+    /3 YouTube Study Topics[\s\S]*?(?=\nकम्युनिकेशन|\nसिच्युएशन|$)/i
   );
 
   if (!match) return [];
 
-  const lines = match[0]
+  return match[0]
     .split("\n")
-    .map(line => line.replace(/^\d+\.\s*/, "").trim())
-    .filter(line =>
-      line &&
-      !line.toLowerCase().includes("youtube")
-    );
-
-  return lines;
+    .slice(1) // remove heading line
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
 };
 
 /* ================= MAIN PAGE ================= */
@@ -580,17 +576,23 @@ export default function AssessmentReport() {
     fetchReports();
   }, []);
 
-  // useEffect(() => {
-  //   if (!selectedReport) return;
+//   useEffect(() => {
+//     if (!selectedReport) return;
+//  setYoutubeVideos([]); 
+//     const topics = extractYoutubeTopics(
+//       selectedReport.aiReport?.technicalReport
+//     );
+// console.log('topics:',topics);
+//     if (topics.length > 0) {
+//       fetchYoutubeRecommendations(topics.join(", "));
+//     }
 
-  //   const topics = extractYoutubeTopics(
-  //     selectedReport.aiReport?.technicalReport
-  //   );
+  // const fullReport = `
+  // ${selectedReport.aiReport?.technicalReport || ""}
+ 
+  // `;
 
-  //   if (topics.length > 0) {
-  //     fetchYoutubeRecommendations(topics.join(", "));
-  //   }
-
+  // fetchYoutubeRecommendations(fullReport);
   // }, [selectedReport]);
 
 
@@ -784,8 +786,8 @@ export default function AssessmentReport() {
                   />
 
 
-                  {/* YOUTUBE RECOMMENDATIONS */}
-                  {/* <div className="bg-slate-900 border border-white/10 rounded-3xl p-10">
+                  {/* YOUTUBE RECOMMENDATIONS 
+                  <div className="bg-slate-900 border border-white/10 rounded-3xl p-10">
                     <h2 className="text-2xl font-bold text-red-400 mb-8">
                       Recommended Learning Videos
                     </h2>
@@ -834,7 +836,8 @@ export default function AssessmentReport() {
                         </div>
                       ))
                     )}
-                  </div> */}
+                  </div>
+                  */}
 
                   {/* FINAL SUMMARY */}
                   {/* <div className="bg-gradient-to-r from-indigo-600/10 to-purple-600/10 border border-white/10 rounded-3xl p-12">

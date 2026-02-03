@@ -3908,7 +3908,7 @@ const InputStage = ({ onComplete }) => {
 // ==========================================
 // 2. MCQ STAGE 
 // ==========================================
-const MCQStage = ({ title, fetchData, themeColor, onComplete }) => {
+const MCQStage = ({ title, fetchData, themeColor, onComplete , isFinalStep = false}) => {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -4037,7 +4037,7 @@ const MCQStage = ({ title, fetchData, themeColor, onComplete }) => {
                             onClick={handleSubmit} 
                             className={`px-8 py-3 bg-${themeColor}-600 hover:bg-${themeColor}-500 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105`}
                         >
-                            पुढील टप्पा <IoMdCheckmarkCircle size={20} />
+                             {isFinalStep ? "सबमिट करा" : "पुढील टप्पा"}  <IoMdCheckmarkCircle size={20} />
                         </button>
                     ) : (
                         <button 
@@ -4432,6 +4432,7 @@ export default function FullAssessmentFlow() {
                                 fetchData={() => fetchSituationQuestions()}
                                 themeColor="emerald" 
                                 onComplete={(data) => finalizeAndSubmit(data)} 
+                                 isFinalStep={true} 
                             />
                         </motion.div>
                     )}

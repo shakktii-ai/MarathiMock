@@ -426,6 +426,7 @@ Rules:
 - 4 options per question.
 - Only one correct answer.
 - No repetition.
+- stictly all questions are different no repetition.
 - Do NOT use "All of the above" or "वरीलपैकी सर्व".
 `;
 
