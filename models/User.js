@@ -14,7 +14,8 @@ const UserSchema = new mongoose.Schema({
     resetTokenExpiry: { type: Date },
     no_of_interviews: {type :Number , required:true, default:1 },
     no_of_interviews_completed: {type :Number , required:true, default:0 },
-    
+    no_of_tests: { type: Number, required: true, default: 2 }
+
   },{timestamps:true});
 
 

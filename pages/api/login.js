@@ -6,12 +6,19 @@ import jwt from "jsonwebtoken";
 const handler = async (req, res) => {
     if (req.method === "POST") {
         try {
-            let user = await User.findOne({ email: req.body.email });
+            // let user = await User.findOne({ email: req.body.email });
+            const { identifier} = req.body;
 
+        let user;
+ if (identifier.includes("@")) {
+            user = await User.findOne({ email: identifier });
+        } else {
+            user = await User.findOne({ mobileNo: identifier });
+        }
             if (!user) {
                 return res.status(401).json({
                     success: false,
-                    error: "No user found with this email. Please check your credentials."
+                    error: "No user found with this email  or mobile number. Please check your credentials."
                 });
             }
 

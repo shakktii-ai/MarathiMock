@@ -171,7 +171,7 @@ export default function SuggestedVideos() {
         {/* EMPTY STATE */}
         {!loading && videoGroups.length === 0 && (
           <div className="text-center py-20 bg-slate-900/50 rounded-3xl border border-white/5 mx-auto max-w-2xl">
-            <div className="text-6xl mb-4">📺</div>
+           
             <h3 className="text-2xl font-bold text-slate-300">कोणतेही व्हिडिओ सापडले नाहीत</h3>
             <p className="text-slate-500 mt-2">तुमची पहिली चाचणी पूर्ण केल्यानंतर येथे व्हिडिओ दिसतील.</p>
           </div>

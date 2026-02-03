@@ -78,7 +78,7 @@ export default function Instruction() {
             onClick={handleStart}
             className="bg-indigo-600 hover:bg-indigo-700 transition px-8 py-4 rounded-xl font-semibold text-sm"
           >
-            परीक्षा सुरू करा →
+           सुरू करा →
           </button>
         </div>
         </div>

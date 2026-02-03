@@ -4275,7 +4275,7 @@ setTimeout(() => {
                         </button>
                     )}
                     <button onClick={handleNext} disabled={status === 'speaking_question'} className="px-10 py-4 bg-white text-black hover:bg-slate-200 rounded-full font-bold flex items-center gap-3">
-                        {qIndex === 4 ? "Finish Interview" : "Next"} <FaArrowRight />
+                        {qIndex === 4 ? "मुलाखत पूर्ण करा" : "पुढील (Next)"} <FaArrowRight />
                     </button>
                 </div>
             </div>
@@ -4320,10 +4320,36 @@ export default function FullAssessmentFlow() {
     
     const [loggedInUser, setLoggedInUser] = useState(null);
 
-    useEffect(() => {
-        const userStr = localStorage.getItem('user');
-        if (userStr) setLoggedInUser(JSON.parse(userStr));
-    }, []);
+   useEffect(() => {
+    const userStr = localStorage.getItem('user');
+
+    if (!userStr) {
+        router.push("/login");
+        return;
+    }
+
+    const user = JSON.parse(userStr);
+    setLoggedInUser(user);
+
+    // CHECK TEST LIMIT
+    const checkTestLimit = async () => {
+        try {
+            const res = await fetch(`/api/check-test-limit?email=${user.email}`);
+            const data = await res.json();
+
+            if (data.remainingTests <= 0) {
+                alert("तुमचे सर्व टेस्ट क्रेडिट संपले आहेत.");
+                router.push("/");
+            }
+        } catch (err) {
+            console.error("Limit check failed", err);
+        }
+    };
+
+    checkTestLimit();
+
+}, []);
+
 
     const handleInputComplete = (data) => {
         setFormUserInfo(data);
