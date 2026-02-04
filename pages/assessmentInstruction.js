@@ -15,12 +15,20 @@ export default function Instruction() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white px-6 py-20">
-      
+    <div className="min-h-screen bg-slate-950 text-white p-4">
+      <div className="mb-4">
+              <button 
+                onClick={() => router.push('/')} 
+                className="flex items-center text-white "
+              >
+                <img src="/2.svg" alt="Back" className="w-8 h-8  text-white " />
+                <span className="text-lg font-medium underline">मागे जा</span>
+              </button>
+            </div>
       <div className="max-w-4xl mx-auto">
         
         {/* Header */}
-        <div className="mb-16">
+        <div className="mb-8">
           <h1 className="text-4xl font-black mb-4">
             परीक्षा सूचना
           </h1>
@@ -30,7 +38,7 @@ export default function Instruction() {
         </div>
 
         {/* Instruction Card */}
-        <div className="bg-slate-900 border border-white/10 rounded-3xl p-12 space-y-10">
+        <div className="bg-slate-900 border border-white/10 rounded-3xl p-8 space-y-6">
 
           {/* Section 1 */}
           <div>
@@ -65,14 +73,14 @@ export default function Instruction() {
           </div>
 
           {/* Important Note */}
-          <div className="bg-indigo-600/10 border border-indigo-500/20 rounded-2xl p-6">
+          {/* <div className="bg-indigo-600/10 border border-indigo-500/20 rounded-2xl p-6">
             <h2 className="text-lg font-bold mb-2">
               महत्वाची सूचना
             </h2>
             <p className="text-slate-300 text-sm leading-relaxed">
               शांतपणे आणि लक्षपूर्वक उत्तरे द्या.
             </p>
-          </div>
+          </div> */}
   <div className="mt-16 text-right">
           <button
             onClick={handleStart}

@@ -220,4 +220,14 @@ img, video, iframe {
   .button:hover {
     background-color: #0056b3;
   }
-  
+  .no-copy {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+.no-copy * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -ms-user-select: none !important;
+}

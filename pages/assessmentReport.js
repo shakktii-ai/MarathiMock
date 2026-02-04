@@ -393,7 +393,7 @@ import Head from "next/head";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
-
+import { IoMdArrowBack } from "react-icons/io";
 /* ================= SCORE CIRCLE ================= */
 
 const ScoreCircle = ({ obtained = 0, total = 100, size = "sm" }) => {
@@ -667,7 +667,15 @@ export default function AssessmentReport() {
       </Head>
 
       <div className="min-h-screen bg-slate-950 text-white px-8 py-16">
-
+<div className="mb-4">
+              <button 
+                onClick={() => router.push('/')} 
+                className="flex items-center text-white "
+              >
+                <IoMdArrowBack className="w-8 h-8  text-white " />
+               
+              </button>
+            </div>
         {/* HEADER */}
         <div className="mb-16">
           <h1 className="text-4xl font-black mb-4">

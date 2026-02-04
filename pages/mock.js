@@ -53,7 +53,7 @@
 
 // // function InterviewApp() {
 // //     const router = useRouter();
-    
+
 // //     // --- State: App Mode ---
 // //     // Modes: 'INSTRUCTION' | 'INTERVIEW' | 'COMPLETED'
 // //     const [appMode, setAppMode] = useState('INSTRUCTION'); 
@@ -161,30 +161,30 @@
 // //             alert("Please complete both Speaker and Microphone tests first.");
 // //             return;
 // //         }
-        
+
 // //         // 1. Generate 5 random questions
 // //         const selectedQuestions = getRandomQuestions(5);
 // //         setInterviewQuestions(selectedQuestions);
-        
+
 // //         // 2. Switch Mode
 // //         setAppMode('INTERVIEW');
-        
+
 // //         // 3. Trigger first question read-aloud (small delay for UI transition)
 // //         setTimeout(() => speakQuestion(selectedQuestions[0]), 1000);
 // //     };
 
 // //     const speakQuestion = (text) => {
 // //         if (!synthRef.current) return;
-        
+
 // //         // Cancel any ongoing speech
 // //         synthRef.current.cancel();
 
 // //         const utterance = new SpeechSynthesisUtterance(text);
 // //         utterance.rate = 0.9; // Slightly slower for clarity
-        
+
 // //         utterance.onstart = () => setIsSpeakingQuestion(true);
 // //         utterance.onend = () => setIsSpeakingQuestion(false);
-        
+
 // //         synthRef.current.speak(utterance);
 // //     };
 
@@ -210,7 +210,7 @@
 // //         recognition.lang = 'en-US';
 
 // //         recognition.onstart = () => setIsListening(true);
-        
+
 // //         recognition.onresult = (event) => {
 // //             let finalTranscript = '';
 // //             for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -255,7 +255,7 @@
 // //             question: currentQ,
 // //             answer: transcript || "No answer provided."
 // //         };
-        
+
 // //         const updatedResults = [...results, newResult];
 // //         setResults(updatedResults);
 // //         setTranscript(''); // Clear buffer
@@ -311,7 +311,7 @@
 // //                     {/* Device Check Card */}
 // //                     <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-gray-100">
 // //                         <h3 className="text-lg font-bold mb-6 text-gray-800">System Check</h3>
-                        
+
 // //                         {/* Speaker Test */}
 // //                         <div className="flex items-center justify-between mb-6 p-4 bg-gray-50 rounded-xl">
 // //                             <div className="flex items-center">
@@ -374,7 +374,7 @@
 // //     // ==========================================
 // //     if (appMode === 'INTERVIEW') {
 // //         const currentQ = interviewQuestions[currentQuestionIndex];
-        
+
 // //         return (
 // //             <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 text-white relative overflow-hidden">
 // //                 {/* Background Blobs for Visual Appeal */}
@@ -423,7 +423,7 @@
 // //                             {isListening && (
 // //                                 <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-20 animate-ping"></span>
 // //                             )}
-                            
+
 // //                             <button
 // //                                 onClick={toggleRecording}
 // //                                 className={`relative w-20 h-20 rounded-full flex items-center justify-center text-2xl shadow-2xl transition-all duration-300 ${
@@ -489,7 +489,7 @@
 // //                                     </div>
 // //                                 ))}
 // //                             </div>
-                            
+
 // //                             <div className="mt-8 flex justify-center">
 // //                                 <button 
 // //                                     onClick={() => window.location.reload()}
@@ -1100,9 +1100,9 @@
 //                 subject: userDetails.subject
 //             })
 //         });
-        
+
 //         const data = await response.json();
-        
+
 //         if (data.result && Array.isArray(data.result)) {
 //             return data.result;
 //         } else if (data.questions) {
@@ -1212,7 +1212,7 @@
 //         if (Object.keys(answers).length < questions.length) {
 //             if(!confirm("तुम्ही सर्व प्रश्न सोडवले नाहीत. तरीही सबमिट करायचे आहे का?")) return;
 //         }
-        
+
 //         const resultPayload = {
 //             questions: questions,
 //             answers: answers
@@ -1221,7 +1221,7 @@
 //     };
 
 //     if (loading) return <LoadingScreen text={`${title} तयार होत आहे...`} color={themeColor} />;
-    
+
 //     if (!questions || questions.length === 0) return <div className="text-center text-white">No questions loaded.</div>;
 
 //     const currentQ = questions[currentQIndex];
@@ -1317,7 +1317,7 @@
 //     const testMic = () => {
 //         setMicStatus('testing');
 //         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        
+
 //         if (!SpeechRecognition) {
 //             alert("Browser Mic Not Supported (Try Chrome)");
 //             setMicStatus('success'); // Bypass for debugging
@@ -1334,7 +1334,7 @@
 //             alert("Mic Error. Please allow permissions.");
 //             setMicStatus('idle');
 //         };
-        
+
 //         try {
 //             recognition.start();
 //             // Fallback: If no sound in 4s, assume failed or stop
@@ -1390,7 +1390,7 @@
 //     const [transcript, setTranscript] = useState('');
 //     const [questions, setQuestions] = useState([]);
 //     const [results, setResults] = useState({}); 
-    
+
 //     const recognitionRef = useRef(null);
 
 //     // Init: Random 5 questions
@@ -1412,7 +1412,7 @@
 
 //     const playQuestion = (index) => {
 //         if (index >= questions.length) return;
-        
+
 //         setTranscript('');
 //         setIsRecording(false);
 //         if (recognitionRef.current) recognitionRef.current.stop();
@@ -1442,7 +1442,7 @@
 //             }
 //             setTranscript(prev => prev + final);
 //         };
-        
+
 //         try {
 //             recognition.start();
 //         } catch(e) { console.error("Mic start error", e); }
@@ -1457,7 +1457,7 @@
 //             question: questions[qIndex], 
 //             answer: transcript.trim() || "उत्तर रेकॉर्ड केले नाही (No Audio)" 
 //         };
-        
+
 //         const updatedResults = { ...results, [qIndex]: currentAnswerData };
 //         setResults(updatedResults);
 
@@ -1536,7 +1536,7 @@
 //     const [stage, setStage] = useState('input'); 
 //     const [userData, setUserData] = useState(null);
 //     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+
 //     // We keep data in a REF or State to survive re-renders, but State is safer for async updates
 //     const [masterData, setMasterData] = useState({ assessment: null, interview: null, situation: null });
 
@@ -1552,7 +1552,7 @@
 
 //     const formatAndSubmitData = async (finalSituationData) => {
 //         setIsSubmitting(true);
-        
+
 //         // 1. Prepare Payload
 //         const payload = {
 //             email: "student@example.com", // Replace with real auth email if available
@@ -1607,7 +1607,7 @@
 
 //             <main className="relative z-10 container mx-auto px-4 py-8 min-h-[85vh] flex flex-col justify-center">
 //                 <AnimatePresence mode="wait">
-                    
+
 //                     {stage === 'input' && (
 //                         <InputStage key="input" onComplete={handleInputComplete} />
 //                     )}
@@ -1791,7 +1791,7 @@
 //             className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2rem] shadow-2xl relative overflow-hidden"
 //         >
 //             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-            
+
 //             <div className="text-center mb-10">
 //                 <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
 //                     <FaUserGraduate />
@@ -1940,7 +1940,7 @@
 //         setMicStatus('testing');
 //         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 //         if (!SpeechRecognition) { alert("Mic Not Supported"); setMicStatus('success'); return; }
-        
+
 //         const recognition = new SpeechRecognition();
 //         recognition.lang = 'mr-IN';
 //         recognition.onresult = () => { setMicStatus('success'); recognition.stop(); };
@@ -2097,7 +2097,7 @@
 //     const [formUserInfo, setFormUserInfo] = useState(null); // Data from the input form
 //     const [isSubmitting, setIsSubmitting] = useState(false);
 //     const [masterData, setMasterData] = useState({ assessment: null, interview: null, situation: null });
-    
+
 //     // --- AUTH STATE ---
 //     const [loggedInUser, setLoggedInUser] = useState(null); // User from LocalStorage
 //     const [authToken, setAuthToken] = useState(null); // Token from LocalStorage
@@ -2121,7 +2121,7 @@
 
 //     const formatAndSubmitData = async (finalSituationData) => {
 //         setIsSubmitting(true);
-        
+
 //         // --- 2. FIXED: Use Dynamic Email ---
 //         const userEmail = loggedInUser?.email || "anonymous@student.com";
 
@@ -2179,7 +2179,7 @@
 //             <main className="relative z-10 container mx-auto px-4 py-8 min-h-[85vh] flex flex-col justify-center">
 //                 <AnimatePresence mode="wait">
 //                     {stage === 'input' && <InputStage key="input" onComplete={handleInputComplete} />}
-                    
+
 //                     {stage === 'assessment' && (
 //                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
 //                             <MCQStage title="टेक्निकल असेसमेंट" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
@@ -2264,7 +2264,7 @@
 //     const utterance = new SpeechSynthesisUtterance(text);
 //     utterance.rate = 0.9; 
 //     utterance.lang = 'mr-IN'; 
-    
+
 //     // Try to find a Marathi or Hindi voice
 //     const voices = window.speechSynthesis.getVoices();
 //     const specificVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
@@ -2327,7 +2327,7 @@
 //             className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden"
 //         >
 //             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-            
+
 //             <div className="text-center mb-8">
 //                 <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
 //                     <FaUserGraduate />
@@ -2415,9 +2415,9 @@
 //     const totalQuestions = questions.length;
 //     const answeredCount = Object.keys(answers).length;
 //     const progressPercentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
-    
+
 //     if (loading) return <LoadingScreen text={`${title} तयार होत आहे...`} color={themeColor} />;
-    
+
 //     const currentQ = questions[currentQIndex];
 
 //     return (
@@ -2486,7 +2486,7 @@
 //                     >
 //                         मागील (Previous)
 //                     </button>
-                    
+
 //                     {currentQIndex === totalQuestions - 1 ? (
 //                         <button 
 //                             onClick={handleSubmit} 
@@ -2532,13 +2532,13 @@
 //             setMicStatus('error'); 
 //             return; 
 //         }
-        
+
 //         const recognition = new SpeechRecognition();
 //         recognition.lang = 'mr-IN';
 //         recognition.onresult = () => { setMicStatus('success'); recognition.stop(); };
 //         recognition.onerror = () => { setMicStatus('idle'); alert("Mic Error. Check permissions."); };
 //         recognition.start();
-        
+
 //         // Auto-stop after 4s if no sound
 //         setTimeout(() => { if(micStatus !== 'success') recognition.stop(); }, 4000);
 //     };
@@ -2549,7 +2549,7 @@
 //         <div className="max-w-xl mx-auto bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2.5rem] shadow-2xl text-center">
 //             <h2 className="text-3xl font-bold text-white mb-2">सिस्टम चेक</h2>
 //             <p className="text-slate-400 mb-8">मुलाखत सुरू करण्यापूर्वी डिव्हाइस तपासा.</p>
-            
+
 //             <div className="space-y-4 mb-10">
 //                 {/* Speaker Check */}
 //                 <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${speakerStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
@@ -2601,14 +2601,14 @@
 // const VoiceStage = ({ onComplete }) => {
 //     const [qIndex, setQIndex] = useState(0);
 //     const [status, setStatus] = useState('preparing'); // preparing, speaking_question, listening, paused
-    
+
 //     // Transcript State
 //     const [permanentTranscript, setPermanentTranscript] = useState(''); // Stores text before pause
 //     const [interimTranscript, setInterimTranscript] = useState(''); // Stores text during current session
-    
+
 //     const [questions, setQuestions] = useState([]);
 //     const [results, setResults] = useState({}); 
-    
+
 //     const recognitionRef = useRef(null);
 
 //     // 1. Initialize Questions
@@ -2627,7 +2627,7 @@
 
 //     const playQuestion = (index) => {
 //         if (index >= questions.length) return;
-        
+
 //         stopRecognition();
 //         setPermanentTranscript('');
 //         setInterimTranscript('');
@@ -2666,7 +2666,7 @@
 //         };
 
 //         recognition.onerror = (e) => console.error("Rec Error", e);
-        
+
 //         try { recognition.start(); } catch(e) { console.error(e); }
 //     };
 
@@ -2694,10 +2694,10 @@
 
 //     const handleNext = () => {
 //         stopRecognition();
-        
+
 //         // Combine all text
 //         const finalAnswer = (permanentTranscript + interimTranscript).trim() || "No Audio Recorded";
-        
+
 //         const currentAnswerData = { question: questions[qIndex], answer: finalAnswer };
 //         const updatedResults = { ...results, [qIndex]: currentAnswerData };
 //         setResults(updatedResults);
@@ -2726,7 +2726,7 @@
 
 //             {/* Main Card */}
 //             <div className="relative w-full bg-slate-900/80 border border-slate-700 p-12 rounded-[2rem] shadow-2xl text-center backdrop-blur-md">
-                
+
 //                 <h2 className="text-2xl md:text-3xl text-white font-bold mb-10 leading-normal min-h-[3rem]">
 //                     {questions[qIndex]}
 //                 </h2>
@@ -2844,7 +2844,7 @@
 //     const [formUserInfo, setFormUserInfo] = useState(null); 
 //     const [isSubmitting, setIsSubmitting] = useState(false);
 //     const [masterData, setMasterData] = useState({ assessment: null, interview: null, situation: null });
-    
+
 //     // Auth
 //     const [loggedInUser, setLoggedInUser] = useState(null);
 //     const [authToken, setAuthToken] = useState(null);
@@ -2908,7 +2908,7 @@
 //     return (
 //         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
 //             <Head><title>Full Assessment | Shakkti AI</title></Head>
-            
+
 //             {/* Background Ambience */}
 //             <div className="fixed inset-0 z-0 pointer-events-none">
 //                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
@@ -2928,7 +2928,7 @@
 //             <main className="relative z-10 container mx-auto px-4 py-12 min-h-[85vh] flex flex-col justify-center">
 //                 <AnimatePresence mode="wait">
 //                     {stage === 'input' && <InputStage key="input" onComplete={handleInputComplete} />}
-                    
+
 //                     {stage === 'assessment' && (
 //                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
 //                             <MCQStage title="टेक्निकल असेसमेंट" endpoint="/api/assessment" userData={formUserInfo} themeColor="indigo" onComplete={(data) => { handleStageData('assessment', data); setStage('interview_intro'); }} />
@@ -3018,7 +3018,7 @@
 //     const utterance = new SpeechSynthesisUtterance(text);
 //     utterance.rate = 0.9; 
 //     utterance.lang = 'mr-IN'; 
-    
+
 //     const voices = window.speechSynthesis.getVoices();
 //     const specificVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
 //     if (specificVoice) utterance.voice = specificVoice;
@@ -3035,7 +3035,7 @@
 //         // Note: Your backend Situation API seemed to prefer GET or POST. 
 //         // We will stick to the method that matches your specific backend route handler logic.
 //         // Assuming your updated backend handles POST for generation:
-        
+
 //         const response = await fetch(endpoint, {
 //             method: 'POST',
 //             headers: { 'Content-Type': 'application/json' },
@@ -3051,11 +3051,11 @@
 //         }
 
 //         const data = await response.json();
-        
+
 //         // Robust check for array data
 //         if (data.result && Array.isArray(data.result) && data.result.length > 0) return data.result;
 //         if (data.questions && Array.isArray(data.questions) && data.questions.length > 0) return data.questions;
-        
+
 //         throw new Error("Invalid or Empty Data Format");
 
 //     } catch (error) {
@@ -3150,7 +3150,7 @@
 //             className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden"
 //         >
 //             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-            
+
 //             <div className="text-center mb-8">
 //                 <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
 //                     <FaUserGraduate />
@@ -3217,7 +3217,7 @@
 
 //     useEffect(() => {
 //         let isMounted = true;
-        
+
 //         const load = async () => {
 //             setLoading(true);
 //             setError(null);
@@ -3242,9 +3242,9 @@
 //                 }
 //             }
 //         };
-        
+
 //         load();
-        
+
 //         return () => { isMounted = false; };
 //     }, [endpoint, userData]);
 
@@ -3264,10 +3264,10 @@
 //     const totalQuestions = questions.length;
 //     const answeredCount = Object.keys(answers).length;
 //     const progressPercentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
-    
+
 //     // Strict Loading View - No Garbage Values
 //     if (loading) return <LoadingScreen text={`${title} तयार होत आहे... (Generating Questions)`} color={themeColor} />;
-    
+
 //     if (questions.length === 0) return <div className="text-center text-white">No questions loaded. Please refresh.</div>;
 
 //     const currentQ = questions[currentQIndex];
@@ -3338,7 +3338,7 @@
 //                     >
 //                         मागील (Previous)
 //                     </button>
-                    
+
 //                     {currentQIndex === totalQuestions - 1 ? (
 //                         <button 
 //                             onClick={handleSubmit} 
@@ -3384,7 +3384,7 @@
 //             setMicStatus('error'); 
 //             return; 
 //         }
-        
+
 //         const recognition = new SpeechRecognition();
 //         recognition.lang = 'mr-IN';
 //         recognition.onresult = () => { setMicStatus('success'); recognition.stop(); };
@@ -3399,7 +3399,7 @@
 //         <div className="max-w-xl mx-auto bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2.5rem] shadow-2xl text-center">
 //             <h2 className="text-3xl font-bold text-white mb-2">सिस्टम चेक</h2>
 //             <p className="text-slate-400 mb-8">मुलाखत सुरू करण्यापूर्वी डिव्हाइस तपासा.</p>
-            
+
 //             <div className="space-y-4 mb-10">
 //                 <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${speakerStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
 //                     <div className="flex items-center gap-4">
@@ -3559,14 +3559,14 @@
 //     const [stage, setStage] = useState('input'); 
 //     const [formUserInfo, setFormUserInfo] = useState(null); 
 //     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+
 //     // Master State to hold ALL data locally before final submit
 //     const [masterData, setMasterData] = useState({ 
 //         assessment: null, 
 //         interview: null, 
 //         situation: null 
 //     });
-    
+
 //     // Auth
 //     const [loggedInUser, setLoggedInUser] = useState(null);
 //     const [authToken, setAuthToken] = useState(null);
@@ -3634,7 +3634,7 @@
 //     return (
 //         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
 //             <Head><title>Full Assessment | Shakkti AI</title></Head>
-            
+
 //             <div className="fixed inset-0 z-0 pointer-events-none">
 //                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
 //                 <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px]"></div>
@@ -3651,7 +3651,7 @@
 //             <main className="relative z-10 container mx-auto px-4 py-12 min-h-[85vh] flex flex-col justify-center">
 //                 <AnimatePresence mode="wait">
 //                     {stage === 'input' && <InputStage key="input" onComplete={handleInputComplete} />}
-                    
+
 //                     {/* 1. Assessment Stage - Post to create questions, then store local */}
 //                     {stage === 'assessment' && (
 //                         <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
@@ -3713,18 +3713,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    IoMdMicrophone, 
+import { MdOutlineHome } from "react-icons/md";
+import {
+    IoMdMicrophone,
     IoMdCheckmarkCircle,
     IoIosArrowDown,
     IoMdPause,
     IoMdPlay
 } from 'react-icons/io';
-import { 
-    FaVolumeUp, 
-    FaMicrophone, 
-    FaArrowRight, 
-    FaBrain, 
+import {
+    FaVolumeUp,
+    FaMicrophone,
+    FaArrowRight,
+    FaBrain,
     FaUserGraduate,
 } from 'react-icons/fa';
 
@@ -3733,29 +3734,29 @@ import {
 // ==========================================
 
 const INTERVIEW_POOL = [
-    "तुमच्याबद्दल थोडक्यात सांगा.", 
-    "तुम्हाला आमच्या कंपनीत काम का करायचे आहे?", 
+    "तुमच्याबद्दल थोडक्यात सांगा.",
+    "तुम्हाला आमच्या कंपनीत काम का करायचे आहे?",
     "तुमच्या जमेच्या बाजू (Strengths) आणि कमकुवत बाजू (Weaknesses) कोणत्या आहेत?",
-    "पुढील ३-५ वर्षांत तुम्ही स्वतःला कुठे पाहता?", 
-    "आम्ही तुमची निवड का करावी?", 
-    "तुम्ही कामाचा ताण किंवा दबाव कसा हाताळता?", 
-    "एखाद्या कठीण प्रसंगाचे वर्णन करा ज्याचा तुम्ही सामना केला आणि तो कसा सोडवला?", 
-    "तुम्हाला काम करण्यासाठी कोणती गोष्ट प्रेरित करते?", 
-    "टीममधील मतभेद किंवा संघर्ष तुम्ही कसे हाताळता?", 
-    "तुम्ही स्वतंत्रपणे आणि टीममध्ये काम करण्यास तयार आहात का?" 
+    "पुढील ३-५ वर्षांत तुम्ही स्वतःला कुठे पाहता?",
+    "आम्ही तुमची निवड का करावी?",
+    "तुम्ही कामाचा ताण किंवा दबाव कसा हाताळता?",
+    "एखाद्या कठीण प्रसंगाचे वर्णन करा ज्याचा तुम्ही सामना केला आणि तो कसा सोडवला?",
+    "तुम्हाला काम करण्यासाठी कोणती गोष्ट प्रेरित करते?",
+    "टीममधील मतभेद किंवा संघर्ष तुम्ही कसे हाताळता?",
+    "तुम्ही स्वतंत्रपणे आणि टीममध्ये काम करण्यास तयार आहात का?"
 ];
 
 // Text-to-Speech Utility
 const speakText = (text, onEndCallback) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-        if(onEndCallback) onEndCallback();
+        if (onEndCallback) onEndCallback();
         return;
     }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9; 
-    utterance.lang = 'mr-IN'; 
-    
+    utterance.rate = 0.9;
+    utterance.lang = 'mr-IN';
+
     // Attempt to select a local voice (Hindi/Marathi)
     const voices = window.speechSynthesis.getVoices();
     const specificVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
@@ -3769,62 +3770,62 @@ const speakText = (text, onEndCallback) => {
 // --- API FUNCTIONS ---
 
 export const fetchAssessmentQuestions = async (userDetails) => {
-  try {
-    const res = await fetch("/api/assessment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "generate_questions",
-        // standard: userDetails.standard,
-        subject: userDetails.subject
-      })
-    });
+    try {
+        const res = await fetch("/api/assessment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                type: "generate_questions",
+                // standard: userDetails.standard,
+                subject: userDetails.subject
+            })
+        });
 
-    if (!res.ok) throw new Error(await res.text());
+        if (!res.ok) throw new Error(await res.text());
 
-    const data = await res.json();
-    const resultList = data.result || data.questions; // Handle potential schema variations
+        const data = await res.json();
+        const resultList = data.result || data.questions; // Handle potential schema variations
 
-    if (!resultList || !Array.isArray(resultList)) {
-      throw new Error("Invalid assessment response format");
+        if (!resultList || !Array.isArray(resultList)) {
+            throw new Error("Invalid assessment response format");
+        }
+
+        return resultList.map((q, index) => ({
+            id: q.id ?? index + 1,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer
+        }));
+
+    } catch (err) {
+        console.error("Assessment API error:", err);
+        throw err;
     }
-
-    return resultList.map((q, index) => ({
-      id: q.id ?? index + 1,
-      question: q.question,
-      options: q.options,
-      correctAnswer: q.correctAnswer
-    }));
-
-  } catch (err) {
-    console.error("Assessment API error:", err);
-    throw err;
-  }
 };
 
 export const fetchSituationQuestions = async () => {
-  try {
-    const res = await fetch("/api/situationque"); // ✅ GET by default
+    try {
+        const res = await fetch("/api/situationque"); // ✅ GET by default
 
-    if (!res.ok) throw new Error(await res.text());
+        if (!res.ok) throw new Error(await res.text());
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!data.result || !Array.isArray(data.result)) {
-      throw new Error("Invalid situation response");
+        if (!data.result || !Array.isArray(data.result)) {
+            throw new Error("Invalid situation response");
+        }
+
+        return data.result.map((q, index) => ({
+            id: q.id ?? index + 1,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer
+        }));
+
+    } catch (err) {
+        console.error("Situation API error:", err);
+        throw err;
     }
-
-    return data.result.map((q, index) => ({
-      id: q.id ?? index + 1,
-      question: q.question,
-      options: q.options,
-      correctAnswer: q.correctAnswer
-    }));
-
-  } catch (err) {
-    console.error("Situation API error:", err);
-    throw err;
-  }
 };
 
 
@@ -3844,13 +3845,13 @@ const InputStage = ({ onComplete }) => {
     };
 
     return (
-        <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="max-w-xl mx-auto bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden"
         >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-            
+
             <div className="text-center mb-8">
                 <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl shadow-lg shadow-purple-500/30">
                     <FaUserGraduate />
@@ -3860,13 +3861,13 @@ const InputStage = ({ onComplete }) => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-             <div className="relative">
+                <div className="relative">
                     <label className="block text-indigo-300 text-xs font-bold mb-2 uppercase tracking-wider">
                         विषय निवडा (Subject)
                     </label>
-                    <select 
-                        value={formData.subject} 
-                        onChange={(e) => setFormData({...formData, subject: e.target.value})} 
+                    <select
+                        value={formData.subject}
+                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                         className={`w-full bg-slate-950 border border-slate-600 rounded-xl px-5 py-4 appearance-none focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer ${formData.subject === "" ? "text-slate-500" : "text-white"}`}
                         required
                     >
@@ -3892,10 +3893,10 @@ const InputStage = ({ onComplete }) => {
                     />
                 </div> */}
 
-               
 
-                <button 
-                    type="submit" 
+
+                <button
+                    type="submit"
                     className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl mt-4 shadow-lg shadow-indigo-600/30 transform transition hover:-translate-y-1"
                 >
                     परीक्षा सुरू करा &rarr;
@@ -3908,11 +3909,11 @@ const InputStage = ({ onComplete }) => {
 // ==========================================
 // 2. MCQ STAGE 
 // ==========================================
-const MCQStage = ({ title, fetchData, themeColor, onComplete , isFinalStep = false}) => {
+const MCQStage = ({ title, fetchData, themeColor, onComplete, isFinalStep = false }) => {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentQIndex, setCurrentQIndex] = useState(0);
-    const [answers, setAnswers] = useState({}); 
+    const [answers, setAnswers] = useState({});
 
     useEffect(() => {
         let isMounted = true;
@@ -3951,7 +3952,7 @@ const MCQStage = ({ title, fetchData, themeColor, onComplete , isFinalStep = fal
 
     const handleSubmit = () => {
         if (Object.keys(answers).length < questions.length) {
-            if(!confirm("काही प्रश्न बाकी आहेत. तरीही सबमिट करायचे?")) return;
+            if (!confirm("काही प्रश्न बाकी आहेत. तरीही सबमिट करायचे?")) return;
         }
         // Send data back up
         onComplete({ questions, answers });
@@ -3960,9 +3961,9 @@ const MCQStage = ({ title, fetchData, themeColor, onComplete , isFinalStep = fal
     const totalQuestions = questions.length;
     const answeredCount = Object.keys(answers).length;
     const progressPercentage = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
-    
+
     if (loading) return <LoadingScreen text={`${title} तयार होत आहे...`} color={themeColor} />;
-    
+
     const currentQ = questions[currentQIndex];
 
     return (
@@ -3980,8 +3981,8 @@ const MCQStage = ({ title, fetchData, themeColor, onComplete , isFinalStep = fal
                         {Math.round(progressPercentage)}% पूर्ण
                     </span>
                     <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-                        <div 
-                            className={`h-full bg-${themeColor}-500 transition-all duration-700 ease-out`} 
+                        <div
+                            className={`h-full bg-${themeColor}-500 transition-all duration-700 ease-out`}
                             style={{ width: `${progressPercentage}%` }}
                         ></div>
                     </div>
@@ -3989,27 +3990,33 @@ const MCQStage = ({ title, fetchData, themeColor, onComplete , isFinalStep = fal
             </div>
 
             {/* Question Card */}
-            <div className="flex-1 bg-slate-900/80 border border-white/10 rounded-[2rem] p-8 md:p-12 shadow-2xl flex flex-col justify-between backdrop-blur-sm">
+            <div className="flex-1 bg-slate-900/80 border border-white/10 rounded-[2rem] p-8 md:p-12 shadow-2xl flex flex-col justify-between backdrop-blur-sm no-copy"
+             onCopy={(e) => e.preventDefault()}
+    onContextMenu={(e) => e.preventDefault()}
+     onDragStart={(e) => e.preventDefault()}
+            >
                 <div>
-                    <h3 className="text-xl md:text-2xl text-white font-medium mb-10 leading-relaxed">
+                    <h3 className="text-xl md:text-2xl text-white font-medium mb-10 leading-relaxed"
+                    onCopy={(e) => e.preventDefault()}
+                    >
                         {currentQ?.question}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {currentQ?.options?.map((opt, idx) => {
                             const isSelected = answers[currentQIndex] === opt;
                             return (
-                                <button 
-                                    key={idx} 
-                                    onClick={() => handleSelect(opt)} 
+                                <button
+                                    key={idx}
+                                    onClick={() => handleSelect(opt)}
                                     className={`p-5 rounded-xl border-2 text-left transition-all flex items-center group
-                                        ${isSelected 
-                                            ? `bg-${themeColor}-900/40 border-${themeColor}-500 text-white shadow-[0_0_15px_rgba(var(--${themeColor}-500),0.3)]` 
+                                        ${isSelected
+                                            ? `bg-${themeColor}-900/40 border-${themeColor}-500 text-white shadow-[0_0_15px_rgba(var(--${themeColor}-500),0.3)]`
                                             : 'bg-slate-950/50 border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-slate-900'
                                         }`}
                                 >
                                     <span className={`w-8 h-8 min-w-[2rem] rounded-full border flex items-center justify-center mr-4 font-bold text-sm transition-colors
-                                        ${isSelected 
-                                            ? `bg-${themeColor}-500 border-${themeColor}-500 text-white` 
+                                        ${isSelected
+                                            ? `bg-${themeColor}-500 border-${themeColor}-500 text-white`
                                             : 'border-slate-600 text-slate-500 group-hover:border-slate-400'
                                         }`}
                                     >
@@ -4024,24 +4031,24 @@ const MCQStage = ({ title, fetchData, themeColor, onComplete , isFinalStep = fal
 
                 {/* Footer Controls */}
                 <div className="flex justify-between mt-12 pt-8 border-t border-white/5">
-                    <button 
-                        onClick={() => setCurrentQIndex(p => Math.max(0, p - 1))} 
-                        disabled={currentQIndex === 0} 
+                    <button
+                        onClick={() => setCurrentQIndex(p => Math.max(0, p - 1))}
+                        disabled={currentQIndex === 0}
                         className="px-6 py-3 rounded-xl text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                         मागील (Previous)
                     </button>
-                    
+
                     {currentQIndex === totalQuestions - 1 ? (
-                        <button 
-                            onClick={handleSubmit} 
+                        <button
+                            onClick={handleSubmit}
                             className={`px-8 py-3 bg-${themeColor}-600 hover:bg-${themeColor}-500 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105`}
                         >
-                             {isFinalStep ? "सबमिट करा" : "पुढील टप्पा"}  <IoMdCheckmarkCircle size={20} />
+                            {isFinalStep ? "सबमिट करा" : "पुढील टप्पा"}  <IoMdCheckmarkCircle size={20} />
                         </button>
                     ) : (
-                        <button 
-                            onClick={() => setCurrentQIndex(p => Math.min(totalQuestions - 1, p + 1))} 
+                        <button
+                            onClick={() => setCurrentQIndex(p => Math.min(totalQuestions - 1, p + 1))}
                             className="px-8 py-3 bg-white text-black hover:bg-slate-200 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform hover:scale-105"
                         >
                             पुढील (Next) <FaArrowRight />
@@ -4057,11 +4064,11 @@ const MCQStage = ({ title, fetchData, themeColor, onComplete , isFinalStep = fal
 // 3. SYSTEM CHECK STAGE
 // ==========================================
 const DeviceCheckStage = ({ onComplete }) => {
-    const [speakerStatus, setSpeakerStatus] = useState('idle'); 
+    const [speakerStatus, setSpeakerStatus] = useState('idle');
     const [micStatus, setMicStatus] = useState('idle');
 
-    useEffect(() => { 
-        if (typeof window !== 'undefined') window.speechSynthesis.getVoices(); 
+    useEffect(() => {
+        if (typeof window !== 'undefined') window.speechSynthesis.getVoices();
     }, []);
 
     const testSpeaker = () => {
@@ -4072,20 +4079,20 @@ const DeviceCheckStage = ({ onComplete }) => {
     const testMic = () => {
         setMicStatus('testing');
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) { 
-            alert("Mic Not Supported in this browser (Use Chrome)."); 
-            setMicStatus('error'); 
-            return; 
+        if (!SpeechRecognition) {
+            alert("Mic Not Supported in this browser (Use Chrome).");
+            setMicStatus('error');
+            return;
         }
-        
+
         const recognition = new SpeechRecognition();
         recognition.lang = 'mr-IN';
         recognition.onresult = () => { setMicStatus('success'); recognition.stop(); };
         recognition.onerror = () => { setMicStatus('idle'); alert("Mic Error. Check permissions."); };
         recognition.start();
-        
+
         // Auto stop after 4 seconds if no sound
-        setTimeout(() => { if(micStatus !== 'success') recognition.stop(); }, 4000);
+        setTimeout(() => { if (micStatus !== 'success') recognition.stop(); }, 4000);
     };
 
     const isReady = speakerStatus === 'success' && micStatus === 'success';
@@ -4094,12 +4101,12 @@ const DeviceCheckStage = ({ onComplete }) => {
         <div className="max-w-xl mx-auto bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-10 rounded-[2.5rem] shadow-2xl text-center">
             <h2 className="text-3xl font-bold text-white mb-2">सिस्टम चेक</h2>
             <p className="text-slate-400 mb-8">मुलाखत सुरू करण्यापूर्वी डिव्हाइस तपासा.</p>
-            
+
             <div className="space-y-4 mb-10">
                 {/* Speaker */}
                 <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${speakerStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaVolumeUp size={20}/></div>
+                        <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaVolumeUp size={20} /></div>
                         <div className="text-left"><p className="font-bold text-white">स्पीकर</p><p className="text-xs text-slate-400">आवाज तपासा</p></div>
                     </div>
                     <button onClick={testSpeaker} className={`px-5 py-2 rounded-lg font-bold text-sm ${speakerStatus === 'success' ? 'bg-green-500 text-white' : 'bg-indigo-600 text-white'}`}>{speakerStatus === 'success' ? 'OK ✔' : 'Test'}</button>
@@ -4108,7 +4115,7 @@ const DeviceCheckStage = ({ onComplete }) => {
                 {/* Mic */}
                 <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors ${micStatus === 'success' ? 'border-green-500/50 bg-green-500/10' : 'border-slate-700 bg-slate-800'}`}>
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaMicrophone size={20}/></div>
+                        <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-white"><FaMicrophone size={20} /></div>
                         <div className="text-left"><p className="font-bold text-white">माईक</p><p className="text-xs text-slate-400">रेकॉर्डिंग तपासा</p></div>
                     </div>
                     <button onClick={testMic} className={`px-5 py-2 rounded-lg font-bold text-sm ${micStatus === 'success' ? 'bg-green-500 text-white' : 'bg-indigo-600 text-white'}`}>{micStatus === 'success' ? 'OK ✔' : 'Test'}</button>
@@ -4125,11 +4132,11 @@ const DeviceCheckStage = ({ onComplete }) => {
 // ==========================================
 const VoiceStage = ({ onComplete }) => {
     const [qIndex, setQIndex] = useState(0);
-    const [status, setStatus] = useState('preparing'); 
+    const [status, setStatus] = useState('preparing');
     const [permanentTranscript, setPermanentTranscript] = useState('');
     const [interimTranscript, setInterimTranscript] = useState('');
     const [questions, setQuestions] = useState([]);
-    const [results, setResults] = useState({}); 
+    const [results, setResults] = useState({});
     const recognitionRef = useRef(null);
 
     useEffect(() => {
@@ -4149,23 +4156,23 @@ const VoiceStage = ({ onComplete }) => {
         setInterimTranscript('');
         setStatus('speaking_question');
         // Wait for speech to finish before starting mic
-        speakText(questions[index], () => { 
-            setStatus('listening'); 
-            startRecognition(); 
+        speakText(questions[index], () => {
+            setStatus('listening');
+            startRecognition();
         });
     };
 
     const startRecognition = () => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) return;
-        
+
         try {
             const recognition = new SpeechRecognition();
             recognition.lang = 'mr-IN';
             recognition.continuous = true;
             recognition.interimResults = true;
             recognitionRef.current = recognition;
-            
+
             recognition.onresult = (event) => {
                 let finalStr = '';
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -4173,13 +4180,13 @@ const VoiceStage = ({ onComplete }) => {
                 }
                 setPermanentTranscript(prev => prev + finalStr);
                 // Reset interim if final found, else show it
-                if(finalStr) setInterimTranscript('');
-                else setInterimTranscript(event.results[event.results.length -1][0].transcript);
+                if (finalStr) setInterimTranscript('');
+                else setInterimTranscript(event.results[event.results.length - 1][0].transcript);
             };
 
             recognition.start();
-        } catch(e) { 
-            console.error(e); 
+        } catch (e) {
+            console.error(e);
         }
     };
 
@@ -4189,16 +4196,16 @@ const VoiceStage = ({ onComplete }) => {
     //         recognitionRef.current = null; 
     //     }
     // };
-   
+
     const stopRecognition = () => {
-    if (recognitionRef.current) {
-        recognitionRef.current.onresult = null;
-        recognitionRef.current.onerror = null;
-        recognitionRef.current.onend = null;
-        recognitionRef.current.abort();   // 👈 use abort instead of stop
-        recognitionRef.current = null;
-    }
-};
+        if (recognitionRef.current) {
+            recognitionRef.current.onresult = null;
+            recognitionRef.current.onerror = null;
+            recognitionRef.current.onend = null;
+            recognitionRef.current.abort();   // 👈 use abort instead of stop
+            recognitionRef.current = null;
+        }
+    };
 
     const togglePause = () => {
         if (status === 'listening') {
@@ -4216,7 +4223,7 @@ const VoiceStage = ({ onComplete }) => {
         // const currentAnswerData = { question: questions[qIndex], answer: finalAnswer };
         // const updatedResults = { ...results, [qIndex]: currentAnswerData };
         // setResults(updatedResults);
-        
+
         // if (qIndex < 4) { 
         //     setQIndex(prev => prev + 1); 
         // } else { 
@@ -4224,29 +4231,29 @@ const VoiceStage = ({ onComplete }) => {
         // }
         stopRecognition();
 
-setTimeout(() => {
-    const finalAnswer =
-      (permanentTranscript + interimTranscript).trim() ||
-      "No Audio Recorded";
+        setTimeout(() => {
+            const finalAnswer =
+                (permanentTranscript + interimTranscript).trim() ||
+                "No Audio Recorded";
 
-    const currentAnswerData = {
-        question: questions[qIndex],
-        answer: finalAnswer
-    };
+            const currentAnswerData = {
+                question: questions[qIndex],
+                answer: finalAnswer
+            };
 
-    const updatedResults = {
-        ...results,
-        [qIndex]: currentAnswerData
-    };
+            const updatedResults = {
+                ...results,
+                [qIndex]: currentAnswerData
+            };
 
-    setResults(updatedResults);
+            setResults(updatedResults);
 
-    if (qIndex < 4) {
-        setQIndex(prev => prev + 1);
-    } else {
-        onComplete({ answers: updatedResults });
-    }
-}, 200);   // 👈 small delay to avoid race condition
+            if (qIndex < 4) {
+                setQIndex(prev => prev + 1);
+            } else {
+                onComplete({ answers: updatedResults });
+            }
+        }, 200);   // 👈 small delay to avoid race condition
 
     };
 
@@ -4256,7 +4263,7 @@ setTimeout(() => {
         <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[600px]">
             <div className="w-full text-center mb-8">
                 <span className="text-purple-400 font-bold uppercase text-sm tracking-widest">प्रश्न {qIndex + 1} / 5</span>
-                <div className="w-full h-1 bg-slate-800 rounded-full mt-4"><div className="h-full bg-purple-500" style={{ width: `${((qIndex+1)/5)*100}%` }}></div></div>
+                <div className="w-full h-1 bg-slate-800 rounded-full mt-4"><div className="h-full bg-purple-500" style={{ width: `${((qIndex + 1) / 5) * 100}%` }}></div></div>
             </div>
             <div className="relative w-full bg-slate-900/80 border border-slate-700 p-12 rounded-[2rem] shadow-2xl text-center backdrop-blur-md">
                 <h2 className="text-2xl md:text-3xl text-white font-bold mb-10">{questions[qIndex]}</h2>
@@ -4294,7 +4301,7 @@ const LoadingScreen = ({ text, color = 'indigo' }) => (
 );
 
 const TransitionScreen = ({ title, subtitle, icon, color, onNext }) => (
-    <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} className="max-w-md mx-auto text-center bg-slate-900/80 backdrop-blur-xl border border-white/10 p-12 rounded-[2.5rem] shadow-2xl">
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md mx-auto text-center bg-slate-900/80 backdrop-blur-xl border border-white/10 p-12 rounded-[2.5rem] shadow-2xl">
         <div className={`w-24 h-24 bg-${color}-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-${color}-400 text-4xl shadow-[0_0_30px_rgba(var(--${color}-500),0.2)]`}>{icon}</div>
         <h2 className="text-3xl font-bold text-white mb-3">{title}</h2>
         <p className="text-slate-400 mb-10 text-lg leading-relaxed">{subtitle}</p>
@@ -4307,49 +4314,75 @@ const TransitionScreen = ({ title, subtitle, icon, color, onNext }) => (
 // ==========================================
 export default function FullAssessmentFlow() {
     const router = useRouter();
-    const [stage, setStage] = useState('input'); 
-    const [formUserInfo, setFormUserInfo] = useState(null); 
+    const [stage, setStage] = useState('input');
+    const [formUserInfo, setFormUserInfo] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+
     // Master State to hold ALL data locally before final submit
-    const [masterData, setMasterData] = useState({ 
-        assessment: null, 
-        interview: null, 
-        situation: null 
+    const [masterData, setMasterData] = useState({
+        assessment: null,
+        interview: null,
+        situation: null
     });
-    
+
     const [loggedInUser, setLoggedInUser] = useState(null);
 
-   useEffect(() => {
-    const userStr = localStorage.getItem('user');
+    useEffect(() => {
+        const userStr = localStorage.getItem('user');
 
-    if (!userStr) {
-        router.push("/login");
-        return;
-    }
-
-    const user = JSON.parse(userStr);
-    setLoggedInUser(user);
-
-    // CHECK TEST LIMIT
-    const checkTestLimit = async () => {
-        try {
-            const res = await fetch(`/api/check-test-limit?email=${user.email}`);
-            const data = await res.json();
-
-            if (data.remainingTests <= 0) {
-                alert("तुमचे सर्व टेस्ट क्रेडिट संपले आहेत.");
-                router.push("/");
-            }
-        } catch (err) {
-            console.error("Limit check failed", err);
+        if (!userStr) {
+            router.push("/login");
+            return;
         }
-    };
 
-    checkTestLimit();
+        const user = JSON.parse(userStr);
+        setLoggedInUser(user);
+
+        // CHECK TEST LIMIT
+        const checkTestLimit = async () => {
+            try {
+                const res = await fetch(`/api/check-test-limit?email=${user.email}`);
+                const data = await res.json();
+
+                if (data.remainingTests <= 0) {
+                    alert("तुमचे सर्व टेस्ट क्रेडिट संपले आहेत.");
+                    router.push("/");
+                }
+            } catch (err) {
+                console.error("Limit check failed", err);
+            }
+        };
+
+        checkTestLimit();
+
+    }, []);
+
+useEffect(() => {
+
+  const blockCopy = (e) => e.preventDefault();
+
+  const blockKeys = (e) => {
+    if (
+      e.ctrlKey &&
+      ['c','u','s','a','x'].includes(e.key.toLowerCase())
+    ) {
+      e.preventDefault();
+    }
+  };
+
+  document.addEventListener('copy', blockCopy);
+  document.addEventListener('cut', blockCopy);
+  document.addEventListener('contextmenu', blockCopy);
+  document.addEventListener('keydown', blockKeys);
+
+  return () => {
+    document.removeEventListener('copy', blockCopy);
+    document.removeEventListener('cut', blockCopy);
+    document.removeEventListener('contextmenu', blockCopy);
+    document.removeEventListener('keydown', blockKeys);
+  };
 
 }, []);
-
 
     const handleInputComplete = (data) => {
         setFormUserInfo(data);
@@ -4370,7 +4403,7 @@ export default function FullAssessmentFlow() {
         // Construct final payload
         const payload = {
             email: userEmail,
-            userInfo: formUserInfo, 
+            userInfo: formUserInfo,
             masterData: {
                 assessment: masterData.assessment,
                 voiceInterview: masterData.interview,
@@ -4379,12 +4412,12 @@ export default function FullAssessmentFlow() {
         };
 
         try {
-            const res = await fetch('/api/submit-full-assessment', { 
+            const res = await fetch('/api/submit-full-assessment', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     // 'Authorization': `Bearer ${token}` // If needed
-                }, 
+                },
                 body: JSON.stringify(payload)
             });
 
@@ -4407,43 +4440,74 @@ export default function FullAssessmentFlow() {
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
             <Head><title>Full Assessment | Shakkti AI</title></Head>
-            
+
             <div className="fixed inset-0 z-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
                 <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/20 rounded-full blur-[120px]"></div>
             </div>
 
-            <nav className="sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
-                <div className="flex items-center gap-3 font-bold text-xl tracking-tight">
-                    <span className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white shadow-lg">S</span> 
-                    Shakkti AI
-                </div>
-                {loggedInUser && <div className="text-sm text-slate-400 bg-white/5 px-4 py-2 rounded-full">Hi, {loggedInUser.fullName}</div>}
-            </nav>
+            
+
+<nav className="sticky top-0 z-50 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
+
+    {/* LEFT SIDE - LOGO */}
+    <div className="flex items-center gap-2 ">
+        <img 
+            src="/y4d_logo1.png" 
+            alt="लोगो चिन्ह" 
+            className="w-8 h-8 sm:w-10 sm:h-10 object-contain bg-white rounded-full p-1" 
+        />
+        <div className="text-white text-lg sm:text-xl font-bold">
+            Shakkti<span className="text-pink-500">AI</span>
+        </div>
+    </div>
+
+    {/* RIGHT SIDE */}
+    <div className="flex items-center gap-4">
+
+       
+       
+
+        {/* Logged In User */}
+        {loggedInUser && (
+            <div className="hidden sm:block text-sm text-slate-400 bg-white/5 px-4 py-2 rounded-full">
+                Hi, {loggedInUser.fullName}
+            </div>
+        )}
+         <button
+            onClick={() => router.push('/')}
+            className="text-white hover:text-pink-400 transition duration-200"
+        >
+            <MdOutlineHome className="w-6 h-6 sm:w-7 sm:h-7 text-gray-100" />
+        </button>
+    </div>
+
+</nav>
+
 
             <main className="relative z-10 container mx-auto px-4 py-12 min-h-[85vh] flex flex-col justify-center">
                 <AnimatePresence mode="wait">
                     {stage === 'input' && <InputStage key="input" onComplete={handleInputComplete} />}
-                    
+
                     {/* 1. Assessment Stage (Uses fetchAssessmentQuestions) */}
                     {stage === 'assessment' && (
-                        <motion.div key="assessment" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
-                            <MCQStage 
-                                title="टेक्निकल असेसमेंट" 
+                        <motion.div key="assessment" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full">
+                            <MCQStage
+                                title="टेक्निकल असेसमेंट"
                                 fetchData={() => fetchAssessmentQuestions(formUserInfo)}
-                                themeColor="indigo" 
-                                onComplete={(data) => handleStageData('assessment', data, 'interview_intro')} 
+                                themeColor="indigo"
+                                onComplete={(data) => handleStageData('assessment', data, 'interview_intro')}
                             />
                         </motion.div>
                     )}
 
                     {stage === 'interview_intro' && <TransitionScreen key="t1" title="टेक्निकल असेसमेंट पूर्ण" subtitle="पुढील: व्हॉइस इंटरव्ह्यू (Voice Interview)" icon={<FaMicrophone />} color="purple" onNext={() => setStage('system_check')} />}
 
-                    {stage === 'system_check' && <motion.div key="check" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
+                    {stage === 'system_check' && <motion.div key="check" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full"><DeviceCheckStage onComplete={() => setStage('interview')} /></motion.div>}
 
                     {/* 2. Interview Stage */}
                     {stage === 'interview' && (
-                        <motion.div key="interview" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
+                        <motion.div key="interview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full">
                             <VoiceStage onComplete={(data) => handleStageData('interview', data, 'situation_intro')} />
                         </motion.div>
                     )}
@@ -4452,19 +4516,19 @@ export default function FullAssessmentFlow() {
 
                     {/* 3. Situation Stage (Uses fetchSituationQuestions) */}
                     {stage === 'situation' && (
-                        <motion.div key="situation" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="w-full">
-                            <MCQStage 
-                                title="सिच्युएशन अ‍ॅप्टिट्यूड" 
+                        <motion.div key="situation" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full">
+                            <MCQStage
+                                title="सिच्युएशन अ‍ॅप्टिट्यूड"
                                 fetchData={() => fetchSituationQuestions()}
-                                themeColor="emerald" 
-                                onComplete={(data) => finalizeAndSubmit(data)} 
-                                 isFinalStep={true} 
+                                themeColor="emerald"
+                                onComplete={(data) => finalizeAndSubmit(data)}
+                                isFinalStep={true}
                             />
                         </motion.div>
                     )}
 
                     {stage === 'success' && (
-                        <motion.div key="success" initial={{scale:0.9, opacity:0}} animate={{scale:1, opacity:1}} className="text-center max-w-xl mx-auto bg-slate-900/80 p-12 rounded-[3rem] border border-white/10 shadow-2xl backdrop-blur-md">
+                        <motion.div key="success" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center max-w-xl mx-auto bg-slate-900/80 p-12 rounded-[3rem] border border-white/10 shadow-2xl backdrop-blur-md">
                             <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 ring-1 ring-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
                                 <IoMdCheckmarkCircle className="text-green-400 text-6xl" />
                             </div>

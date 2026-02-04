@@ -13,15 +13,38 @@ export default function dashboard({ Logout, user }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State to control mobile menu
   const router = useRouter(); // Next.js router to navigate to /role
 
-  useEffect(() => {
-          if (!localStorage.getItem("token")) {
-            router.push("/login");
-          } else {
-            const userFromStorage = JSON.parse(localStorage.getItem('user'));
-              setFirstName(userFromStorage.fullName.split(" ")[0]);
+  // useEffect(() => {
+  //         if (!localStorage.getItem("token")) {
+  //           router.push("/login");
+  //         } else {
+  //           const userFromStorage = JSON.parse(localStorage.getItem('user'));
+  //             setFirstName(userFromStorage.fullName.split(" ")[0]);
           
-          }
-        }, []);
+  //         }
+  //       }, []);
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+
+  const storedUser = localStorage.getItem("user");
+
+  if (storedUser) {
+    try {
+      const userFromStorage = JSON.parse(storedUser);
+
+      if (userFromStorage?.fullName) {
+        setFirstName(userFromStorage.fullName.split(" ")[0]);
+      }
+    } catch (error) {
+      console.error("Invalid user in localStorage");
+    }
+  }
+}, []);
+
 
   const toggleDropdown = () => setDropdown(prev => !prev);
   const toggleMobileMenu = () => setMobileMenuOpen(prev => !prev);
@@ -41,13 +64,13 @@ export default function dashboard({ Logout, user }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div
-        className="min-h-screen bg-gradient-to-b text-white px-4 bg-cover flex flex-col items-center justify-center"
-        style={{ backgroundImage: "url('/bg.gif')" }}
+        className="min-h-screen bg-gradient-to-b text-white px-2 bg-cover flex flex-col items-center justify-center"
+        style={{ backgroundColor:'black'}}
       >
         {/* Navigation Bar */}
-        <nav className="flex justify-between items-center mb-20 py-4 px-6 backdrop-blur-md bg-black/40 w-full rounded-xl shadow-lg">
-          <div className="flex items-center gap-2">
-            <img src="/Logo.png" alt="लोगो चिन्ह " className="w-8 h-8 object-contain" />
+        <nav className="flex justify-between items-center mb-20 py-4 px-4  bg-black border-b border-white w-full">
+          <div className="flex items-center gap-1">
+            <img src="/MM_LOGO1.png" alt="लोगो चिन्ह " className="w-10 h-10 object-contain" />
             <div className="text-white text-xl font-bold">Shakkti<span className="text-pink-500">AI</span></div>
           </div>
           
@@ -55,24 +78,24 @@ export default function dashboard({ Logout, user }) {
           <ul className="hidden md:flex space-x-8 text-sm items-center">
             <li className="hover:text-pink-400 cursor-pointer transition-colors font-medium">होम</li>
             
-            <Link href={''}>
+            {/* <Link href={''}>
               <li className="hover:text-pink-400 cursor-pointer transition-colors font-medium">
                 <span className="relative inline-flex">
                   प्रोग्रेस
                    </span>
               </li>
-            </Link>
+            </Link> */}
             
             
             
-            <Link href={''}>
+            {/* <Link href={''}>
               <li className="relative hover:text-pink-400 cursor-pointer transition-colors font-medium" onClick={handleReportClick}>
                 अहवाल
                 {notification && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-2.5 h-2.5"></span>
                 )}
               </li>
-            </Link>
+            </Link> */}
                 <Link href={'/assessmentReport'}>
               <li className="hover:text-pink-400 cursor-pointer transition-all duration-300 relative group">
                 असेसमेंट रिपोर्ट
@@ -153,112 +176,141 @@ export default function dashboard({ Logout, user }) {
             )}
           </button>
           
-          {/* Mobile Navigation - Combining all navigation elements for mobile */}
-          {mobileMenuOpen && (
-            <div className="md:hidden fixed inset-0 bg-black bg-opacity-80 z-10 flex flex-col items-center justify-center">
-              <ul className="flex flex-col space-y-6 text-center items-center">
-                <li className="text-white hover:text-pink-400 font-medium text-xl cursor-pointer" onClick={toggleMobileMenu}>होम</li>
-                
-                <Link href={''}>
-                  <li className="text-white hover:text-pink-400 font-medium text-xl cursor-pointer" onClick={toggleMobileMenu}>
-                    <span className="relative inline-flex">
-                      प्रोग्रेस
-                      <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full"> नवीन</span>
-                    </span>
-                  </li>
-                </Link>
-                
-                <Link href={''}>
-                  <li className="text-white hover:text-pink-400 font-medium text-xl cursor-pointer relative" onClick={() => { handleReportClick(); toggleMobileMenu(); }}>
-                    अहवाल
-                    {notification && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-2.5 h-2.5"></span>
-                    )}
-                  </li>
-                </Link>
-                <Link href={'/assessmentReport'}>
-              <li className="hover:text-pink-400 cursor-pointer transition-all duration-300 relative group">
-                असेसमेंट रिपोर्ट
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-500 group-hover:w-full transition-all duration-300"></span>
-              </li>
+         {/* Mobile Sidebar */}
+<>
+ 
+  {/* Overlay */}
+  <div
+    className={`md:hidden fixed inset-0 bg-black transition-opacity duration-300 ${
+      mobileMenuOpen ? "opacity-100 visible z-40" : "opacity-0 invisible"
+    }`}
+    onClick={toggleMobileMenu}
+  />
+
+  {/* Sidebar */}
+  <div
+    className={`md:hidden fixed top-0 right-0 h-full w-72 bg-slate-950 border-l border-white/10 z-50 transform transition-transform duration-300 ease-in-out ${
+      mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+    }`}
+  >
+    <div className="p-6 border-b border-white/10 flex justify-between items-center">
+      <h2 className="text-white font-bold text-lg">Menu</h2>
+      <button
+        onClick={toggleMobileMenu}
+        className="text-white text-2xl"
+      >
+        ✕
+      </button>
+    </div>
+
+    <ul className="flex flex-col space-y-6 p-6 text-white font-medium">
+      <li>
+        <Link href="/" onClick={toggleMobileMenu}>
+          होम
+        </Link>
+      </li>
+
+      <li>
+        <Link href="/assessmentReport" onClick={toggleMobileMenu}>
+          असेसमेंट रिपोर्ट
+        </Link>
+      </li>
+
+      <li>
+        <Link href="/suggestionVideos" onClick={toggleMobileMenu}>
+          व्हिडिओ ट्युटोरियल्स
+        </Link>
+      </li>
+
+      {user?.value ? (
+        <>
+          <li>
+            <Link href="/profile" onClick={toggleMobileMenu}>
+              प्रोफाइल
             </Link>
-            <Link href={'/suggestionVideos'}>
-              <li className="hover:text-pink-400 cursor-pointer transition-all duration-300 relative group">
-               व्हिडिओ ट्युटोरियल्स
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-500 group-hover:w-full transition-all duration-300"></span>
-              </li>
-            </Link>
-              
-                {user?.value ? (
-                  <>
-                    <Link href={'/profile'}>
-                      <li className="text-white hover:text-pink-400 font-medium text-xl cursor-pointer" onClick={toggleMobileMenu}>
-                        प्रोफाइल
-                      </li>
-                    </Link>
-                    <li className="text-white hover:text-red-400 font-medium text-xl cursor-pointer" onClick={() => { Logout(); toggleMobileMenu(); }}>
-                      बाहेर पडा
-                    </li>
-                  </>
-                ) : (
-                  <Link href="/login">
-                    <li className="text-white hover:text-pink-400 font-medium text-xl cursor-pointer bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-2 rounded-full" onClick={toggleMobileMenu}>
-                      लॉगिन
-                    </li>
-                  </Link>
-                )}
-              </ul>
-            </div>
-          )}
+          </li>
+
+          <li
+            className="text-red-400 cursor-pointer"
+            onClick={() => {
+              Logout();
+              toggleMobileMenu();
+            }}
+          >
+            बाहेर पडा
+          </li>
+        </>
+      ) : (
+        <li>
+          <Link
+            href="/login"
+            onClick={toggleMobileMenu}
+            className="bg-gradient-to-r from-pink-500 to-purple-600 px-4 py-2 rounded-full inline-block text-center"
+          >
+            लॉगिन
+          </Link>
+        </li>
+      )}
+    </ul>
+  </div>
+</>
+
+
         </nav>
 
         {/* Main Content */}
         <div className="flex flex-col items-center   text-center w-full">
-          <div className="w-20 h-20  border-2 border-white rounded-full flex items-center justify-center">
-            <img src="/Logo.png" alt="Logo" className="w-16 h-16 object-contain" />
+          <div className="w-[5rem] h-[5rem] border-2 border-white bg-white rounded-full flex items-center justify-center m-4">
+            <img src="/y4d.png" alt="Logo" className="w-[4rem] h-[4rem] object-contain justify-center" />
           </div>
 
           
 
           {/* Hero Section */}
           <div className="relative mb-10 flex flex-col md:flex-row items-center justify-center text-white max-w-7xl mx-auto">
-            <div className="text-center md:text-left max-w-2xl md:mr-32 order-2 md:order-1 z-10">
+            <div className="text-center md:text-left order-2 md:order-1 z-10">
               <div className="flex flex-col gap-3">
                 <span className="inline-block bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium mb-2 w-fit animate-pulse">
                   नवीन: प्रोग्रेस ट्रॅकिंग आणि विश्लेषण
                 </span>
-                
-                <h1 className="text-4xl md:text-6xl font-bold leading-tight text-white">
-                  तुमच्या <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-600">मुलाखत कौशल्यांवर </span>प्रभुत्व मिळवा
-                  <br />
+
+                <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white">
+                  तुमच्या
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-600">
+                    {" "}मुलाखत कौशल्यांवर{" "}
+                  </span>
+                  प्रभुत्व मिळवा
+                  <br /><br/>
                   एआय-आधारित फीडबॅकसह
                 </h1>
-                
+
                 <p className="text-gray-300 text-lg mt-2">
-                  आमच्या एआय मुलाखतकर्त्यासोबत सराव करा, त्वरित फीडबॅक मिळवा आणि सविस्तर विश्लेषणाच्या आधारे वेळोवेळी आपली प्रोग्रेस ट्रॅक करा.
+                  आमच्या एआय मुलाखतकर्त्यासोबत सराव करा, त्वरित फीडबॅक मिळवा आणि
+                  सविस्तर विश्लेषणाच्या आधारे वेळोवेळी आपली प्रगती ट्रॅक करा.
                 </p>
-                
+
+
                 <div className="mt-6 flex flex-col sm:flex-row gap-4">
-                  <Link href={''}>
+                  {/* <Link href={'/role'}>
                     <button className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 group">
                       सराव सुरू करा
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </button>
-                  </Link>
-                  
-                  
-                  <Link href={''}>
+                  </Link> */}
+
+
+                  {/* <Link href={'/progress'}>
                     <button className="border-2 border-white hover:border-pink-400 text-white py-3 px-8 rounded-full text-lg font-semibold hover:text-pink-400 transition duration-300 flex items-center gap-2 group">
                       प्रोग्रेस पाहण्यासाठी क्लिक करा
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
                       </svg>
                     </button>
-                  </Link>
-                  
-                  <Link href={'/practices'}>
+                  </Link> */}
+
+                  {/* <Link href={'/practices'}>
                     <button className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:from-indigo-600 hover:to-blue-700 transition duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 group">
                       प्रॅक्टिस टेस्ट्स
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
@@ -266,11 +318,9 @@ export default function dashboard({ Logout, user }) {
                         <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
                       </svg>
                     </button>
-                  </Link>
-                  
-                  
-                 {/* <Link href={'/assessment'}> */}
-                 <Link href={'/assessmentInstruction'}>
+                  </Link> */}
+
+                  <Link href={'/assessmentInstruction'}>
                     <button className="bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 group">
                       असेसमेंट द्या
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
@@ -281,21 +331,24 @@ export default function dashboard({ Logout, user }) {
                   </Link>
 
 
+
+
+
                 </div>
               </div>
             </div>
-            
-            <div className="order-1 md:order-2 mb-8 md:mb-0">
+
+            {/* <div className="order-1 md:order-2 mb-8 md:mb-0">
               <div className="relative">
-                <img 
-                  src="/mock.png" 
-                  alt="एआय मुलाखत सहाय्यक" 
-                  className="relative w-full max-w-md md:max-w-xl rounded-lg" 
+                <img
+                  src="/mock.png"
+                  alt="एआय मुलाखत सहाय्यक"
+                  className="relative w-full max-w-md md:max-w-xl rounded-lg"
                 />
               </div>
-            </div>
+            </div> */}
           </div>
-          
+
 
 
         </div>
@@ -357,7 +410,7 @@ export default function dashboard({ Logout, user }) {
                     </li>
                   ))}
                 </ul>
-                <Link href="/practices">
+                <Link href="">
                   <button className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white py-2 px-6 rounded-lg font-medium hover:from-indigo-600 hover:to-blue-700 transition duration-300 shadow-md mt-2">
                     प्रॅक्टिस टेस्ट्स सुरू करा
                   </button>

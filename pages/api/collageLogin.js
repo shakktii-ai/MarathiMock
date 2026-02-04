@@ -1,14 +1,15 @@
-import User from "@/models/CollageReg";
-import connectDb from "@/middleware/dbConnect";
+//page/api/collageLogin
+import User from "../../models/CollageReg";
+import connectDb from "../../middleware/dbConnect";
 import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 
 const handler = async (req, res) => {
     if (req.method === "POST") {
         try {
-            let user = await User.findOne({ email: req.body.email });
+            let admin = await User.findOne({ email: req.body.email });
 
-            if (!user) {
+            if (!admin) {
                 return res.status(401).json({
                     success: false,
                     error: "No user found with this email. Please check your credentials."
@@ -16,7 +17,7 @@ const handler = async (req, res) => {
             }
 
             // Decrypt stored password
-            const bytes = CryptoJS.AES.decrypt(user.password, process.env.PASSWORD_SECRET || "secret123");
+            const bytes = CryptoJS.AES.decrypt(admin.password, process.env.PASSWORD_SECRET || "secret123");
             const decryptedPass = bytes.toString(CryptoJS.enc.Utf8);
 
             // Validate password
@@ -28,11 +29,11 @@ const handler = async (req, res) => {
             }
 
             // Generate JWT token with user data
-            const token = jwt.sign(
+            const Admintoken = jwt.sign(
                 {
-                    id: user._id,
-                    email: user.email,
-                    collageName: user.collageName,
+                    id: admin._id,
+                    email: admin.email,
+                    collageName: admin.collageName,
                    
                     
                 },
@@ -43,11 +44,11 @@ const handler = async (req, res) => {
             // Send user data and token in response
             return res.status(200).json({
                 success: true,
-                token,
+                Admintoken,
                 user: {
-                    id: user._id,
-                    email: user.email,
-                    collageName: user.collageName,
+                    id: admin._id,
+                    email: admin.email,
+                    collageName: admin.collageName,
                   
                   
                 },
@@ -65,4 +66,3 @@ const handler = async (req, res) => {
 };
 
 export default connectDb(handler);
-
