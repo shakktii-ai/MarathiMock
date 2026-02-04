@@ -29,7 +29,7 @@ export default function Login() {
         const data = { email, password };
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/collageLogin`, {
+            const res = await fetch(`/api/collageLogin`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
