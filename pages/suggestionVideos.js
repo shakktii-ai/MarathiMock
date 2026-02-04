@@ -110,34 +110,102 @@ export default function SuggestedVideos() {
     fetchVideos();
   }, []);
 
-  const fetchVideos = async () => {
-    try {
-      const userStr = localStorage.getItem("user");
-      if (!userStr) { router.push("/login"); return; }
-      
-      const user = JSON.parse(userStr);
-      const res = await fetch(`/api/get-reports?email=${user.email}`);
-      const data = await res.json();
+// const fetchVideos = async () => {
+//   try {
+//     const userStr = localStorage.getItem("user");
+//     if (!userStr) { 
+//       router.push("/login"); 
+//       return; 
+//     }
 
-      if (data.reports) {
-        const groups = data.reports
-          .filter(r => r.aiReport?.videoSuggestions?.length > 0)
-          .map(report => ({
-            id: report._id,
-            subject: report.technicalAssessment?.subject || "General ITI",
-            date: new Date(report.createdAt).toLocaleDateString("mr-IN"),
-            videos: report.aiReport.videoSuggestions
-          }))
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
+//     const user = JSON.parse(userStr);
 
-        setVideoGroups(groups);
-      }
-    } catch (error) {
-      console.error("Failed to fetch videos", error);
-    } finally {
-      setLoading(false);
+//     // 👇 You can dynamically set subject if stored
+//     const subject = user.selectedSubject || "PCB";
+
+//     const res = await fetch(`/api/randomVideos?subject=${subject}`);
+//     const data = await res.json();
+
+//     if (data.videos?.length > 0) {
+//       setVideoGroups([
+//         {
+//           id: "current",
+//           subject: subject,
+//           date: new Date().toLocaleDateString("mr-IN"),
+//           videos: data.videos
+//         }
+//       ]);
+//     }
+
+//   } catch (error) {
+//     console.error("Failed to fetch videos", error);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+const fetchVideos = async () => {
+  try {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      router.push("/login");
+      return;
     }
-  };
+
+    const user = JSON.parse(userStr);
+
+    const res = await fetch(`/api/randomVideos?email=${user.email}`);
+    const data = await res.json();
+
+    if (!data.groups || data.groups.length === 0) {
+      setLoading(false);
+      return;
+    }
+
+    const formattedGroups = data.groups.map(group => ({
+      id: group.testId,
+      subject: group.subject,
+      date: new Date(group.date).toLocaleDateString("mr-IN"),
+      videos: group.videos
+    }));
+
+    setVideoGroups(formattedGroups);
+
+  } catch (error) {
+    console.error("Failed to fetch videos", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  // const fetchVideos = async () => {
+  //   try {
+  //     const userStr = localStorage.getItem("user");
+  //     if (!userStr) { router.push("/login"); return; }
+      
+  //     const user = JSON.parse(userStr);
+  //     const res = await fetch(`/api/get-reports?email=${user.email}`);
+  //     const data = await res.json();
+
+  //     if (data.reports) {
+  //       const groups = data.reports
+  //         .filter(r => r.aiReport?.videoSuggestions?.length > 0)
+  //         .map(report => ({
+  //           id: report._id,
+  //           subject: report.technicalAssessment?.subject || "General ITI",
+  //           date: new Date(report.createdAt).toLocaleDateString("mr-IN"),
+  //           videos: report.aiReport.videoSuggestions
+  //         }))
+  //         .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  //       setVideoGroups(groups);
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to fetch videos", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <>
