@@ -4296,7 +4296,7 @@ const VoiceStage = ({ onComplete }) => {
 const LoadingScreen = ({ text, color = 'indigo' }) => (
     <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
         <div className={`w-16 h-16 border-4 border-${color}-500/30 border-t-${color}-500 rounded-full animate-spin mb-6`}></div>
-        <h3 className="text-xl text-white font-medium tracking-wide animate-pulse">{text}</h3>
+        <h3 className="text-xl text-black font-medium tracking-wide animate-pulse">{text}</h3>
     </div>
 );
 
@@ -4453,7 +4453,7 @@ useEffect(() => {
     {/* LEFT SIDE - LOGO */}
     <div className="flex items-center gap-2 ">
         <img 
-            src="/y4d_logo1.png" 
+            src="/MM_LOGO1.png" 
             alt="लोगो चिन्ह" 
             className="w-8 h-8 sm:w-10 sm:h-10 object-contain bg-white rounded-full p-1" 
         />
@@ -4481,7 +4481,7 @@ useEffect(() => {
             <MdOutlineHome className="w-6 h-6 sm:w-7 sm:h-7 text-gray-100" />
         </button>
          <img 
-            src="/MM_LOGO1.png" 
+            src="/y4d_logo1.png" 
             alt="लोगो चिन्ह" 
             className="w-12 h-12 sm:w-10 sm:h-10 object-contain bg-white rounded-full p-1" 
         />

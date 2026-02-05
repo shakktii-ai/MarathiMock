@@ -1,3 +1,4 @@
+//middleware/dbConnect.js
 import mongoose from 'mongoose';
 
 // Cache the connection to avoid multiple connections in development
