@@ -117,9 +117,9 @@ export default function Index({ users }) {
   return (
     <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full">
       <div className="max-w-7xl mx-auto mt-20">
-        <header className="mb-6 md:mb-10 text-white drop-shadow-lg text-center md:text-left">
+        <header className="mb-6 md:mb-10 text-black drop-shadow-lg text-center md:text-left">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Admin Dashboard</h1>
-          <p className="mt-2 text-base md:text-lg text-indigo-100 italic">Tracking performance for Mockmingle Students</p>
+          <p className="mt-2 text-base md:text-lg  italic">Tracking performance for Mockmingle Students</p>
         </header>
 
         {/* Search and Stats Section */}

@@ -113,36 +113,36 @@ export default function Login() {
             
             {/* Lazy Loaded Background Image */}
             <div className="fixed inset-0 z-0">
-                <Image
+                {/* <Image
                     src="/bg.gif" // Ensure this path is correct
                     alt="Background"
                     fill
                     className="object-cover opacity-20"
                     priority={false} // Lazy load (default behavior)
                     quality={75}
-                />
+                /> */}
                 {/* Gradient Overlay for better contrast */}
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-slate-900/50 backdrop-blur-[2px]" />
             </div>
 
             {/* Main Login Card */}
-            <div className="relative z-10 w-full max-w-[420px] bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-8 sm:p-10 transform transition-all duration-300 hover:border-white/30">
+            <div className="relative z-10 w-full max-w-[420px] bg-white/20 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-8 sm:p-10 transform transition-all duration-300 hover:border-white/30">
                 
                 {/* Logo & Header */}
                 <div className="flex flex-col items-center mb-8">
-                    <div className="relative w-20 h-20 mb-4 drop-shadow-lg">
+                    {/* <div className="relative w-20 h-20 mb-4 drop-shadow-lg">
                         <Image 
-                            src="/Logoo.png" 
+                            src="/MM_LOGO1.png" 
                             alt="Logo" 
                             fill
                             className="object-contain"
                             priority // Load logo immediately as LCP
                         />
-                    </div>
+                    </div> */}
                     <h1 className="text-3xl font-bold text-white tracking-tight">
-                        Welcome <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300">Back!</span>
+                        Welcome Back!
                     </h1>
-                    <p className="text-slate-300 text-sm mt-2 font-medium">Sign in to access your admin dashboard</p>
+                    <p className="text-slate-400 text-sm mt-2 font-medium">Sign in to access your admin dashboard</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
