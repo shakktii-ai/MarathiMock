@@ -619,7 +619,7 @@ export default function dashboard({ Logout, user }) {
         </div>
         <div className="text-center mt-5">
           <h2 className="text-gray-300 text-2xl">संपर्क करा</h2>
-          <h2 className="text-gray-300 text-3xl mt-2 font-bold">info@shakktii.in</h2>
+          <h2 className="text-gray-300 text-3xl mt-2 font-bold">hello@shakktii.in</h2>
           <div>
           </div>
         </div>
