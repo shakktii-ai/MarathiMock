@@ -48,7 +48,6 @@
 // export default AdminNav
 
 
-
 import { LogOut } from "lucide-react"
 import { useRouter } from "next/router"
 
@@ -59,16 +58,16 @@ import Image from "next/image"
 import { Menu, X, LayoutDashboard, Users, UserPlus } from "lucide-react"
 
 const navItems = [
-  { 
-    name: "Dashboard Overview", 
-    link: "/admin", 
-    icon: LayoutDashboard 
+  {
+    name: "Dashboard Overview",
+    link: "/admin",
+    icon: LayoutDashboard
   },
-  { 
-    name: "Students Profiles", 
-    link: "/admin/studentProfiles", 
-    icon: Users 
-  },
+  // {
+  //   name: "Students Profiles",
+  //   link: "/admin/studentProfiles",
+  //   icon: Users
+  // },
   // { 
   //   name: "Students Registration", 
   //   link: "/admin/signup", 
@@ -81,13 +80,15 @@ export default function AdminNav() {
 
   const router = useRouter()
 
-const handleLogout = () => {
-  localStorage.removeItem("Admintoken")
-  localStorage.removeItem("admin")
+  const handleLogout = () => {
+    localStorage.removeItem("Admintoken")
+    localStorage.removeItem("admin")
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
 
-  setOpen(false)
-  router.push("/admin/login")
-}
+    setOpen(false)
+    router.push("/admin/login")
+  }
 
   return (
     <>
@@ -97,7 +98,7 @@ const handleLogout = () => {
         <div className="flex items-center gap-3">
           <div className="relative overflow-hidden rounded-lg shadow-sm border border-slate-100">
             <Image
-              src="/image.png"
+              src="/MM_LOGO1.png"
               alt="Logo"
               width={36}
               height={36}
@@ -105,7 +106,7 @@ const handleLogout = () => {
             />
           </div>
           <span className="font-bold text-lg text-slate-800 tracking-tight">
-            SHAKTI AI
+            MockMingle
           </span>
         </div>
 
@@ -145,13 +146,7 @@ const handleLogout = () => {
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-6 mb-2">
           <div className="flex items-center gap-3">
-            {/* <Image
-              src="/image.png"
-              alt="Logo"
-              width={200}
-              height={200}
-              className="rounded-xl bg-black shadow-sm border border-slate-100"
-            /> */}
+           
             <div className="flex flex-col">
               {/* <span className="font-bold text-slate-800 text-lg leading-none">SHAKTI AI</span>
               <span className="text-[11px] font-bold text-indigo-500 uppercase tracking-widest mt-1">Admin Panel</span> */}
@@ -189,9 +184,9 @@ const handleLogout = () => {
                     "
                   >
                     {/* Icon with hover effect */}
-                    <Icon 
-                      size={20} 
-                      className="text-slate-400 group-hover:text-indigo-600 transition-colors duration-200" 
+                    <Icon
+                      size={20}
+                      className="text-slate-400 group-hover:text-indigo-600 transition-colors duration-200"
                     />
                     {item.name}
                   </Link>
@@ -200,21 +195,21 @@ const handleLogout = () => {
             })}
           </ul>
           {/* ================= LOGOUT ================= */}
-<div className="p-4 border-t border-slate-200">
-  <button
-    onClick={handleLogout}
-    className="
+          <div className="p-4 border-t border-slate-200">
+            <button
+              onClick={handleLogout}
+              className="
       w-full flex items-center gap-3 px-4 py-3 rounded-xl
       text-sm font-semibold text-red-600
       hover:bg-red-50 hover:shadow-sm
       transition-all duration-200
       active:scale-[0.98]
     "
-  >
-    <LogOut size={20} />
-    Logout
-  </button>
-</div>
+            >
+              <LogOut size={20} />
+              Logout
+            </button>
+          </div>
 
         </nav>
 

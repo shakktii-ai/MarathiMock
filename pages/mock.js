@@ -4458,7 +4458,7 @@ useEffect(() => {
             className="w-8 h-8 sm:w-10 sm:h-10 object-contain bg-white rounded-full p-1" 
         />
         <div className="text-white text-lg sm:text-xl font-bold">
-            Shakkti<span className="text-pink-500">AI</span>
+           MockMingle
         </div>
     </div>
 
@@ -4480,6 +4480,11 @@ useEffect(() => {
         >
             <MdOutlineHome className="w-6 h-6 sm:w-7 sm:h-7 text-gray-100" />
         </button>
+         <img 
+            src="/MM_LOGO1.png" 
+            alt="लोगो चिन्ह" 
+            className="w-12 h-12 sm:w-10 sm:h-10 object-contain bg-white rounded-full p-1" 
+        />
     </div>
 
 </nav>

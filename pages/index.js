@@ -70,8 +70,8 @@ export default function dashboard({ Logout, user }) {
         {/* Navigation Bar */}
         <nav className="flex justify-between items-center mb-20 py-4 px-4  bg-black border-b border-white w-full">
           <div className="flex items-center gap-1">
-            <img src="/MM_LOGO1.png" alt="लोगो चिन्ह " className="w-10 h-10 object-contain" />
-            <div className="text-white text-xl font-bold">Shakkti<span className="text-pink-500">AI</span></div>
+            <img src="/MM_LOGO1.png" alt="लोगो चिन्ह " className="w-12 h-12 object-contain" />
+            <div className="text-white text-xl font-bold">MockMingle</div>
           </div>
           
           {/* Desktop Navigation */}
@@ -259,37 +259,31 @@ export default function dashboard({ Logout, user }) {
         </nav>
 
         {/* Main Content */}
-        <div className="flex flex-col items-center   text-center w-full">
-          <div className="w-[5rem] h-[5rem] border-2 border-white bg-white rounded-full flex items-center justify-center m-4">
-            <img src="/y4d.png" alt="Logo" className="w-[4rem] h-[4rem] object-contain justify-center" />
+        <div className="flex flex-col items-center  text-center w-full">
+          <div className="w-[8rem] h-[8rem] border-2 border-white bg-white rounded-full flex items-center justify-center m-4">
+            <img src="/y4d.png" alt="Logo" className="w-[6rem] h-[6rem] object-contain justify-center" />
           </div>
 
           
 
           {/* Hero Section */}
           <div className="relative mb-10 flex flex-col md:flex-row items-center justify-center text-white max-w-7xl mx-auto">
-            <div className="text-center md:text-left order-2 md:order-1 z-10">
+            <div className="text-center md:text-left max-w-2xl md:mr-32 order-2 md:order-1 z-10">
               <div className="flex flex-col gap-3">
                 <span className="inline-block bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium mb-2 w-fit animate-pulse">
                   नवीन: प्रोग्रेस ट्रॅकिंग आणि विश्लेषण
                 </span>
-
-                <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white">
-                  तुमच्या
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-600">
-                    {" "}मुलाखत कौशल्यांवर{" "}
-                  </span>
-                  प्रभुत्व मिळवा
-                  <br /><br/>
+                
+                <h1 className="text-4xl md:text-6xl font-bold leading-tight text-white">
+                  तुमच्या <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-600">मुलाखत कौशल्यांवर </span>प्रभुत्व मिळवा
+                  <br />
                   एआय-आधारित फीडबॅकसह
                 </h1>
-
+                
                 <p className="text-gray-300 text-lg mt-2">
-                  आमच्या एआय मुलाखतकर्त्यासोबत सराव करा, त्वरित फीडबॅक मिळवा आणि
-                  सविस्तर विश्लेषणाच्या आधारे वेळोवेळी आपली प्रगती ट्रॅक करा.
+                  आमच्या एआय मुलाखतकर्त्यासोबत सराव करा, त्वरित फीडबॅक मिळवा आणि सविस्तर विश्लेषणाच्या आधारे वेळोवेळी आपली प्रोग्रेस ट्रॅक करा.
                 </p>
-
-
+                
                 <div className="mt-6 flex flex-col sm:flex-row gap-4">
                   {/* <Link href={'/role'}>
                     <button className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 group">
@@ -298,19 +292,19 @@ export default function dashboard({ Logout, user }) {
                         <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </button>
-                  </Link> */}
-
-
-                  {/* <Link href={'/progress'}>
+                  </Link>
+                  
+                  
+                  <Link href={'/progress'}>
                     <button className="border-2 border-white hover:border-pink-400 text-white py-3 px-8 rounded-full text-lg font-semibold hover:text-pink-400 transition duration-300 flex items-center gap-2 group">
                       प्रोग्रेस पाहण्यासाठी क्लिक करा
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
                       </svg>
                     </button>
-                  </Link> */}
-
-                  {/* <Link href={'/practices'}>
+                  </Link>
+                  
+                  <Link href={'/practices'}>
                     <button className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:from-indigo-600 hover:to-blue-700 transition duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 group">
                       प्रॅक्टिस टेस्ट्स
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
@@ -319,8 +313,10 @@ export default function dashboard({ Logout, user }) {
                       </svg>
                     </button>
                   </Link> */}
-
-                  <Link href={'/assessmentInstruction'}>
+                  
+                  
+                 {/* <Link href={'/assessment'}> */}
+                 <Link href={'/assessmentInstruction'}>
                     <button className="bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 group">
                       असेसमेंट द्या
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
@@ -331,24 +327,20 @@ export default function dashboard({ Logout, user }) {
                   </Link>
 
 
-
-
-
                 </div>
               </div>
             </div>
-
-            {/* <div className="order-1 md:order-2 mb-8 md:mb-0">
+            
+            <div className="order-1 md:order-2 mb-8 md:mb-0">
               <div className="relative">
-                <img
-                  src="/mock.png"
-                  alt="एआय मुलाखत सहाय्यक"
-                  className="relative w-full max-w-md md:max-w-xl rounded-lg"
+                <img 
+                  src="/MM_LOGO1.png" 
+                  alt="एआय मुलाखत सहाय्यक" 
+                  className="relative w-[10rem] md:w-[20rem] max-w-md md:max-w-xl rounded-lg" 
                 />
               </div>
-            </div> */}
+            </div>
           </div>
-
 
 
         </div>
@@ -357,7 +349,7 @@ export default function dashboard({ Logout, user }) {
       <div className="text-gray-900 p-8 py-20 min-h-screen bg-cover" style={{ backgroundImage: "url('/whitebg.jpg')" }}>
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-12">
-            तुम्ही मुलाखतीसाठी तयार आहात का? <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">Shakkti AI</span> सोबत चाचणी देऊन तपासा.
+            तुम्ही मुलाखतीसाठी तयार आहात का? <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">MockMingle</span> सोबत चाचणी देऊन तपासा.
           </h1>
           
           {/* Feature Sections */}
@@ -613,10 +605,10 @@ export default function dashboard({ Logout, user }) {
 
         </div>
       </div>
-      <div className="relative bg-blue-950 grid grid-cols-1 lg:grid-cols-2">
-        <div className="">
-          <img src="/footermock.png" className="" />
-        </div>
+      <div className="relative bg-blue-950 ">
+        {/* <div className="">
+          <img src="/MM_LOGO1.png" className="" />
+        </div> */}
         <div className="text-center mt-5">
           <h2 className="text-gray-300 text-2xl">संपर्क करा</h2>
           <h2 className="text-gray-300 text-3xl mt-2 font-bold">hello@shakktii.in</h2>

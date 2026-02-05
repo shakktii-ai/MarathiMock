@@ -344,8 +344,8 @@ const handleSubmit = async (e) => {
         pauseOnHover
         theme="light"
     />
-       <div className="relative grid grid-cols-1 place-items-center w-full min-h-screen">
-    <img
+       <div className="relative grid grid-cols-1 place-items-center w-full min-h-screen bg-black">
+    {/* <img
         src="/bg.gif"
         alt="background"
         className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
@@ -354,7 +354,7 @@ const handleSubmit = async (e) => {
         src="/Logoo.png"
         alt="Shakti AI Logo"
         className="absolute top-4 right-8 w-20 mb-5"
-    />
+    /> */}
 
     <div className="container ml-2 mr-2 w-full max-w-5xl p-4 rounded-lg bg-white bg-opacity-30">
         <h1 className="text-2xl text-white mb-4">

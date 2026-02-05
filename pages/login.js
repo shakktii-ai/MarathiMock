@@ -129,12 +129,12 @@ export default function Login() {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen  relative overflow-hidden">
-            <img src="/bg.gif" className="absolute top-0 left-0 w-full h-full object-cover z-[-1]" alt="background" />
-            <img src="/Logoo.png" className="absolute top-4 right-8 w-20 mb-4" alt="Logo" />
+        <div className="flex justify-center items-center min-h-screen  relative overflow-hidden bg-black">
+            {/* <img src="/bg.gif" className="absolute top-0 left-0 w-full h-full object-cover z-[-1]" alt="background" /> */}
+            {/* <img src="/Logoo.png" className="absolute top-4 right-8 w-20 mb-4" alt="Logo" /> */}
 
-            <div className="bg-transparent text-center p-6 w-full max-w-xs rounded-lg">
-                <h1 className="text-2xl text-white mb-6">स्वागत आहे <span className="text-pink-400">मागे जा!</span></h1>
+            <div className="bg-transparent text-center p-6 w-full max-w-xs rounded-lg border border-gray-500">
+                <h1 className="text-2xl text-white mb-6">स्वागत आहे </h1>
 
                 <form onSubmit={handleSubmit}>
                     {/* <input 

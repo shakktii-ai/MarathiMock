@@ -12,7 +12,7 @@ const Link = dynamic(() => import('next/link'), {
 
 export default function Index({ users }) {
   const [user, setUser] = useState(null);
-   const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const router = useRouter();
@@ -110,16 +110,16 @@ export default function Index({ users }) {
 
   //   fetchData();
   // }, [user]); // Added 'user' to dependency array to ensure effect runs when user state is set
-const filteredUsers = users.filter(user =>
+  const filteredUsers = users.filter(user =>
     user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
   return (
-    <main className="flex-1 p-8 overflow-y-auto">
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-10 text-white drop-shadow-lg">
-          <h1 className="text-4xl font-extrabold tracking-tight">Admin Dashboard</h1>
-          <p className="mt-2 text-lg text-indigo-100 italic">Tracking performance for Mockmingle Students</p>
+    <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full">
+      <div className="max-w-7xl mx-auto mt-20">
+        <header className="mb-6 md:mb-10 text-white drop-shadow-lg text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Admin Dashboard</h1>
+          <p className="mt-2 text-base md:text-lg text-indigo-100 italic">Tracking performance for Mockmingle Students</p>
         </header>
 
         {/* Search and Stats Section */}
@@ -133,7 +133,7 @@ const filteredUsers = users.filter(user =>
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <svg className="absolute left-4 top-4 h-6 w-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
           <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-4 shadow-xl flex items-center justify-between text-white">
@@ -150,16 +150,16 @@ const filteredUsers = users.filter(user =>
         </div>
 
         {/* User Table */}
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/20">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden border border-white/20 mb-10">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left min-w-[800px]">
               <thead className="bg-indigo-50/50 border-b border-indigo-100">
                 <tr>
-                  <th className="px-6 py-5 text-sm font-semibold text-indigo-900 uppercase tracking-wider">User Details</th>
-                  <th className="px-6 py-5 text-sm font-semibold text-indigo-900 uppercase tracking-wider text-center">Technical (MCQ)</th>
-                  <th className="px-6 py-5 text-sm font-semibold text-indigo-900 uppercase tracking-wider text-center">Communication</th>
-                  <th className="px-6 py-5 text-sm font-semibold text-indigo-900 uppercase tracking-wider text-center">Situation (MCQ)</th>
-                  <th className="px-6 py-5 text-sm font-semibold text-indigo-900 uppercase tracking-wider text-center">Overall</th>
+                  <th className="px-4 md:px-6 py-4 md:py-5 text-xs md:text-sm font-semibold text-indigo-900 uppercase tracking-wider">User Details</th>
+                  <th className="px-4 md:px-6 py-4 md:py-5 text-xs md:text-sm font-semibold text-indigo-900 uppercase tracking-wider text-center">Technical (MCQ)</th>
+                  <th className="px-4 md:px-6 py-4 md:py-5 text-xs md:text-sm font-semibold text-indigo-900 uppercase tracking-wider text-center">Communication</th>
+                  <th className="px-4 md:px-6 py-4 md:py-5 text-xs md:text-sm font-semibold text-indigo-900 uppercase tracking-wider text-center">Situation (MCQ)</th>
+                  <th className="px-4 md:px-6 py-4 md:py-5 text-xs md:text-sm font-semibold text-indigo-900 uppercase tracking-wider text-center">Overall</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -270,4 +270,3 @@ export async function getServerSideProps() {
     }
   };
 }
- 
