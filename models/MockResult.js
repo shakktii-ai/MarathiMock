@@ -270,7 +270,11 @@ const MockResultSchema = new mongoose.Schema({
       {
         title: { type: String },
         url: { type: String },
-        description: { type: String }
+        description: { type: String },
+         thumbnail: String,          // 🔥 store thumbnail permanently
+      category: String,           // technical / interview / softskill
+      watchTime: { type: Number, default: 0 },  // 🔥 seconds watched
+      watched: { type: Boolean, default: false } // 🔥 completed or not
       }
     ]
   },

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import MockResult from "../../models/MockResult";
 import User from "../../models/User";
 import jwt from "jsonwebtoken";
-
+import Video from '../../models/Video';
 // ================= DATABASE =================
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -272,6 +272,31 @@ Overall: ${overallScore}%
 
 Create final career readiness summary in Marathi.
 `);
+// ================= GENERATE RANDOM VIDEOS (ONLY ONCE) =================
+
+const subject = userInfo?.subject;
+
+let videoSuggestions = [];
+
+if (subject) {
+
+  const technical = await Video.aggregate([
+    { $match: { subject, category: "technical", isActive: true } },
+    { $sample: { size: 3 } }
+  ]);
+
+  const interview = await Video.aggregate([
+    { $match: { category: "interview", isActive: true } },
+    { $sample: { size: 1 } }
+  ]);
+
+  const softskill = await Video.aggregate([
+    { $match: { category: "softskill", isActive: true } },
+    { $sample: { size: 1 } }
+  ]);
+
+  videoSuggestions = [...technical, ...interview, ...softskill];
+}
 
     // ============================================================
     // ================= SAVE TO DATABASE ==========================
@@ -309,6 +334,7 @@ Create final career readiness summary in Marathi.
         communicationReport,
         overallSummary,
         overallScore,
+          videoSuggestions
       },
     });
 // ================= REDUCE TEST COUNT =================
