@@ -251,9 +251,75 @@ function ReportDetailPopup({ user, isOpen, setIsOpen }) {
                       markdown={report.aiReport?.situationReport}
                     />
 
-                
+                {/* ================= VIDEO PROGRESS ================= */}
+<div className="bg-slate-900 border border-white/10 rounded-3xl p-6 md:p-10 mb-8">
+  <h2 className="text-xl md:text-2xl font-bold text-indigo-400 mb-6">
+    व्हिडिओ प्रगती (Video Progress)
+  </h2>
+
+  {report.aiReport?.videoSuggestions?.length > 0 ? (
+    <div className="space-y-4">
+      {report.aiReport.videoSuggestions.map((video, vidIndex) => {
+        const minutes = Math.floor((video.watchTime || 0) / 60);
+        const seconds = (video.watchTime || 0) % 60;
+
+        return (
+          <div
+            key={vidIndex}
+            className="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-white/5"
+          >
+            <div>
+              <p className="text-white font-medium text-sm md:text-base">
+                {video.title}
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                Watch Time: {minutes}m {seconds}s
+              </p>
+            </div>
+
+            <div>
+              {video.watched ? (
+                <span className="text-green-400 font-bold">
+                  ✅ Completed
+                </span>
+              ) : (
+                <span className="text-yellow-400 font-semibold">
+                   In Progress
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Overall Status */}
+      {(() => {
+        const total = report.aiReport.videoSuggestions.length;
+        const completed = report.aiReport.videoSuggestions.filter(v => v.watched).length;
+
+        return (
+          <div className="mt-6 p-4 bg-slate-800 rounded-xl text-center border border-white/5">
+            {completed === total ? (
+              <p className="text-green-400 font-bold text-lg">
+                ✅ All Videos Completed
+              </p>
+            ) : (
+              <p className="text-indigo-300 font-semibold">
+                {completed} / {total} Videos Completed
+              </p>
+            )}
+          </div>
+        );
+      })()}
+    </div>
+  ) : (
+    <p className="text-slate-400">No videos available.</p>
+  )}
+</div>
+
 
                   </div>
+                  
                 )}
               </div>
             ))}
