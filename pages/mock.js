@@ -4296,7 +4296,7 @@ const VoiceStage = ({ onComplete }) => {
 const LoadingScreen = ({ text, color = 'indigo' }) => (
     <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
         <div className={`w-16 h-16 border-4 border-${color}-500/30 border-t-${color}-500 rounded-full animate-spin mb-6`}></div>
-        <h3 className="text-xl text-blue-600 font-medium tracking-wide animate-pulse">{text}</h3>
+        <h3 className="text-xl text-blue-500 font-medium tracking-wide animate-pulse">{text}</h3>
     </div>
 );
 
@@ -4317,8 +4317,6 @@ export default function FullAssessmentFlow() {
     const [stage, setStage] = useState('input');
     const [formUserInfo, setFormUserInfo] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-const [lastPayload, setLastPayload] = useState(null);
-const [submitError, setSubmitError] = useState(false);
 
     // Master State to hold ALL data locally before final submit
     const [masterData, setMasterData] = useState({
@@ -4399,69 +4397,43 @@ useEffect(() => {
 
     // FINAL SUBMISSION
     const finalizeAndSubmit = async (finalSituationData) => {
-    setIsSubmitting(true);
-    setSubmitError(false);
+        setIsSubmitting(true);
+        const userEmail = loggedInUser?.email || "anonymous@student.com";
 
-    const userEmail = loggedInUser?.email || "anonymous@student.com";
+        // Construct final payload
+        const payload = {
+            email: userEmail,
+            userInfo: formUserInfo,
+            masterData: {
+                assessment: masterData.assessment,
+                voiceInterview: masterData.interview,
+                situation: finalSituationData // Comes from the last step
+            }
+        };
 
-    const payload = {
-        email: userEmail,
-        userInfo: formUserInfo,
-        masterData: {
-            assessment: masterData.assessment,
-            voiceInterview: masterData.interview,
-            situation: finalSituationData
+        try {
+            const res = await fetch('/api/submit-full-assessment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'Authorization': `Bearer ${token}` // If needed
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                setStage('success');
+            } else {
+                console.error("Server Error:", await res.text());
+                alert("Submission Failed. Please try again.");
+            }
+        } catch (error) {
+            console.error("Network Error", error);
+            alert("Network Error. Check console.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
-
-    // Save payload for retry
-    setLastPayload(payload);
-
-    try {
-        const res = await fetch('/api/submit-full-assessment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-            setStage('success');
-        } else {
-            console.error("Server Error:", await res.text());
-            setSubmitError(true);
-        }
-    } catch (error) {
-        console.error("Network Error", error);
-        setSubmitError(true);
-    } finally {
-        setIsSubmitting(false);
-    }
-};
-
-const retrySubmit = async () => {
-    if (!lastPayload) return;
-
-    setIsSubmitting(true);
-    setSubmitError(false);
-
-    try {
-        const res = await fetch('/api/submit-full-assessment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(lastPayload)
-        });
-
-        if (res.ok) {
-            setStage('success');
-        } else {
-            setSubmitError(true);
-        }
-    } catch (err) {
-        setSubmitError(true);
-    } finally {
-        setIsSubmitting(false);
-    }
-};
 
     if (isSubmitting) return <LoadingScreen text="पूर्ण निकाल जतन करत आहोत..." color="green" />;
 
@@ -4572,38 +4544,6 @@ const retrySubmit = async () => {
                             </button>
                         </motion.div>
                     )}
-                    {submitError && (
-    <motion.div
-        key="submit_error"
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="text-center max-w-xl mx-auto bg-slate-900/80 p-12 rounded-[3rem] border border-red-500/30 shadow-2xl backdrop-blur-md"
-    >
-        <h2 className="text-3xl font-bold text-red-400 mb-4">
-            सबमिशन अयशस्वी
-        </h2>
-        <p className="text-slate-400 mb-8">
-            तुमचा डेटा सुरक्षित आहे. कृपया पुन्हा प्रयत्न करा.
-        </p>
-
-        <div className="flex justify-center gap-4">
-            <button
-                onClick={retrySubmit}
-                className="px-8 py-3 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold"
-            >
-                Retry
-            </button>
-
-            <button
-                onClick={() => router.push('/')}
-                className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold"
-            >
-                Home
-            </button>
-        </div>
-    </motion.div>
-)}
-
                 </AnimatePresence>
             </main>
         </div>
