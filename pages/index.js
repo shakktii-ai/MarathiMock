@@ -35,7 +35,11 @@ export default function dashboard({ Logout, user }) {
   if (storedUser) {
     try {
       const userFromStorage = JSON.parse(storedUser);
-
+  // ⭐ SURVEY PROTECTION (IMPORTANT)
+      if (!userFromStorage?.baselineSurveyCompleted) {
+        router.push("/baselineSurvey");
+        return;
+      }
       if (userFromStorage?.fullName) {
         setFirstName(userFromStorage.fullName.split(" ")[0]);
       }

@@ -63,16 +63,21 @@ const navItems = [
     link: "/admin",
     icon: LayoutDashboard
   },
-  // {
-  //   name: "Students Profiles",
-  //   link: "/admin/studentProfiles",
-  //   icon: Users
-  // },
-  // { 
-  //   name: "Students Registration", 
-  //   link: "/admin/signup", 
-  //   icon: UserPlus 
-  // },
+  {
+    name: "Students Profiles",
+    link: "/admin/user-links",
+    icon: Users
+  },
+  { 
+    name: "Students Registration", 
+    link: "/admin/signup", 
+    icon: UserPlus 
+  },
+  { 
+    name: "baseLineSurvey", 
+    link: "/admin/survey", 
+    icon: UserPlus 
+  },
 ]
 
 export default function AdminNav() {

@@ -34,11 +34,11 @@ export default function Login() {
         e.preventDefault();
         toast.dismiss(); // Dismiss any previous toasts
         setLoading(true);
-         if (!identifier || !password) {
-        toast.error("कृपया सर्व माहिती भरा.");
-        setLoading(false);
-        return;
-    }
+        if (!identifier || !password) {
+            toast.error("कृपया सर्व माहिती भरा.");
+            setLoading(false);
+            return;
+        }
         const data = { identifier, password };
 
         try {
@@ -91,13 +91,22 @@ export default function Login() {
                     progress: undefined,
                     theme: "light",
                 });
-
                 setTimeout(() => {
-                    router.push({
-                        pathname: '/',
-                        query: { user: response.user },
-                    });
+
+                    // Check mandatory survey
+                    if (!response.user.baselineSurveyCompleted) {
+                        router.push('/baselineSurvey');   // 🔒 Force survey first
+                    } else {
+                        router.push('/');                  // ✅ Dashboard
+                    }
+
                 }, 1000);
+                // setTimeout(() => {
+                //     router.push({
+                //         pathname: '/',
+                //         query: { user: response.user },
+                //     });
+                // }, 1000);
             } else {
                 // Show general error in toast if not a 401 but some other error
                 toast.error(response.error || 'An unexpected error occurred. Please try again.', {

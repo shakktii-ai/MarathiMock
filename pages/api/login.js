@@ -66,6 +66,7 @@ const handler = async (req, res) => {
                     address: user.address,
                     DOB: user.DOB,
                     education: user.education,
+                     baselineSurveyCompleted: user.baselineSurveyCompleted || false,
                 },
             });
         } catch (error) {
