@@ -21,7 +21,7 @@ email: { type: String, sparse: true },
     comfort: {type: Number,required:true},
 
     language: {type: String,required:true},
-    otherLanguage: {type: String,required:true},
+    otherLanguage: {type: String},
   },
   { timestamps: true }
 );
