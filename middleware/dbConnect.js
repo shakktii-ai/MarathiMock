@@ -1,7 +1,6 @@
-//middleware/dbConnect.js
-import mongoose from 'mongoose';
+// middleware/dbConnect.js
+import mongoose from "mongoose";
 
-// Cache the connection to avoid multiple connections in development
 let cached = global.mongoose;
 
 if (!cached) {
@@ -10,54 +9,33 @@ if (!cached) {
 
 const connectDb = (handler) => async (req, res) => {
   try {
-    // If we have a cached connection, use it
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MONGODB_URI not defined");
+    }
+
     if (cached.conn) {
       return handler(req, res);
     }
 
-    // Set connection options
-    const options = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // Timeout after 10s instead of 30s
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-    };
-
-    if (!process.env.MONGODB_URI) {
-      throw new Error('Please define the MONGODB_URI environment variable');
-    }
-
-    // Create a new connection if one doesn't exist
     if (!cached.promise) {
-      cached.promise = mongoose.connect(process.env.MONGODB_URI, options);
+      cached.promise = mongoose.connect(process.env.MONGODB_URI, {
+        bufferCommands: false
+      });
     }
 
-    try {
-      // Wait for the connection to be established
-      cached.conn = await cached.promise;
-      console.log('MongoDB connected successfully');
-    } catch (error) {
-      console.error('MongoDB connection error:', error);
-      cached.promise = null; // Clear the promise to allow retry
-      return res.status(500).json({ success: false, message: 'Database connection failed' });
-    }
+    cached.conn = await cached.promise;
 
-    // Handle connection events
-    mongoose.connection.on('error', (err) => {
-      console.error('MongoDB connection error:', err);
-    });
+    console.log("MongoDB connected");
 
-    mongoose.connection.on('disconnected', () => {
-      console.log('MongoDB disconnected');
-      cached.conn = null;
-      cached.promise = null;
-    });
-
-    // Call the handler
     return handler(req, res);
+
   } catch (error) {
-    console.error('Database connection error:', error);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("MongoDB connection error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Database connection failed"
+    });
   }
 };
 
