@@ -3803,9 +3803,9 @@ export const fetchAssessmentQuestions = async (userDetails) => {
     }
 };
 
-export const fetchSituationQuestions = async () => {
+export const fetchSituationQuestions = async (subject) => {
     try {
-        const res = await fetch("/api/situationque"); // ✅ GET by default
+        const res = await fetch(`/api/situationque?subject=${encodeURIComponent(subject || "PCB")}`);// ✅ GET by default
 
         if (!res.ok) throw new Error(await res.text());
 
@@ -4524,7 +4524,7 @@ useEffect(() => {
                         <motion.div key="situation" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full">
                             <MCQStage
                                 title="सिच्युएशन अ‍ॅप्टिट्यूड"
-                                fetchData={() => fetchSituationQuestions()}
+                                fetchData={() => fetchSituationQuestions(formUserInfo?.subject)}
                                 themeColor="emerald"
                                 onComplete={(data) => finalizeAndSubmit(data)}
                                 isFinalStep={true}

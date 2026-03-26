@@ -1,364 +1,179 @@
-// import mongoose from 'mongoose';
-// import AssessmentReport from '@/models/assessmentReport';
 
-// // --- DATABASE CONNECTION ---
+// import mongoose from "mongoose";
+// // DATABASE CONNECTION
 // const MONGODB_URI = process.env.MONGODB_URI;
 
-// if (!MONGODB_URI) {
-//   throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-// }
-
-// let cached = global.mongoose;
-// if (!cached) {
-//   cached = global.mongoose = { conn: null, promise: null };
-// }
+// let cached = global.mongoose || { conn: null, promise: null };
+// global.mongoose = cached;
 
 // async function dbConnect() {
 //   if (cached.conn) return cached.conn;
+
 //   if (!cached.promise) {
-//     const opts = {
+//     cached.promise = mongoose.connect(MONGODB_URI, {
 //       bufferCommands: false,
-//       maxPoolSize: 5,
-//       serverSelectionTimeoutMS: 10000,
-//     };
-//     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => mongoose);
+//     });
 //   }
+
 //   cached.conn = await cached.promise;
 //   return cached.conn;
 // }
 
-// // --- HELPER: SAFE JSON PARSER ---
-// function safeJSONParse(jsonString, fallbackData) {
-//   try {
-//     // 1. Basic Clean: Remove markdown code blocks
-//     let clean = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
-
-//     // 2. Extract Array: Find the first '[' and the LAST ']'
-//     const firstBracket = clean.indexOf('[');
-//     const lastBracket = clean.lastIndexOf(']');
-    
-//     if (firstBracket !== -1 && lastBracket !== -1) {
-//       clean = clean.substring(firstBracket, lastBracket + 1);
-//     }
-
-//     return JSON.parse(clean);
-//   } catch (e) {
-//     console.error("JSON Parse Failed. Attempting repair...", e.message);
-    
-//     // 3. Repair Truncated JSON (If AI cut off in the middle)
-//     try {
-//       let clean = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
-//       const firstBracket = clean.indexOf('[');
-//       if (firstBracket !== -1) {
-//         // Find the last closing brace '}' which signifies the end of the last complete object
-//         const lastBrace = clean.lastIndexOf('}');
-//         if (lastBrace !== -1) {
-//             // Cut off everything after the last complete object and close the array
-//             clean = clean.substring(firstBracket, lastBrace + 1) + ']';
-//             return JSON.parse(clean);
-//         }
-//       }
-//     } catch (repairError) {
-//       console.error("Repair Failed. Using Fallback.", repairError.message);
-//     }
-    
-//     return fallbackData;
-//   }
+// // ===============================
+// // SAFE JSON CLEANER
+// // ===============================
+// function cleanJSON(text) {
+//   return text
+//     .replace(/```json/g, "")
+//     .replace(/```/g, "")
+//     .trim();
 // }
 
+// // ===============================
+// // API HANDLER
+// // ===============================
 // export default async function handler(req, res) {
-//   const apiKey = process.env.OPENAI_API_KEY;
-
-//   // 1. Establish DB Connection
-//   try {
-//     await dbConnect();
-//   } catch (error) {
-//     console.error("Database connection failed:", error);
+//   if (req.method !== "GET") {
+//     return res.status(405).json({ message: "Use GET only" });
 //   }
 
-//   const url = 'https://api.openai.com/v1/chat/completions';
+//   const apiKey = process.env.OPENAI_API_KEY;
+//   if (!apiKey) {
+//     return res.status(500).json({ error: "Missing OpenAI API Key" });
+//   }
 
-//   // ==========================================
-//   //  HANDLE POST REQUEST
-//   // ==========================================
-//   if (req.method === 'POST') {
-//     const { type, standard, subject, questions, userAnswers, email, collageName, role } = req.body;
+//   await dbConnect();
 
-//     if (!apiKey) return res.status(500).json({ error: "OpenAI API Key not configured" });
+//   const url = "https://api.openai.com/v1/chat/completions";
 
-//     try {
-//       // --- SCENARIO 1: GENERATE SITUATION QUESTIONS ---
-//       if (type === 'generate_questions') {
-//         // We reduce count to 15 to prevent token truncation (Max tokens often cut off 20 detailed questions)
-//         const questionCount = 10; 
-        
-//         const systemPrompt = `You are a strict JSON generator. You never output conversational text. Output only a raw JSON array.`;
-//         const userPrompt = `Create exactly ${questionCount} Situation Reaction Test (MCQ) questions in Marathi for Class ${standard} (${subject}).
-        
-//         Topics: Decision Making, Ethics, Leadership.
+//   const systemPrompt = `
+// You are an expert industrial behavioural assessment designer specializing in shop-floor workers in Indian factories.
+// Uniqueness constraints:
+// - 
+// - Every scenario must be completely different.
+// - Do NOT repeat scenario themes.
+// - Avoid repeating patterns like:
+//   coworker mistake
+//   new worker
+//   machine noise
+//   asking supervisor
+// - Each scenario must represent a different shop-floor situation.
+// Return ONLY strict valid JSON.
+// Do NOT include markdown.
+// Do NOT include explanations.
+// Do NOT include headings.
+// Do NOT include any text outside JSON.
+// `;
 
-//         Strict JSON Array Format:
-//         [{"id":1,"question":"Marathi Text","options":["A","B","C","D"],"correctAnswer":"A"}]`;
+//  const userPrompt = `
+// Generate exactly 25 situational judgement questions in Marathi for Indian factory workers.
 
-//         const response = await fetch(url, {
-//           method: 'POST',
-//           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-//           body: JSON.stringify({
-//             model: "gpt-3.5-turbo",
-//             messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
-//             temperature: 0.7,
-//             max_tokens: 2500 // Increased limit
-//           })
-//         });
+// Language rules:
+// - Use natural spoken Marathi used on factory shop floors.
+// - Avoid overly formal Marathi.
 
-//         const data = await response.json();
-//         if (data.error) return res.status(500).json({ error: data.error.message });
+// Design rules:
+// - Each item must describe a realistic shop-floor situation.
+// - Hide the behavioural intent.
+// - Avoid direct personality questions.
+// - Avoid using these words: honesty, ethics, safety rule, respect, bias, harassment.
+// - All 4 options must sound plausible.
 
-//         const aiContent = data.choices[0].message.content;
+// Engine distribution (must be exact):
+// A:4 items
+// B:3 items
+// C:3 items
+// D:4 items
+// E:3 items
+// F:4 items
+// G:4 items
 
-//         // FALLBACK DATA (In case AI fails completely)
-//         const fallback = Array.from({ length: 10 }, (_, i) => ({
-//             id: i + 1,
-//             question: `(Server Backup) खालीलपैकी कोणत्या परिस्थितीत तुम्ही काय कराल? प्रश्न ${i + 1}`,
-//             options: ["पर्याय 1", "पर्याय 2", "पर्याय 3", "पर्याय 4"],
-//             correctAnswer: "पर्याय 1"
-//         }));
+// Each item must contain the following fields:
+// - id (1–25)
+// - engine (A,B,C,D,E,F,G)
+// - sub_parameter
+// - scenario
+// - options
+// - hidden_measure
 
-//         // USE SAFE PARSER
-//         const parsedQuestions = safeJSONParse(aiContent, fallback);
+// Formatting rules:
+// - scenario: maximum 60 words
+// - each option: maximum 18 words
+// - hidden_measure: maximum 5 words
 
-//         return res.status(200).json({ result: parsedQuestions });
-//       } 
+// Options must follow this structure:
 
-//       // --- SCENARIO 2: EVALUATE & SAVE REPORT ---
-//       else if (type === 'evaluate_answers') {
-//         if (!email) return res.status(400).json({ error: "User login required" });
+// "options": {
+//   "A": "option text",
+//   "B": "option text",
+//   "C": "option text",
+//   "D": "option text"
+// }
 
-//         let calculatedScore = 0;
-//         const totalQuestions = questions.length;
+// Output format must be exactly:
 
-//         questions.forEach((q, index) => {
-//           if (userAnswers[index] && String(userAnswers[index]).trim() === String(q.correctAnswer).trim()) {
-//             calculatedScore++;
-//           }
-//         });
+// {
+//   "questions": [
+//     {
+//       "id": 1,
+//       "engine": "A",
+//       "sub_parameter": "",
+//       "scenario": "",
+//       "options": {
+//         "A": "",
+//         "B": "",
+//         "C": "",
+//         "D": ""
+//       },
+//       "hidden_measure": ""
+//     }
+//   ]
+// }
 
-//         const systemPrompt = `You are a career counselor speaking Marathi.`;
-//         const userPrompt = `The student scored ${calculatedScore}/${totalQuestions} in a Situation Reaction Test. Provide a Markdown report in Marathi covering Decision Making and Ethics.`;
+// Return valid JSON only.
+// `;
 
-//         const response = await fetch(url, {
-//           method: 'POST',
-//           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-//           body: JSON.stringify({
-//             model: "gpt-3.5-turbo",
-//             messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
-//             temperature: 0.7
-//           })
-//         });
+//   try {
+//     const response = await fetch(url, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${apiKey}`,
+//       },
+//       body: JSON.stringify({
+//         model: "gpt-4o-mini",
+//         temperature: 0.7,
+//         messages: [
+//           { role: "system", content: systemPrompt },
+//           { role: "user", content: userPrompt },
+//         ],
+//       }),
+//     });
 
-//         const data = await response.json();
-//         const aiAnalysis = data.choices?.[0]?.message?.content || "Analysis could not be generated.";
+//     const data = await response.json();
 
-//         const newReport = new AssessmentReport({
-//           role: role || 'Student',
-//           subject: "Situation Aptitude", 
-//           type: 'Situation',             
-//           email: email,
-//           collageName: collageName || 'Unknown College',
-//           reportAnalysis: aiAnalysis,
-//           score: calculatedScore,
-//           totalQuestions: totalQuestions,
-//           createdAt: new Date()
-//         });
-
-//         await newReport.save();
-
-//         return res.status(200).json({ 
-//             result: aiAnalysis, 
-//             score: calculatedScore, 
-//             total: totalQuestions 
-//         });
-//       }
-
-//     } catch (error) {
-//       console.error("API Logic Error:", error);
-//       // Return a 200 with fallback data instead of 500 to keep UI alive
-//       return res.status(200).json({ 
-//         result: Array.from({ length: 5 }, (_, i) => ({
-//              id: i, question: "Error generating questions. Please try again.", options: ["A","B","C","D"], correctAnswer: "A"
-//         })) 
+//     const content = data?.choices?.[0]?.message?.content;
+//     if (!content) {
+//       return res.status(500).json({
+//         error: "AI did not return content",
+//         raw: data,
 //       });
 //     }
-//   } else {
-//     return res.status(405).json({ message: 'Method not allowed' });
+
+//     const cleaned = cleanJSON(content);
+//     const parsed = JSON.parse(cleaned);
+
+//     return res.status(200).json({ result: parsed });
+
+//   } catch (err) {
+//     console.error("Situation generation failed:", err);
+//     return res.status(500).json({
+//       error: "Situation generation failed",
+//       details: err.message,
+//     });
 //   }
 // }
 
-// import mongoose from 'mongoose';
-// import AssessmentReport from '@/models/assessmentReport';
-
-// // --- DATABASE CONNECTION ---
-// const MONGODB_URI = process.env.MONGODB_URI;
-
-// if (!MONGODB_URI) {
-//   throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-// }
-
-// let cached = global.mongoose;
-// if (!cached) {
-//   cached = global.mongoose = { conn: null, promise: null };
-// }
-
-// async function dbConnect() {
-//   if (cached.conn) return cached.conn;
-//   if (!cached.promise) {
-//     const opts = {
-//       bufferCommands: false,
-//       maxPoolSize: 5,
-//       serverSelectionTimeoutMS: 10000,
-//     };
-//     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => mongoose);
-//   }
-//   cached.conn = await cached.promise;
-//   return cached.conn;
-// }
-
-// // --- HELPER: SAFE JSON PARSER (Fixes the "SyntaxError") ---
-// function safeJSONParse(jsonString, fallbackData) {
-//   try {
-//     // 1. Basic Clean: Remove markdown code blocks
-//     let clean = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
-
-//     // 2. Extract Array: Find the first '[' and the LAST ']'
-//     const firstBracket = clean.indexOf('[');
-//     const lastBracket = clean.lastIndexOf(']');
-    
-//     if (firstBracket !== -1 && lastBracket !== -1) {
-//       clean = clean.substring(firstBracket, lastBracket + 1);
-//     }
-
-//     return JSON.parse(clean);
-//   } catch (e) {
-//     console.error("JSON Parse Failed. Attempting repair...", e.message);
-    
-//     // 3. Repair Truncated JSON (If AI cut off in the middle)
-//     try {
-//       let clean = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
-//       const firstBracket = clean.indexOf('[');
-//       if (firstBracket !== -1) {
-//         // Find the last closing brace '}' 
-//         const lastBrace = clean.lastIndexOf('}');
-//         if (lastBrace !== -1) {
-//             // Cut off everything after the last complete object and close the array
-//             clean = clean.substring(firstBracket, lastBrace + 1) + ']';
-//             return JSON.parse(clean);
-//         }
-//       }
-//     } catch (repairError) {
-//       console.error("Repair Failed. Using Fallback.");
-//     }
-    
-//     return fallbackData;
-//   }
-// }
-
-// export default async function handler(req, res) {
-//   const apiKey = process.env.OPENAI_API_KEY;
-
-//   try {
-//     await dbConnect();
-//   } catch (error) {
-//     console.error("Database connection failed:", error);
-//   }
-
-//   const url = 'https://api.openai.com/v1/chat/completions';
-
-//   // ==========================================
-//   //  HANDLE GET REQUEST (Generation)
-//   // ==========================================
-//   if (req.method === 'GET') {
-//     if (!apiKey) return res.status(500).json({ error: "OpenAI API Key not configured" });
-
-//     // 1. Get Params from Query URL (e.g. ?standard=12&subject=Science)
-//     const { standard = "General", subject = "General Aptitude" } = req.query;
-
-//     try {
-//       // 2. Prompt Engineering
-//       const questionCount = 20; // Safer limit to prevent timeout/truncation
-      
-//       const systemPrompt = `You are an expert Psychologist. Output strictly valid JSON array only. No markdown.`;
-//       const userPrompt = `Create exactly ${questionCount} Situation Reaction Test (MCQ) questions in Marathi for a student in Class ${standard} (${subject}).
-      
-//       The situations should test: 
-//       1. Decision Making (निर्णय क्षमता)
-//       2. Workplace Ethics (कामाच्या ठिकाणची नैतिकता)
-//       3. Teamwork & Leadership (संघभावना आणि नेतृत्व)
-
-//       Output format (RAW JSON Array):
-//       [
-//         {
-//           "id": 1,
-//           "question": "A detailed description of a challenging situation in Marathi...",
-//           "options": ["Marathi Opt A", "Marathi Opt B", "Marathi Opt C", "Marathi Opt D"],
-//           "correctAnswer": "Exact text of the correct option"
-//         }
-//       ]
-//       and give 20 question in ablove format  
-//       `
-      
-//       ;
-
-//       const response = await fetch(url, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-//         body: JSON.stringify({
-//           model: "gpt-3.5-turbo-16k",
-//           messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
-//           temperature: 0.7,
-//           max_tokens: 2500 
-//         })
-//       });
-
-//       const data = await response.json();
-      
-//       if (data.error) {
-//           return res.status(500).json({ error: data.error.message });
-//       }
-
-//       const aiContent = data.choices[0].message.content;
-
-//       // 3. Fallback Data (In case AI fails)
-//       const fallback = Array.from({ length: 5 }, (_, i) => ({
-//           id: i + 1,
-//           question: `(Server Backup) खालीलपैकी कोणत्या परिस्थितीत तुम्ही काय कराल? प्रश्न ${i + 1}`,
-//           options: ["पर्याय 1", "पर्याय 2", "पर्याय 3", "पर्याय 4"],
-//           correctAnswer: "पर्याय 1"
-//       }));
-
-//       // 4. Safe Parse
-//       const parsedQuestions = safeJSONParse(aiContent, fallback);
-
-//       return res.status(200).json({ result: parsedQuestions });
-
-//     } catch (error) {
-//       console.error("GET Generation Error:", error);
-//       return res.status(500).json({ error: error.message || "Failed to generate questions" });
-//     }
-//   }
-
-//   // ==========================================
-//   //  HANDLE POST REQUEST (Evaluation - Optional)
-//   // ==========================================
-//   else if (req.method === 'POST') {
-//      // If you need evaluation logic here, paste it. 
-//      // Otherwise, strictly for generation, we only need GET.
-//      return res.status(405).json({ message: 'Use GET for generation' });
-//   } 
-  
-//   else {
-//     return res.status(405).json({ message: 'Method not allowed' });
-//   }
-// }
 import mongoose from "mongoose";
 
 // ===============================
@@ -392,6 +207,21 @@ function cleanJSON(text) {
     .trim();
 }
 
+
+// shuffle options
+function shuffleOptions(questions) {
+  return questions.map((q) => {
+    const correct = q.correctAnswer;
+    const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+    return {
+      ...q,
+      options: shuffled,
+      correctAnswer: correct,
+    };
+  });
+}
+
+
 // ===============================
 // API HANDLER
 // ===============================
@@ -406,49 +236,174 @@ export default async function handler(req, res) {
   }
 
   await dbConnect();
+  const { subject = "Printed Circuit Board" } = req.query;
+
+  const subjectContext = subject.toLowerCase().includes("auto") || subject.toLowerCase().includes("aao")
+    ? {
+      tradeName: "Automotive Assembly Operator (AAO)",
+      locations: "engine assembly shop, vehicle workshop, garage floor, parts store",
+      tools: "torque wrench, engine components, assembly tools, vehicle parts, hydraulic jack",
+      scenarios: "engine assembly mistake, wrong torque setting, missing part, oil spill safety, vehicle inspection defect"
+    }
+    : {
+      tradeName: "Printed Circuit Board (PCB)",
+      locations: "PCB assembly line, soldering station, electronics workshop, testing bench",
+      tools: "soldering iron, multimeter, PCB board, electronic components, continuity tester",
+      scenarios: "soldering defect, component placed wrongly, short circuit risk, testing failure, ESD safety violation"
+    };
 
   const url = "https://api.openai.com/v1/chat/completions";
 
+
   const systemPrompt = `
-You are a corporate behavioural assessment expert.
+You are a senior ITI behavioural assessment designer specializing in Situational Judgement Tests (SJT) for Indian blue collar workers in manufacturing and workshop environments.
 
 Return ONLY a valid JSON array.
-Do NOT include markdown.
-Do NOT include explanations.
-Do NOT include headings.
-Do NOT include any text outside JSON.
+Do NOT include markdown, explanations, headings, or any text outside JSON.
 
-Rules:
-- Exactly 10 corporate workplace scenario-based MCQs.
-- Marathi language only.
-- Office or corporate environment only.
-- Decision-making based situations.
-- 4 options per question.
-- Only one correct answer.
-- No repetition.
-- stictly all questions are different no repetition.
-- Do NOT use "All of the above" or "वरीलपैकी सर्व".
+═══ TRADE CONTEXT ═══
+This assessment is for: ${subjectContext.tradeName}
+All scenarios MUST be specific to this trade only.
+Locations to use: ${subjectContext.locations}
+Tools and equipment to mention: ${subjectContext.tools}
+Relevant work scenarios: ${subjectContext.scenarios}
+
+═══ LANGUAGE RULES — MOST IMPORTANT ═══
+- Write ALL words in Marathi only — no English words in questions or options.
+- ONLY these short technical abbreviations can stay in English: PCB, ESD, SOP, AAO, RPM, DC, AC, QC, ITI.
+- ALL other words must be in Marathi. Use these translations:
+  soldering defect → सोल्डरिंग दोष
+  assembly line → असेंब्ली लाईन
+  safety rules → सुरक्षा नियम
+  breakdown → बिघाड
+  production → उत्पादन
+  quality → गुणवत्ता
+  defect → दोष
+  machine → मशीन
+  tool → साधन
+  workshop → कार्यशाळा
+  shift → शिफ्ट
+  supervisor → सुपरवायझर
+  soldering iron → सोल्डरिंग आयरन
+  torque wrench → टॉर्क रेंच
+  safety gear → सुरक्षा साधने
+  component → घटक
+  circuit → सर्किट
+  testing → तपासणी
+  report → अहवाल
+  repair → दुरुस्ती
+
+═══ SCENARIO RULES ═══
+- Exactly 10 questions, each from a DIFFERENT shop floor or workshop context:
+  1. Machine or equipment breakdown during production shift
+  2. Supervisor giving unclear or wrong instructions
+  3. Safety rule being ignored by a colleague
+  4. Quality defect found in your own work
+  5. Conflict with a senior worker on the shop floor
+  6. Production target pressure with less manpower
+  7. New machine or tool learning situation
+  8. Workplace near-miss accident
+  9. Colleague not following SOP
+  10. Overtime or shift change dispute
+
+- Scenario length: minimum 3 sentences, maximum 5 sentences.
+- Scenarios must be realistic — do not create false urgency or impossible situations.
+- The situation must be something that genuinely happens on a shop floor daily.
+- Make the situation feel real — use names like रमेश, सुरेश, प्रिया, राजू.
+- ONLY use locations and tools relevant to ${subjectContext.tradeName}.
+- The behavioural trait being tested must NEVER be mentioned in the question.
+- No two questions can have the same scenario — all 10 must be completely different.
+- Each question must have minimum 3 sentences before "तुम्ही काय कराल?"
+- Every question MUST end with exactly this sentence: "तुम्ही काय कराल?"
+- This must be the very last sentence of every question — no exceptions.
+
+═══ REALISM RULES ═══
+- Do NOT say "उत्पादन थांबवायचं आहे" unless it is genuinely required in the situation.
+- Do NOT create scenarios where the entire production line stops for a minor issue.
+- A broken tool → inform supervisor and find alternative, NOT stop entire production.
+- A quality defect → report to supervisor, NOT shutdown the factory.
+- A safety violation → warn the colleague and inform supervisor, NOT call HR immediately.
+- Keep situations proportional — small problems have small responses, big problems have big responses.
+
+═══ OPTION RULES ═══
+- Exactly 4 options per question.
+- Each option must represent a DIFFERENT decision strategy:
+  Option 1 → Assertive & safety/process-following
+  Option 2 → Passive & avoidant
+  Option 3 → Collaborative & team-oriented
+  Option 4 → Impulsive & self-focused
+- No two options can have similar meaning — even slightly.
+- Option lengths must vary — do NOT make all options the same length.
+- NEVER use "वरीलपैकी सर्व", "All of the above", "None of the above".
+- Use simple spoken Marathi — NOT formal or office language.
+- ALL option text must be in Marathi — no English words except allowed abbreviations.
+- Options must be realistic responses — no extreme actions for minor problems.
+
+═══ CORRECTANSWER RULES ═══
+- correctAnswer must be the professionally sound, safe and ethical choice.
+- correctAnswer must match one of the 4 options EXACTLY — character for character.
+- correctAnswer should always be proportional to the situation — calm and process-following.
+
+═══ DIMENSION COVERAGE ═══
+Each question must test a DIFFERENT dimension — no repeats:
+Q1: Safety Awareness
+Q2: SOP Compliance
+Q3: Accountability
+Q4: Teamwork
+Q5: Respect for Authority
+Q6: Work Ethics
+Q7: Problem Solving
+Q8: Adaptability
+Q9: Conflict Resolution
+Q10: Initiative
 `;
 
   const userPrompt = `
-Generate corporate scenario MCQs to evaluate:
+Generate exactly 10 Marathi ITI shop floor SJT questions for ${subjectContext.tradeName} trade following all system rules.
 
-- Leadership
-- Accountability
-- Teamwork
-- Integrity
-- Communication
-- Problem solving
-- Work ethics
+All questions MUST be specific to ${subjectContext.tradeName} — use relevant tools, locations and work scenarios for this trade only.
 
-Return strictly in this format:
+CRITICAL CHECKS before generating each question:
+- Is every word in Marathi? (except PCB, ESD, SOP, AAO, RPM, DC, AC, QC)
+- Is the scenario at least 3 sentences long?
+- Is this scenario different from all other 9 questions?
+- Is the situation realistic and proportional?
+- Does it end with "तुम्ही काय कराल?"
+
+Here is one example of a perfect question for ${subjectContext.tradeName}:
+
+${subjectContext.tradeName.includes("Auto") ? `
+{
+  "id": 1,
+  "question": "तुम्ही इंजिन असेंब्ली शॉपमध्ये सिलिंडर हेड बसवत असताना तुमच्या लक्षात आले की टॉर्क रेंच व्यवस्थित काम करत नाही. रमेश सुपरवायझर जवळच दुसऱ्या कामगाराशी बोलत आहे. जर चुकीच्या टॉर्कने काम झाले तर इंजिनमध्ये दोष येऊ शकतो. तुम्ही काय कराल?",
+  "options": [
+    "रमेश सुपरवायझरला लगेच सांगा की टॉर्क रेंच व्यवस्थित काम करत नाही आणि दुसरे साधन मागवा",
+    "काही बोलू नका, अंदाजाने काम पूर्ण करा",
+    "टीममधील अनुभवी सहकाऱ्याला विचारा की हे साधन आधी व्यवस्थित होते का",
+    "तो भाग बाजूला ठेवा आणि दुसरे काम सुरू करा"
+  ],
+  "correctAnswer": "रमेश सुपरवायझरला लगेच सांगा की टॉर्क रेंच व्यवस्थित काम करत नाही आणि दुसरे साधन मागवा"
+}` : `
+{
+  "id": 1,
+  "question": "तुम्ही PCB असेंब्ली लाईनवर सोल्डरिंग करत असताना तुमचे सोल्डरिंग आयरन अचानक बंद झाले. सुपरवायझर जवळच दुसऱ्या कामगाराशी बोलत आहे. तुमच्या बाजूला spare सोल्डरिंग आयरन नाही. तुम्ही काय कराल?",
+  "options": [
+    "सुपरवायझरला शांतपणे सांगा की सोल्डरिंग आयरन बंद झाले आहे आणि दुसरे मागवा",
+    "काही बोलू नका, थोड्या वेळाने परत चालू होईल असे वाटते",
+    "शेजारच्या सहकाऱ्याला विचारा की त्याच्याकडे spare आयरन आहे का",
+    "लगेच उत्पादन सुपरवायझरला फोन करा आणि लाईन बंद करायला सांगा"
+  ],
+  "correctAnswer": "सुपरवायझरला शांतपणे सांगा की सोल्डरिंग आयरन बंद झाले आहे आणि दुसरे मागवा"
+}`}
+
+Now generate all 10 questions in this format:
 
 [
   {
     "id": 1,
-    "question": "Situation in Marathi",
-    "options": ["A","B","C","D"],
-    "correctAnswer": "Exact option text"
+    "question": "Marathi scenario minimum 3 sentences ending with तुम्ही काय कराल?",
+    "options": ["option1", "option2", "option3", "option4"],
+    "correctAnswer": "Exact matching option text"
   }
 ]
 `;
@@ -481,9 +436,13 @@ Return strictly in this format:
     }
 
     const cleaned = cleanJSON(content);
-    const parsed = JSON.parse(cleaned);
+    console.log("cleaned", cleaned);
 
-    return res.status(200).json({ result: parsed });
+    const parsed = JSON.parse(cleaned);
+    const questionsArray = Array.isArray(parsed) ? parsed : (parsed.questions || []);
+    const shuffled = shuffleOptions(questionsArray);
+    return res.status(200).json({ result: shuffled });
+
 
   } catch (err) {
     console.error("Situation generation failed:", err);
